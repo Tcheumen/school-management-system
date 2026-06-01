@@ -5,9 +5,9 @@
 - [x] Initialize Spring Boot project
 - [x] Configure PostgreSQL
 - [x] Create Student CRUD
-- [ ] Add DTOs
-- [ ] Add Validation
-- [ ] Add Exception Handling
+- [x] Add DTOs
+- [x] Add Validation
+- [x] Add Exception Handling
 
 ---
 
