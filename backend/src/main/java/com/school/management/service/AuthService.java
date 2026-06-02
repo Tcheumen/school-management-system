@@ -1,8 +1,10 @@
 package com.school.management.service;
 
+
 import com.school.management.dto.AuthResponse;
 import com.school.management.dto.LoginRequest;
 import com.school.management.dto.RegisterRequest;
+import com.school.management.dto.UserResponse;
 import com.school.management.entity.User;
 import com.school.management.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -53,5 +55,17 @@ public class AuthService {
                 token,
                 user.getEmail(),
                 user.getRole());
+    }
+
+    public UserResponse getCurrentUser(String email) {
+    User user = userRepository.findByEmail(email)
+            .orElseThrow(() -> new RuntimeException("User not found"));
+
+    return new UserResponse(
+            user.getId(),
+            user.getFullName(),
+            user.getEmail(),
+            user.getRole()
+    );
     }
 }

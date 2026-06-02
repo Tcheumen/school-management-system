@@ -12,9 +12,9 @@
 ---
 
 # Phase 2 - Authentication
-- [ ] Spring Security
-- [ ] JWT Authentication
-- [ ] Role Management
+- [x] Spring Security
+- [x] JWT Authentication
+- [x] Role Management
 
 Roles:
 - ADMIN
