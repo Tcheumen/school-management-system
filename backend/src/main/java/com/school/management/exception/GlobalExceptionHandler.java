@@ -39,5 +39,14 @@ public class GlobalExceptionHandler {
                 exception.getMessage());
     }
 
+    @ExceptionHandler(ClassroomNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleClassroomNotFound(ClassroomNotFoundException exception) {
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                exception.getMessage());
+    }
     
 }
