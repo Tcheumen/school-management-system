@@ -5,6 +5,7 @@ import com.school.management.dto.TeacherResponse;
 import com.school.management.entity.Teacher;
 import com.school.management.repository.TeacherRepository;
 import org.springframework.stereotype.Service;
+import com.school.management.exception.TeacherNotFoundException;
 
 import java.util.List;
 
@@ -26,7 +27,7 @@ public class TeacherService {
 
     public TeacherResponse getTeacherById(Long id) {
         Teacher teacher = teacherRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Teacher not found"));
+                .orElseThrow(() -> new TeacherNotFoundException(id));
 
         return mapToResponse(teacher);
     }
@@ -47,7 +48,7 @@ public class TeacherService {
 
     public TeacherResponse updateTeacher(Long id, TeacherRequest request) {
         Teacher teacher = teacherRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Teacher not found"));
+                .orElseThrow(() -> new TeacherNotFoundException(id));
 
         teacher.setFirstName(request.getFirstName());
         teacher.setLastName(request.getLastName());
@@ -62,7 +63,7 @@ public class TeacherService {
 
     public void deleteTeacher(Long id) {
         Teacher teacher = teacherRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Teacher not found"));
+                .orElseThrow(() -> new TeacherNotFoundException(id));
 
         teacherRepository.delete(teacher);
     }
