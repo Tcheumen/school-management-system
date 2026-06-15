@@ -59,6 +59,14 @@ public class GlobalExceptionHandler {
                 exception.getMessage());
     }
 
-    
+    @ExceptionHandler(GradeNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleGradeNotFound(GradeNotFoundException exception) {
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                exception.getMessage());
+    }
     
 }
