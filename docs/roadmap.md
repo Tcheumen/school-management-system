@@ -33,7 +33,7 @@ Roles:
 ---
 
 # Phase 4 - Frontend
-- [ ] Initialize Angular project
+- [x] Initialize Angular project
 - [ ] Authentication pages
 - [ ] Admin dashboard
 - [ ] Teacher dashboard
