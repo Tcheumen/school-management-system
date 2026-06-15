@@ -48,5 +48,17 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND.getReasonPhrase(),
                 exception.getMessage());
     }
+
+    @ExceptionHandler(AttendanceNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)   
+    public ErrorResponse handleAttendanceNotFound(AttendanceNotFoundException exception) {
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                exception.getMessage());
+    }
+
+    
     
 }

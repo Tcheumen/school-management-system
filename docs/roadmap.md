@@ -26,7 +26,7 @@ Roles:
 # Phase 3 - School Features
 - [x] Teacher CRUD
 - [x] Subject CRUD
-- [ ] Classroom CRUD
+- [x] Classroom CRUD
 - [ ] Attendance Management
 - [ ] Grade Management
 
