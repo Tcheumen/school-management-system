@@ -28,7 +28,7 @@ Roles:
 - [x] Subject CRUD
 - [x] Classroom CRUD
 - [x] Attendance Management
-- [ ] Grade Management
+- [x] Grade Management
 
 ---
 
