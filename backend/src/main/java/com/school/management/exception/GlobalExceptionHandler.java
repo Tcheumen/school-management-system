@@ -69,4 +69,13 @@ public class GlobalExceptionHandler {
                 exception.getMessage());
     }
     
+    @ExceptionHandler(AcademicYearNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleAcademicYearNotFound(AcademicYearNotFoundException exception) {
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
+                exception.getMessage());
+    }
 }
