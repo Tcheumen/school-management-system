@@ -1,6 +1,7 @@
 package com.school.management.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 
 public class ClassroomRequest {
 
@@ -10,8 +11,8 @@ public class ClassroomRequest {
     @NotBlank(message = "Level is required")
     private String level;
 
-    @NotBlank(message = "Academic year is required")
-    private String academicYear;
+    @NotNull(message = "Academic year is required")
+    private Long academicYearId;
 
     public String getName() {
         return name;
@@ -21,7 +22,7 @@ public class ClassroomRequest {
         return level;
     }
 
-    public String getAcademicYear() {
-        return academicYear;
+    public Long getAcademicYearId() {
+        return academicYearId;
     }
 }

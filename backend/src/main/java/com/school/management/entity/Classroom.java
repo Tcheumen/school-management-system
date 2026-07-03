@@ -10,12 +10,14 @@ public class Classroom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(unique = true, nullable = false)
+    @Column(nullable = false)
     private String name;
 
     private String level;
 
-    private String academicYear;
+    @ManyToOne
+    @JoinColumn(name = "academic_year_id", nullable = false)
+    private AcademicYear academicYear;
 
     public Classroom() {
     }
@@ -40,11 +42,11 @@ public class Classroom {
         this.level = level;
     }
 
-    public String getAcademicYear() {
+    public AcademicYear getAcademicYear() {
         return academicYear;
     }
 
-    public void setAcademicYear(String academicYear) {
+    public void setAcademicYear(AcademicYear academicYear) {
         this.academicYear = academicYear;
     }
 }

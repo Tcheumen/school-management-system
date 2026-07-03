@@ -2,9 +2,12 @@ package com.school.management.service;
 
 import com.school.management.dto.ClassroomRequest;
 import com.school.management.dto.ClassroomResponse;
+import com.school.management.entity.AcademicYear;
 import com.school.management.entity.Classroom;
-import com.school.management.repository.ClassroomRepository;
+import com.school.management.exception.AcademicYearNotFoundException;
 import com.school.management.exception.ClassroomNotFoundException;
+import com.school.management.repository.AcademicYearRepository;
+import com.school.management.repository.ClassroomRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,9 +16,13 @@ import java.util.List;
 public class ClassroomService {
 
     private final ClassroomRepository classroomRepository;
+    private final AcademicYearRepository academicYearRepository;
 
-    public ClassroomService(ClassroomRepository classroomRepository) {
+    public ClassroomService(
+            ClassroomRepository classroomRepository,
+            AcademicYearRepository academicYearRepository) {
         this.classroomRepository = classroomRepository;
+        this.academicYearRepository = academicYearRepository;
     }
 
     public List<ClassroomResponse> getAllClassrooms() {
@@ -33,11 +40,14 @@ public class ClassroomService {
     }
 
     public ClassroomResponse createClassroom(ClassroomRequest request) {
+        AcademicYear academicYear = academicYearRepository.findById(request.getAcademicYearId())
+                .orElseThrow(() -> new AcademicYearNotFoundException(request.getAcademicYearId()));
+
         Classroom classroom = new Classroom();
 
         classroom.setName(request.getName());
         classroom.setLevel(request.getLevel());
-        classroom.setAcademicYear(request.getAcademicYear());
+        classroom.setAcademicYear(academicYear);
 
         Classroom savedClassroom = classroomRepository.save(classroom);
 
@@ -48,9 +58,12 @@ public class ClassroomService {
         Classroom classroom = classroomRepository.findById(id)
                 .orElseThrow(() -> new ClassroomNotFoundException(id));
 
+        AcademicYear academicYear = academicYearRepository.findById(request.getAcademicYearId())
+                .orElseThrow(() -> new AcademicYearNotFoundException(request.getAcademicYearId()));
+
         classroom.setName(request.getName());
         classroom.setLevel(request.getLevel());
-        classroom.setAcademicYear(request.getAcademicYear());
+        classroom.setAcademicYear(academicYear);
 
         Classroom updatedClassroom = classroomRepository.save(classroom);
 
@@ -69,6 +82,7 @@ public class ClassroomService {
                 classroom.getId(),
                 classroom.getName(),
                 classroom.getLevel(),
-                classroom.getAcademicYear());
+                classroom.getAcademicYear().getId(),
+                classroom.getAcademicYear().getName());
     }
 }

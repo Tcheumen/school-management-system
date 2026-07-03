@@ -5,13 +5,21 @@ public class ClassroomResponse {
     private Long id;
     private String name;
     private String level;
-    private String academicYear;
 
-    public ClassroomResponse(Long id, String name, String level, String academicYear) {
+    private Long academicYearId;
+    private String academicYearName;
+
+    public ClassroomResponse(
+            Long id,
+            String name,
+            String level,
+            Long academicYearId,
+            String academicYearName) {
         this.id = id;
         this.name = name;
         this.level = level;
-        this.academicYear = academicYear;
+        this.academicYearId = academicYearId;
+        this.academicYearName = academicYearName;
     }
 
     public Long getId() {
@@ -26,7 +34,11 @@ public class ClassroomResponse {
         return level;
     }
 
-    public String getAcademicYear() {
-        return academicYear;
+    public Long getAcademicYearId() {
+        return academicYearId;
+    }
+
+    public String getAcademicYearName() {
+        return academicYearName;
     }
 }
