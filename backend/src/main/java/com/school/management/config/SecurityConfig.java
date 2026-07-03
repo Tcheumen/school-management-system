@@ -40,11 +40,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/register", "/api/auth/login").permitAll()
                         .requestMatchers("/api/auth/me").authenticated()
-                        .requestMatchers("/api/academic-years/**").hasAnyRole("ADMIN")
-                        .requestMatchers("/api/classrooms/**").hasAnyRole("ADMIN")
-                        .requestMatchers("/api/students/**").hasAnyRole("ADMIN")
-                        .requestMatchers("/api/teachers/**").hasAnyRole("ADMIN")
-                        .requestMatchers("/api/subjects/**").hasAnyRole("ADMIN")
+                        .requestMatchers("/api/academic-years/**").hasRole("ADMIN")
+                        .requestMatchers("/api/classrooms/**").hasRole("ADMIN")
+                        .requestMatchers("/api/students/**").hasRole("ADMIN")
+                        .requestMatchers("/api/teachers/**").hasRole("ADMIN")
+                        .requestMatchers("/api/enrollments/**").hasRole("ADMIN")
+                        .requestMatchers("/api/subjects/**").hasRole("ADMIN")
                         .requestMatchers("/api/attendances/**").hasAnyRole("ADMIN", "TEACHER")
                         .requestMatchers("/api/grades/**").hasAnyRole("ADMIN", "TEACHER")
                         
