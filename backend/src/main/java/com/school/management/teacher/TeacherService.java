@@ -1,11 +1,6 @@
-package com.school.management.service;
+package com.school.management.teacher;
 
-import com.school.management.dto.TeacherRequest;
-import com.school.management.dto.TeacherResponse;
-import com.school.management.entity.Teacher;
-import com.school.management.repository.TeacherRepository;
 import org.springframework.stereotype.Service;
-import com.school.management.exception.TeacherNotFoundException;
 
 import java.util.List;
 

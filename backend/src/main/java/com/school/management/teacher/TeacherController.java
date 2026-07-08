@@ -1,8 +1,5 @@
-package com.school.management.controller;
+package com.school.management.teacher;
 
-import com.school.management.dto.TeacherRequest;
-import com.school.management.dto.TeacherResponse;
-import com.school.management.service.TeacherService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

@@ -1,4 +1,4 @@
-package com.school.management.dto;
+package com.school.management.teacher;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
