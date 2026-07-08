@@ -1,14 +1,21 @@
 package com.school.management.service;
 
+import com.school.management.AcademicYear.AcademicYear;
+import com.school.management.AcademicYear.AcademicYearNotFoundException;
+import com.school.management.AcademicYear.AcademicYearRepository;
 import com.school.management.dto.EnrollmentRequest;
 import com.school.management.dto.EnrollmentResponse;
-import com.school.management.entity.AcademicYear;
 import com.school.management.entity.Classroom;
 import com.school.management.entity.Enrollment;
 import com.school.management.entity.Student;
-import com.school.management.exception.*;
-import com.school.management.repository.*;
-
+import com.school.management.exception.ClassroomNotFoundException;
+import com.school.management.exception.EnrollmentAlreadyExistsException;
+import com.school.management.exception.EnrollmentNotFoundException;
+import com.school.management.exception.InvalidAcademicYearException;
+import com.school.management.exception.StudentNotFoundException;
+import com.school.management.repository.ClassroomRepository;
+import com.school.management.repository.EnrollmentRepository;
+import com.school.management.repository.StudentRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -65,7 +72,7 @@ public class EnrollmentService {
         }
 
         if (!classroom.getAcademicYear().getId().equals(academicYear.getId())) {
-            throw new RuntimeException("Classroom does not belong to the selected academic year");
+            throw new InvalidAcademicYearException();
         }
 
         Enrollment enrollment = new Enrollment();

@@ -1,8 +1,5 @@
-package com.school.management.controller;
+package com.school.management.AcademicYear;
 
-import com.school.management.dto.AcademicYearRequest;
-import com.school.management.dto.AcademicYearResponse;
-import com.school.management.service.AcademicYearService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

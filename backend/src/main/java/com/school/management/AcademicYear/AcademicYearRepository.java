@@ -1,6 +1,5 @@
-package com.school.management.repository;
+package com.school.management.AcademicYear;
 
-import com.school.management.entity.AcademicYear;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

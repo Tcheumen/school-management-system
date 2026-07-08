@@ -1,4 +1,4 @@
-package com.school.management.entity;
+package com.school.management.AcademicYear;
 
 import jakarta.persistence.*;
 

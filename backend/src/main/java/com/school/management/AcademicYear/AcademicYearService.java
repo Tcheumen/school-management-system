@@ -1,10 +1,5 @@
-package com.school.management.service;
+package com.school.management.AcademicYear;
 
-import com.school.management.dto.AcademicYearRequest;
-import com.school.management.dto.AcademicYearResponse;
-import com.school.management.entity.AcademicYear;
-import com.school.management.exception.AcademicYearNotFoundException;
-import com.school.management.repository.AcademicYearRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
