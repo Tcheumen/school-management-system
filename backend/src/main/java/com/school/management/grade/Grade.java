@@ -1,4 +1,4 @@
-package com.school.management.entity;
+package com.school.management.grade;
 
 import com.school.management.classroom.Classroom;
 import com.school.management.student.Student;

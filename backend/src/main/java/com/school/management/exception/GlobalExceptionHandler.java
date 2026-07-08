@@ -8,6 +8,7 @@ import com.school.management.attendance.AttendanceNotFoundException;
 import com.school.management.classroom.ClassroomNotFoundException;
 import com.school.management.enrollment.EnrollmentAlreadyExistsException;
 import com.school.management.enrollment.EnrollmentNotFoundException;
+import com.school.management.grade.GradeNotFoundException;
 import com.school.management.student.StudentNotFoundException;
 import com.school.management.subject.SubjectNotFoundException;
 import com.school.management.teacher.TeacherNotFoundException;
