@@ -1,6 +1,4 @@
-package com.school.management.dto;
-
-import com.school.management.entity.AttendanceStatus;
+package com.school.management.attendance;
 
 import java.time.LocalDate;
 

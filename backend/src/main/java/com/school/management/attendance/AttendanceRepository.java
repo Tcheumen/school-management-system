@@ -1,6 +1,5 @@
-package com.school.management.repository;
+package com.school.management.attendance;
 
-import com.school.management.entity.Attendance;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface AttendanceRepository extends JpaRepository<Attendance, Long> {

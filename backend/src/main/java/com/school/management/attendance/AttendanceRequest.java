@@ -1,6 +1,5 @@
-package com.school.management.dto;
+package com.school.management.attendance;
 
-import com.school.management.entity.AttendanceStatus;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDate;

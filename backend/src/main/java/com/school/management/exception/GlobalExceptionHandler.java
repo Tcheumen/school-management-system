@@ -4,6 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
 import com.school.management.academicYear.AcademicYearNotFoundException;
+import com.school.management.attendance.AttendanceNotFoundException;
 import com.school.management.classroom.ClassroomNotFoundException;
 import com.school.management.enrollment.EnrollmentAlreadyExistsException;
 import com.school.management.enrollment.EnrollmentNotFoundException;
