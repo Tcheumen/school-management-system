@@ -1,4 +1,4 @@
-package com.school.management.service;
+package com.school.management.enrollment;
 
 import com.school.management.academicYear.AcademicYear;
 import com.school.management.academicYear.AcademicYearNotFoundException;
@@ -6,13 +6,7 @@ import com.school.management.academicYear.AcademicYearRepository;
 import com.school.management.classroom.Classroom;
 import com.school.management.classroom.ClassroomNotFoundException;
 import com.school.management.classroom.ClassroomRepository;
-import com.school.management.dto.EnrollmentRequest;
-import com.school.management.dto.EnrollmentResponse;
-import com.school.management.entity.Enrollment;
-import com.school.management.exception.EnrollmentAlreadyExistsException;
-import com.school.management.exception.EnrollmentNotFoundException;
 import com.school.management.exception.InvalidAcademicYearException;
-import com.school.management.repository.EnrollmentRepository;
 import com.school.management.student.Student;
 import com.school.management.student.StudentNotFoundException;
 import com.school.management.student.StudentRepository;

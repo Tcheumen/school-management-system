@@ -1,4 +1,4 @@
-package com.school.management.entity;
+package com.school.management.enrollment;
 
 import com.school.management.academicYear.AcademicYear;
 import com.school.management.classroom.Classroom;

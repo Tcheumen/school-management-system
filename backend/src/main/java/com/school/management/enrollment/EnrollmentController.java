@@ -1,8 +1,5 @@
-package com.school.management.controller;
+package com.school.management.enrollment;
 
-import com.school.management.dto.EnrollmentRequest;
-import com.school.management.dto.EnrollmentResponse;
-import com.school.management.service.EnrollmentService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

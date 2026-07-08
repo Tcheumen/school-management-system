@@ -5,6 +5,8 @@ import org.springframework.web.bind.annotation.*;
 
 import com.school.management.academicYear.AcademicYearNotFoundException;
 import com.school.management.classroom.ClassroomNotFoundException;
+import com.school.management.enrollment.EnrollmentAlreadyExistsException;
+import com.school.management.enrollment.EnrollmentNotFoundException;
 import com.school.management.student.StudentNotFoundException;
 import com.school.management.subject.SubjectNotFoundException;
 import com.school.management.teacher.TeacherNotFoundException;

@@ -1,4 +1,6 @@
-package com.school.management.exception;
+package com.school.management.enrollment;
+
+import com.school.management.exception.BusinessException;
 
 public class EnrollmentAlreadyExistsException extends BusinessException {
 
