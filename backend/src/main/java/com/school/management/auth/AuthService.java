@@ -1,9 +1,9 @@
 package com.school.management.auth;
 
 
-import com.school.management.entity.User;
-import com.school.management.repository.UserRepository;
-import com.school.management.service.JwtService;
+import com.school.management.shared.security.JwtService;
+import com.school.management.shared.user.User;
+import com.school.management.shared.user.UserRepository;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

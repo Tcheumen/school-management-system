@@ -1,6 +1,6 @@
 package com.school.management.auth;
 
-import com.school.management.entity.Role;
+import com.school.management.shared.user.Role;
 
 public class UserResponse {
 

@@ -1,6 +1,7 @@
 package com.school.management.auth;
 
-import com.school.management.entity.Role;
+import com.school.management.shared.user.Role;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
