@@ -1,6 +1,5 @@
-package com.school.management.repository;
+package com.school.management.subject;
 
-import com.school.management.entity.Subject;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface SubjectRepository extends JpaRepository<Subject, Long> {

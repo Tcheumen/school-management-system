@@ -1,4 +1,4 @@
-package com.school.management.exception;
+package com.school.management.subject;
 
 public class SubjectNotFoundException extends RuntimeException {
 

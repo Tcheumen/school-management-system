@@ -1,10 +1,5 @@
-package com.school.management.service;
+package com.school.management.subject;
 
-import com.school.management.dto.SubjectRequest;
-import com.school.management.dto.SubjectResponse;
-import com.school.management.entity.Subject;
-import com.school.management.repository.SubjectRepository;
-import com.school.management.exception.SubjectNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

@@ -1,8 +1,5 @@
-package com.school.management.controller;
+package com.school.management.subject;
 
-import com.school.management.dto.SubjectRequest;
-import com.school.management.dto.SubjectResponse;
-import com.school.management.service.SubjectService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

@@ -2,6 +2,7 @@ package com.school.management.entity;
 
 import com.school.management.classroom.Classroom;
 import com.school.management.student.Student;
+import com.school.management.subject.Subject;
 
 import jakarta.persistence.*;
 
