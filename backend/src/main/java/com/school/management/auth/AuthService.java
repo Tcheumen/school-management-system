@@ -1,12 +1,10 @@
-package com.school.management.service;
+package com.school.management.auth;
 
 
-import com.school.management.dto.AuthResponse;
-import com.school.management.dto.LoginRequest;
-import com.school.management.dto.RegisterRequest;
-import com.school.management.dto.UserResponse;
 import com.school.management.entity.User;
 import com.school.management.repository.UserRepository;
+import com.school.management.service.JwtService;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

@@ -1,12 +1,8 @@
-package com.school.management.controller;
+package com.school.management.auth;
 
 
-import com.school.management.dto.AuthResponse;
-import com.school.management.dto.LoginRequest;
-import com.school.management.dto.RegisterRequest;
-import com.school.management.dto.UserResponse;
 import org.springframework.security.core.Authentication;
-import com.school.management.service.AuthService;
+
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 

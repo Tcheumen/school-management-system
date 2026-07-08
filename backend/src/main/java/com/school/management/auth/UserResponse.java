@@ -1,4 +1,4 @@
-package com.school.management.dto;
+package com.school.management.auth;
 
 import com.school.management.entity.Role;
 
