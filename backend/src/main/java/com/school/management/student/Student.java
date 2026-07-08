@@ -1,4 +1,4 @@
-package com.school.management.entity;
+package com.school.management.student;
 
 import jakarta.annotation.Generated;
 import jakarta.persistence.*;

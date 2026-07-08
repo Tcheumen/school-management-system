@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 
 import com.school.management.classroom.Classroom;
+import com.school.management.student.Student;
 
 @Entity
 @Table(name = "attendances")

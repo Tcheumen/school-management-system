@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.school.management.academicYear.AcademicYearNotFoundException;
 import com.school.management.classroom.ClassroomNotFoundException;
+import com.school.management.student.StudentNotFoundException;
 
 import java.time.LocalDateTime;
 

@@ -1,10 +1,5 @@
-package com.school.management.service;
+package com.school.management.student;
 
-import com.school.management.dto.StudentRequest;
-import com.school.management.dto.StudentResponse;
-import com.school.management.entity.Student;
-import com.school.management.repository.StudentRepository;
-import com.school.management.exception.StudentNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

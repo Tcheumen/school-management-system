@@ -9,13 +9,14 @@ import com.school.management.classroom.ClassroomRepository;
 import com.school.management.dto.EnrollmentRequest;
 import com.school.management.dto.EnrollmentResponse;
 import com.school.management.entity.Enrollment;
-import com.school.management.entity.Student;
 import com.school.management.exception.EnrollmentAlreadyExistsException;
 import com.school.management.exception.EnrollmentNotFoundException;
 import com.school.management.exception.InvalidAcademicYearException;
-import com.school.management.exception.StudentNotFoundException;
 import com.school.management.repository.EnrollmentRepository;
-import com.school.management.repository.StudentRepository;
+import com.school.management.student.Student;
+import com.school.management.student.StudentNotFoundException;
+import com.school.management.student.StudentRepository;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;

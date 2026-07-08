@@ -6,11 +6,12 @@ import com.school.management.classroom.ClassroomRepository;
 import com.school.management.dto.AttendanceRequest;
 import com.school.management.dto.AttendanceResponse;
 import com.school.management.entity.Attendance;
-import com.school.management.entity.Student;
 import com.school.management.exception.AttendanceNotFoundException;
-import com.school.management.exception.StudentNotFoundException;
 import com.school.management.repository.AttendanceRepository;
-import com.school.management.repository.StudentRepository;
+import com.school.management.student.Student;
+import com.school.management.student.StudentNotFoundException;
+import com.school.management.student.StudentRepository;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
