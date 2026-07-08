@@ -1,6 +1,6 @@
-package com.school.management.entity;
+package com.school.management.classroom;
 
-import com.school.management.AcademicYear.AcademicYear;
+import com.school.management.academicYear.AcademicYear;
 
 import jakarta.persistence.*;
 

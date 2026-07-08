@@ -1,4 +1,4 @@
-package com.school.management.AcademicYear;
+package com.school.management.academicYear;
 
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

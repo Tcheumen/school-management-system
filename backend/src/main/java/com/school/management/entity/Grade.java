@@ -1,5 +1,7 @@
 package com.school.management.entity;
 
+import com.school.management.classroom.Classroom;
+
 import jakarta.persistence.*;
 
 @Entity

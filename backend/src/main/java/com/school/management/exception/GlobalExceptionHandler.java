@@ -3,7 +3,8 @@ package com.school.management.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
-import com.school.management.AcademicYear.AcademicYearNotFoundException;
+import com.school.management.academicYear.AcademicYearNotFoundException;
+import com.school.management.classroom.ClassroomNotFoundException;
 
 import java.time.LocalDateTime;
 

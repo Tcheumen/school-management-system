@@ -1,6 +1,5 @@
-package com.school.management.repository;
+package com.school.management.classroom;
 
-import com.school.management.entity.Classroom;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 

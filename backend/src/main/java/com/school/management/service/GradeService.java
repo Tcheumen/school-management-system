@@ -1,16 +1,16 @@
 package com.school.management.service;
 
+import com.school.management.classroom.Classroom;
+import com.school.management.classroom.ClassroomNotFoundException;
+import com.school.management.classroom.ClassroomRepository;
 import com.school.management.dto.GradeRequest;
 import com.school.management.dto.GradeResponse;
-import com.school.management.entity.Classroom;
 import com.school.management.entity.Grade;
 import com.school.management.entity.Student;
 import com.school.management.entity.Subject;
-import com.school.management.exception.ClassroomNotFoundException;
 import com.school.management.exception.GradeNotFoundException;
 import com.school.management.exception.StudentNotFoundException;
 import com.school.management.exception.SubjectNotFoundException;
-import com.school.management.repository.ClassroomRepository;
 import com.school.management.repository.GradeRepository;
 import com.school.management.repository.StudentRepository;
 import com.school.management.repository.SubjectRepository;

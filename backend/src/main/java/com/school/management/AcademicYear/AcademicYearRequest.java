@@ -1,4 +1,4 @@
-package com.school.management.AcademicYear;
+package com.school.management.academicYear;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
