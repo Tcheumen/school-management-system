@@ -1,6 +1,10 @@
-package com.school.management.auth;
+package com.school.management.auth.service;
 
 
+import com.school.management.auth.dto.AuthResponse;
+import com.school.management.auth.dto.LoginRequest;
+import com.school.management.auth.dto.RegisterRequest;
+import com.school.management.auth.dto.UserResponse;
 import com.school.management.shared.security.JwtService;
 import com.school.management.shared.user.User;
 import com.school.management.shared.user.UserRepository;

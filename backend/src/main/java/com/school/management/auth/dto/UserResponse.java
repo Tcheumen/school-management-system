@@ -1,4 +1,4 @@
-package com.school.management.auth;
+package com.school.management.auth.dto;
 
 import com.school.management.shared.user.Role;
 
