@@ -12,6 +12,7 @@ import com.school.management.grade.exception.GradeNotFoundException;
 import com.school.management.student.exception.StudentNotFoundException;
 import com.school.management.subject.exception.SubjectNotFoundException;
 import com.school.management.teacher.exception.TeacherNotFoundException;
+import com.school.management.schedule.exception.ClassScheduleNotFoundException;
 
 import java.time.LocalDateTime;
 
@@ -126,6 +127,17 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now(),
                 HttpStatus.BAD_REQUEST.value(),
                 HttpStatus.BAD_REQUEST.getReasonPhrase(),
+                exception.getMessage());
+    }
+
+    
+    @ExceptionHandler(ClassScheduleNotFoundException.class)
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public ErrorResponse handleClassScheduleNotFound(ClassScheduleNotFoundException exception) {
+        return new ErrorResponse(
+                LocalDateTime.now(),
+                HttpStatus.NOT_FOUND.value(),
+                HttpStatus.NOT_FOUND.getReasonPhrase(),
                 exception.getMessage());
     }
 }

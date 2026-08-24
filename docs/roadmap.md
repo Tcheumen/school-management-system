@@ -34,9 +34,10 @@ Roles:
 ---
 
 # Phase 4 - School Domain Workflows
-- [ ] Academic Year Management
-- [ ] Student Enrollment
-- [ ] Teacher Assignment
+- [x] Academic Year Management
+- [x] Associate Classrooms with Academic Years
+- [x] Student Enrollment
+- [x] Teacher Assignment
 - [ ] Class Schedule Management
 - [ ] Attendance Workflow
 - [ ] Grade Workflow
