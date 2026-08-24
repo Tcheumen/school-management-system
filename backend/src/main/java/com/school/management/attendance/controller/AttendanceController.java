@@ -1,12 +1,11 @@
 package com.school.management.attendance.controller;
 
-import jakarta.validation.Valid;
-import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.*;
-
 import com.school.management.attendance.dto.AttendanceRequest;
 import com.school.management.attendance.dto.AttendanceResponse;
 import com.school.management.attendance.service.AttendanceService;
+import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -32,7 +31,8 @@ public class AttendanceController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public AttendanceResponse createAttendance(@Valid @RequestBody AttendanceRequest request) {
+    public AttendanceResponse createAttendance(
+            @Valid @RequestBody AttendanceRequest request) {
         return attendanceService.createAttendance(request);
     }
 

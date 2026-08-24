@@ -1,34 +1,41 @@
 package com.school.management.attendance.entity;
 
+import com.school.management.enrollment.entity.Enrollment;
+import com.school.management.schedule.entity.ClassSchedule;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
-import com.school.management.classroom.entity.Classroom;
-import com.school.management.student.entity.Student;
-
 @Entity
-@Table(name = "attendances")
+@Table(name = "attendances", uniqueConstraints = {
+        @UniqueConstraint(columnNames = {
+                "enrollment_id",
+                "class_schedule_id",
+                "attendance_date"
+        })
+})
 public class Attendance {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "attendance_date", nullable = false)
     private LocalDate attendanceDate;
 
     @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private AttendanceStatus status;
 
     private String remarks;
 
     @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
-    private Student student;
+    @JoinColumn(name = "enrollment_id", nullable = false)
+    private Enrollment enrollment;
 
     @ManyToOne
-    @JoinColumn(name = "classroom_id", nullable = false)
-    private Classroom classroom;
+    @JoinColumn(name = "class_schedule_id", nullable = false)
+    private ClassSchedule classSchedule;
 
     public Attendance() {
     }
@@ -61,19 +68,19 @@ public class Attendance {
         this.remarks = remarks;
     }
 
-    public Student getStudent() {
-        return student;
+    public Enrollment getEnrollment() {
+        return enrollment;
     }
 
-    public void setStudent(Student student) {
-        this.student = student;
+    public void setEnrollment(Enrollment enrollment) {
+        this.enrollment = enrollment;
     }
 
-    public Classroom getClassroom() {
-        return classroom;
+    public ClassSchedule getClassSchedule() {
+        return classSchedule;
     }
 
-    public void setClassroom(Classroom classroom) {
-        this.classroom = classroom;
+    public void setClassSchedule(ClassSchedule classSchedule) {
+        this.classSchedule = classSchedule;
     }
 }

@@ -38,7 +38,7 @@ Roles:
 - [x] Associate Classrooms with Academic Years
 - [x] Student Enrollment
 - [x] Teacher Assignment
-- [ ] Class Schedule Management
+- [x] Class Schedule Management
 - [ ] Attendance Workflow
 - [ ] Grade Workflow
 - [ ] Report Cards
