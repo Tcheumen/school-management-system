@@ -40,7 +40,7 @@ Roles:
 - [x] Teacher Assignment
 - [x] Class Schedule Management
 - [x] Attendance Workflow
-- [ ] Grade Workflow
+- [x]  Grade Workflow
 - [ ] Report Cards
 
 ---
