@@ -1,20 +1,19 @@
 package com.school.management.grade.service;
 
-import com.school.management.classroom.entity.Classroom;
-import com.school.management.classroom.exception.ClassroomNotFoundException;
-import com.school.management.classroom.repository.ClassroomRepository;
+import com.school.management.assignment.entity.TeacherAssignment;
+import com.school.management.assignment.exception.TeacherAssignmentNotFoundException;
+import com.school.management.assignment.repository.TeacherAssignmentRepository;
+import com.school.management.enrollment.entity.Enrollment;
+import com.school.management.enrollment.exception.EnrollmentNotFoundException;
+import com.school.management.enrollment.repository.EnrollmentRepository;
 import com.school.management.grade.dto.GradeRequest;
 import com.school.management.grade.dto.GradeResponse;
 import com.school.management.grade.entity.Grade;
+import com.school.management.grade.exception.GradeAlreadyExistsException;
 import com.school.management.grade.exception.GradeNotFoundException;
+import com.school.management.grade.exception.InvalidGradeAcademicYearException;
+import com.school.management.grade.exception.InvalidGradeClassroomException;
 import com.school.management.grade.repository.GradeRepository;
-import com.school.management.student.entity.Student;
-import com.school.management.student.exception.StudentNotFoundException;
-import com.school.management.student.repository.StudentRepository;
-import com.school.management.subject.entity.Subject;
-import com.school.management.subject.exception.SubjectNotFoundException;
-import com.school.management.subject.repository.SubjectRepository;
-
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,106 +21,167 @@ import java.util.List;
 @Service
 public class GradeService {
 
-    private final GradeRepository gradeRepository;
-    private final StudentRepository studentRepository;
-    private final SubjectRepository subjectRepository;
-    private final ClassroomRepository classroomRepository;
+        private final GradeRepository gradeRepository;
+        private final EnrollmentRepository enrollmentRepository;
+        private final TeacherAssignmentRepository teacherAssignmentRepository;
 
-    public GradeService(
-            GradeRepository gradeRepository,
-            StudentRepository studentRepository,
-            SubjectRepository subjectRepository,
-            ClassroomRepository classroomRepository) {
-        this.gradeRepository = gradeRepository;
-        this.studentRepository = studentRepository;
-        this.subjectRepository = subjectRepository;
-        this.classroomRepository = classroomRepository;
-    }
+        public GradeService(
+                        GradeRepository gradeRepository,
+                        EnrollmentRepository enrollmentRepository,
+                        TeacherAssignmentRepository teacherAssignmentRepository) {
+                this.gradeRepository = gradeRepository;
+                this.enrollmentRepository = enrollmentRepository;
+                this.teacherAssignmentRepository = teacherAssignmentRepository;
+        }
 
-    public List<GradeResponse> getAllGrades() {
-        return gradeRepository.findAll()
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
-    }
+        public List<GradeResponse> getAllGrades() {
+                return gradeRepository.findAll()
+                                .stream()
+                                .map(this::mapToResponse)
+                                .toList();
+        }
 
-    public GradeResponse getGradeById(Long id) {
-        Grade grade = gradeRepository.findById(id)
-                .orElseThrow(() -> new GradeNotFoundException(id));
+        public GradeResponse getGradeById(Long id) {
+                Grade grade = gradeRepository.findById(id)
+                                .orElseThrow(() -> new GradeNotFoundException(id));
 
-        return mapToResponse(grade);
-    }
+                return mapToResponse(grade);
+        }
 
-    public GradeResponse createGrade(GradeRequest request) {
-        Student student = studentRepository.findById(request.getStudentId())
-                .orElseThrow(() -> new StudentNotFoundException(request.getStudentId()));
+        public GradeResponse createGrade(GradeRequest request) {
 
-        Subject subject = subjectRepository.findById(request.getSubjectId())
-                .orElseThrow(() -> new SubjectNotFoundException(request.getSubjectId()));
+                Enrollment enrollment = enrollmentRepository
+                                .findById(request.getEnrollmentId())
+                                .orElseThrow(() -> new EnrollmentNotFoundException(request.getEnrollmentId()));
 
-        Classroom classroom = classroomRepository.findById(request.getClassroomId())
-                .orElseThrow(() -> new ClassroomNotFoundException(request.getClassroomId()));
+                TeacherAssignment assignment = teacherAssignmentRepository
+                                .findById(request.getTeacherAssignmentId())
+                                .orElseThrow(() -> new TeacherAssignmentNotFoundException(
+                                                request.getTeacherAssignmentId()));
 
-        Grade grade = new Grade();
-        grade.setValue(request.getValue());
-        grade.setTerm(request.getTerm());
-        grade.setRemarks(request.getRemarks());
-        grade.setStudent(student);
-        grade.setSubject(subject);
-        grade.setClassroom(classroom);
+                validateGradeContext(enrollment, assignment);
 
-        Grade savedGrade = gradeRepository.save(grade);
+                boolean alreadyExists = gradeRepository
+                                .existsByEnrollmentIdAndTeacherAssignmentIdAndTerm(
+                                                enrollment.getId(),
+                                                assignment.getId(),
+                                                request.getTerm());
 
-        return mapToResponse(savedGrade);
-    }
+                if (alreadyExists) {
+                        throw new GradeAlreadyExistsException(
+                                        enrollment.getId(),
+                                        assignment.getId(),
+                                        request.getTerm());
+                }
 
-    public GradeResponse updateGrade(Long id, GradeRequest request) {
-        Grade grade = gradeRepository.findById(id)
-                .orElseThrow(() -> new GradeNotFoundException(id));
+                Grade grade = new Grade();
+                grade.setEnrollment(enrollment);
+                grade.setTeacherAssignment(assignment);
+                grade.setValue(request.getValue());
+                grade.setTerm(request.getTerm());
+                grade.setRemarks(request.getRemarks());
 
-        Student student = studentRepository.findById(request.getStudentId())
-                .orElseThrow(() -> new StudentNotFoundException(request.getStudentId()));
+                Grade savedGrade = gradeRepository.save(grade);
 
-        Subject subject = subjectRepository.findById(request.getSubjectId())
-                .orElseThrow(() -> new SubjectNotFoundException(request.getSubjectId()));
+                return mapToResponse(savedGrade);
+        }
 
-        Classroom classroom = classroomRepository.findById(request.getClassroomId())
-                .orElseThrow(() -> new ClassroomNotFoundException(request.getClassroomId()));
+        public GradeResponse updateGrade(
+                        Long id,
+                        GradeRequest request) {
+                Grade grade = gradeRepository.findById(id)
+                                .orElseThrow(() -> new GradeNotFoundException(id));
 
-        grade.setValue(request.getValue());
-        grade.setTerm(request.getTerm());
-        grade.setRemarks(request.getRemarks());
-        grade.setStudent(student);
-        grade.setSubject(subject);
-        grade.setClassroom(classroom);
+                Enrollment enrollment = enrollmentRepository
+                                .findById(request.getEnrollmentId())
+                                .orElseThrow(() -> new EnrollmentNotFoundException(request.getEnrollmentId()));
 
-        Grade updatedGrade = gradeRepository.save(grade);
+                TeacherAssignment assignment = teacherAssignmentRepository
+                                .findById(request.getTeacherAssignmentId())
+                                .orElseThrow(() -> new TeacherAssignmentNotFoundException(
+                                                request.getTeacherAssignmentId()));
 
-        return mapToResponse(updatedGrade);
-    }
+                validateGradeContext(enrollment, assignment);
 
-    public void deleteGrade(Long id) {
-        Grade grade = gradeRepository.findById(id)
-                .orElseThrow(() -> new GradeNotFoundException(id));
+                boolean alreadyExists = gradeRepository
+                                .existsByEnrollmentIdAndTeacherAssignmentIdAndTermAndIdNot(
+                                                enrollment.getId(),
+                                                assignment.getId(),
+                                                request.getTerm(),
+                                                id);
 
-        gradeRepository.delete(grade);
-    }
+                if (alreadyExists) {
+                        throw new GradeAlreadyExistsException(
+                                        enrollment.getId(),
+                                        assignment.getId(),
+                                        request.getTerm());
+                }
 
-    private GradeResponse mapToResponse(Grade grade) {
-        Student student = grade.getStudent();
-        Subject subject = grade.getSubject();
-        Classroom classroom = grade.getClassroom();
+                grade.setEnrollment(enrollment);
+                grade.setTeacherAssignment(assignment);
+                grade.setValue(request.getValue());
+                grade.setTerm(request.getTerm());
+                grade.setRemarks(request.getRemarks());
 
-        return new GradeResponse(
-                grade.getId(),
-                grade.getValue(),
-                grade.getTerm(),
-                grade.getRemarks(),
-                student.getId(),
-                student.getFirstName() + " " + student.getLastName(),
-                subject.getId(),
-                subject.getName(),
-                classroom.getId(),
-                classroom.getName());
-    }
+                Grade updatedGrade = gradeRepository.save(grade);
+
+                return mapToResponse(updatedGrade);
+        }
+
+        public void deleteGrade(Long id) {
+                Grade grade = gradeRepository.findById(id)
+                                .orElseThrow(() -> new GradeNotFoundException(id));
+
+                gradeRepository.delete(grade);
+        }
+
+        private void validateGradeContext(
+                        Enrollment enrollment,
+                        TeacherAssignment assignment) {
+                if (!enrollment.getClassroom().getId()
+                                .equals(assignment.getClassroom().getId())) {
+                        throw new InvalidGradeClassroomException();
+                }
+
+                if (!enrollment.getAcademicYear().getId()
+                                .equals(assignment.getAcademicYear().getId())) {
+                        throw new InvalidGradeAcademicYearException();
+                }
+        }
+
+        private GradeResponse mapToResponse(Grade grade) {
+
+                Enrollment enrollment = grade.getEnrollment();
+                TeacherAssignment assignment = grade.getTeacherAssignment();
+
+                return new GradeResponse(
+                                grade.getId(),
+
+                                enrollment.getId(),
+
+                                enrollment.getStudent().getId(),
+                                enrollment.getStudent().getFirstName()
+                                                + " "
+                                                + enrollment.getStudent().getLastName(),
+
+                                assignment.getId(),
+
+                                assignment.getTeacher().getId(),
+                                assignment.getTeacher().getFirstName()
+                                                + " "
+                                                + assignment.getTeacher().getLastName(),
+
+                                assignment.getSubject().getId(),
+                                assignment.getSubject().getName(),
+
+                                enrollment.getClassroom().getId(),
+                                enrollment.getClassroom().getName(),
+
+                                enrollment.getAcademicYear().getId(),
+                                enrollment.getAcademicYear().getName(),
+
+                                grade.getValue(),
+                                grade.getTerm(),
+                                grade.getRemarks());
+        }
 }

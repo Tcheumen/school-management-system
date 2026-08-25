@@ -1,9 +1,7 @@
 package com.school.management.grade.entity;
 
-import com.school.management.classroom.entity.Classroom;
-import com.school.management.student.entity.Student;
-import com.school.management.subject.entity.Subject;
-
+import com.school.management.assignment.entity.TeacherAssignment;
+import com.school.management.enrollment.entity.Enrollment;
 import jakarta.persistence.*;
 
 @Entity
@@ -14,23 +12,21 @@ public class Grade {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private Double value;
 
+    @Column(nullable = false)
     private String term;
 
     private String remarks;
 
     @ManyToOne
-    @JoinColumn(name = "student_id", nullable = false)
-    private Student student;
+    @JoinColumn(name = "enrollment_id", nullable = false)
+    private Enrollment enrollment;
 
     @ManyToOne
-    @JoinColumn(name = "subject_id", nullable = false)
-    private Subject subject;
-
-    @ManyToOne
-    @JoinColumn(name = "classroom_id", nullable = false)
-    private Classroom classroom;
+    @JoinColumn(name = "teacher_assignment_id", nullable = false)
+    private TeacherAssignment teacherAssignment;
 
     public Grade() {
     }
@@ -63,27 +59,19 @@ public class Grade {
         this.remarks = remarks;
     }
 
-    public Student getStudent() {
-        return student;
+    public Enrollment getEnrollment() {
+        return enrollment;
     }
 
-    public void setStudent(Student student) {
-        this.student = student;
+    public void setEnrollment(Enrollment enrollment) {
+        this.enrollment = enrollment;
     }
 
-    public Subject getSubject() {
-        return subject;
+    public TeacherAssignment getTeacherAssignment() {
+        return teacherAssignment;
     }
 
-    public void setSubject(Subject subject) {
-        this.subject = subject;
-    }
-
-    public Classroom getClassroom() {
-        return classroom;
-    }
-
-    public void setClassroom(Classroom classroom) {
-        this.classroom = classroom;
+    public void setTeacherAssignment(TeacherAssignment teacherAssignment) {
+        this.teacherAssignment = teacherAssignment;
     }
 }

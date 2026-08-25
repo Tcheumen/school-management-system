@@ -39,7 +39,7 @@ Roles:
 - [x] Student Enrollment
 - [x] Teacher Assignment
 - [x] Class Schedule Management
-- [ ] Attendance Workflow
+- [x] Attendance Workflow
 - [ ] Grade Workflow
 - [ ] Report Cards
 

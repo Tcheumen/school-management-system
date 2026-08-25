@@ -7,6 +7,12 @@ import jakarta.validation.constraints.NotNull;
 
 public class GradeRequest {
 
+    @NotNull(message = "Enrollment id is required")
+    private Long enrollmentId;
+
+    @NotNull(message = "Teacher assignment id is required")
+    private Long teacherAssignmentId;
+
     @NotNull(message = "Grade value is required")
     @DecimalMin(value = "0.0", message = "Grade must be at least 0")
     @DecimalMax(value = "20.0", message = "Grade must be at most 20")
@@ -17,14 +23,13 @@ public class GradeRequest {
 
     private String remarks;
 
-    @NotNull(message = "Student id is required")
-    private Long studentId;
+    public Long getEnrollmentId() {
+        return enrollmentId;
+    }
 
-    @NotNull(message = "Subject id is required")
-    private Long subjectId;
-
-    @NotNull(message = "Classroom id is required")
-    private Long classroomId;
+    public Long getTeacherAssignmentId() {
+        return teacherAssignmentId;
+    }
 
     public Double getValue() {
         return value;
@@ -36,17 +41,5 @@ public class GradeRequest {
 
     public String getRemarks() {
         return remarks;
-    }
-
-    public Long getStudentId() {
-        return studentId;
-    }
-
-    public Long getSubjectId() {
-        return subjectId;
-    }
-
-    public Long getClassroomId() {
-        return classroomId;
     }
 }
