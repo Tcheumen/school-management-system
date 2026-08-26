@@ -10,4 +10,9 @@ public interface TeacherAssignmentRepository extends JpaRepository<TeacherAssign
             Long subjectId,
             Long classroomId,
             Long academicYearId);
+
+    boolean existsByTeacherIdAndClassroomIdAndAcademicYearId(
+            Long teacherId,
+            Long classroomId,
+            Long academicYearId);
 }

@@ -1,5 +1,7 @@
 package com.school.management.teacher.entity;
 
+import com.school.management.shared.user.User;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -10,6 +12,10 @@ public class Teacher {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @OneToOne
+    @JoinColumn(name = "user_id", unique = true)
+    private User user;
+
     private String firstName;
     private String lastName;
 
@@ -18,6 +24,7 @@ public class Teacher {
 
     private String phoneNumber;
     private String specialty;
+
 
     public Teacher() {
     }
@@ -64,5 +71,13 @@ public class Teacher {
 
     public void setSpecialty(String specialty) {
         this.specialty = specialty;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

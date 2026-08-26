@@ -1,5 +1,7 @@
 package com.school.management.student.entity;
 
+import com.school.management.shared.user.User;
+
 import jakarta.annotation.Generated;
 import jakarta.persistence.*;
 import java.time.LocalDate;
@@ -13,6 +15,10 @@ public class Student {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
+    @OneToOne
+    @JoinColumn(name = "user_id", unique = true)
+    private User user;
 
     private String firstName;
     private String lastName;
@@ -70,5 +76,13 @@ public class Student {
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = phoneNumber;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }
