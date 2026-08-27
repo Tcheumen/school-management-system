@@ -16,6 +16,13 @@ import com.school.management.enrollment.repository.EnrollmentRepository;
 import com.school.management.schedule.entity.ClassSchedule;
 import com.school.management.schedule.exception.ClassScheduleNotFoundException;
 import com.school.management.schedule.repository.ClassScheduleRepository;
+import com.school.management.shared.exception.ForbiddenOperationException;
+import com.school.management.shared.security.CurrentUserService;
+import com.school.management.teacher.entity.Teacher;
+import com.school.management.teacher.repository.TeacherRepository;
+
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -26,14 +33,20 @@ public class AttendanceService {
         private final AttendanceRepository attendanceRepository;
         private final EnrollmentRepository enrollmentRepository;
         private final ClassScheduleRepository classScheduleRepository;
+        private final CurrentUserService currentUserService;
+private final TeacherRepository teacherRepository;
 
         public AttendanceService(
                         AttendanceRepository attendanceRepository,
                         EnrollmentRepository enrollmentRepository,
-                        ClassScheduleRepository classScheduleRepository) {
+                        ClassScheduleRepository classScheduleRepository,
+                        CurrentUserService currentUserService,
+                        TeacherRepository teacherRepository) {
                 this.attendanceRepository = attendanceRepository;
                 this.enrollmentRepository = enrollmentRepository;
                 this.classScheduleRepository = classScheduleRepository;
+                this.currentUserService = currentUserService;
+                this.teacherRepository = teacherRepository;
         }
 
         public List<AttendanceResponse> getAllAttendances() {
@@ -52,6 +65,8 @@ public class AttendanceService {
         public AttendanceResponse createAttendance(AttendanceRequest request) {
                 Enrollment enrollment = getEnrollmentById(request.getEnrollmentId());
                 ClassSchedule classSchedule = getClassScheduleById(request.getClassScheduleId());
+
+                validateTeacherAccess(classSchedule);
 
                 validateAttendanceContext(
                                 enrollment,
@@ -84,6 +99,8 @@ public class AttendanceService {
                 Enrollment enrollment = getEnrollmentById(request.getEnrollmentId());
                 ClassSchedule classSchedule = getClassScheduleById(request.getClassScheduleId());
 
+                validateTeacherAccess(classSchedule);
+
                 validateAttendanceContext(
                                 enrollment,
                                 classSchedule,
@@ -108,7 +125,7 @@ public class AttendanceService {
 
         public void deleteAttendance(Long id) {
                 Attendance attendance = getAttendanceEntityById(id);
-
+                validateTeacherAccess(attendance.getClassSchedule());
                 attendanceRepository.delete(attendance);
         }
 
@@ -210,6 +227,48 @@ public class AttendanceService {
                                         classScheduleId);
                 }
         }
+
+        private void validateTeacherAccess(ClassSchedule classSchedule) {
+
+          Authentication authentication =
+              SecurityContextHolder.getContext().getAuthentication();
+
+        boolean isAdmin = authentication.getAuthorities()
+            .stream()
+            .anyMatch(authority ->
+                    authority.getAuthority().equals("ROLE_ADMIN")
+            );
+
+        if (isAdmin) {
+           return;
+      }
+
+        boolean isTeacher = authentication.getAuthorities()
+            .stream()
+            .anyMatch(authority ->
+                    authority.getAuthority().equals("ROLE_TEACHER")
+            );
+
+        if (!isTeacher) {
+           throw new ForbiddenOperationException("Access denied");
+      }
+
+         String email = currentUserService.getCurrentUserEmail();
+
+         Teacher teacher = teacherRepository.findByUserEmail(email)
+            .orElseThrow(() ->
+                    new ForbiddenOperationException("Teacher profile not found")
+            );
+
+       if (!classSchedule.getTeacherAssignment()
+            .getTeacher()
+            .getId()
+                       .equals(teacher.getId())) {
+
+               throw new ForbiddenOperationException(
+                               "You are not allowed to manage attendance for this class schedule");
+        }
+     }
 
         private AttendanceResponse mapToResponse(Attendance attendance) {
 
