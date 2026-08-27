@@ -53,8 +53,10 @@ public class SecurityConfig {
                         .requestMatchers("/api/grades/**").hasAnyRole("ADMIN", "TEACHER")
                         .requestMatchers("/api/grades/me").hasRole("STUDENT")
                         .requestMatchers("/api/teacher-assignments/**").hasAnyRole("ADMIN")
+                        .requestMatchers("/api/teacher-assignments/me").hasRole("TEACHER")
                         .requestMatchers("/api/class-schedules/**").hasAnyRole("ADMIN")
                         .requestMatchers("/api/class-schedules/me").hasRole("STUDENT")
+                        .requestMatchers("/api/class-schedules/teacher/me").hasRole("TEACHER")
                         .requestMatchers("/api/report-cards/**").hasAnyRole("ADMIN", "TEACHER", "STUDENT")
                         .requestMatchers("/api/report-cards/me").hasRole("STUDENT")
                         

@@ -13,6 +13,7 @@ import com.school.management.assignment.repository.TeacherAssignmentRepository;
 import com.school.management.classroom.entity.Classroom;
 import com.school.management.classroom.exception.ClassroomNotFoundException;
 import com.school.management.classroom.repository.ClassroomRepository;
+import com.school.management.shared.security.CurrentUserService;
 import com.school.management.subject.entity.Subject;
 import com.school.management.subject.exception.SubjectNotFoundException;
 import com.school.management.subject.repository.SubjectRepository;
@@ -31,18 +32,21 @@ public class TeacherAssignmentService {
     private final SubjectRepository subjectRepository;
     private final ClassroomRepository classroomRepository;
     private final AcademicYearRepository academicYearRepository;
+    private final CurrentUserService currentUserService;
 
     public TeacherAssignmentService(
             TeacherAssignmentRepository teacherAssignmentRepository,
             TeacherRepository teacherRepository,
             SubjectRepository subjectRepository,
             ClassroomRepository classroomRepository,
-            AcademicYearRepository academicYearRepository) {
+            AcademicYearRepository academicYearRepository,
+            CurrentUserService currentUserService) {
         this.teacherAssignmentRepository = teacherAssignmentRepository;
         this.teacherRepository = teacherRepository;
         this.subjectRepository = subjectRepository;
         this.classroomRepository = classroomRepository;
         this.academicYearRepository = academicYearRepository;
+        this.currentUserService = currentUserService;
     }
 
     public List<TeacherAssignmentResponse> getAllAssignments() {
@@ -103,10 +107,21 @@ public class TeacherAssignmentService {
     }
 
     public void deleteAssignment(Long id) {
-        TeacherAssignment assignment = teacherAssignmentRepository.findById(id)
-                .orElseThrow(() -> new TeacherAssignmentNotFoundException(id));
+            TeacherAssignment assignment = teacherAssignmentRepository.findById(id)
+                            .orElseThrow(() -> new TeacherAssignmentNotFoundException(id));
 
-        teacherAssignmentRepository.delete(assignment);
+            teacherAssignmentRepository.delete(assignment);
+    }
+    
+    public List<TeacherAssignmentResponse> getMyAssignments() {
+
+            String email = currentUserService.getCurrentUserEmail();
+
+            return teacherAssignmentRepository
+                            .findByTeacherUserEmail(email)
+                            .stream()
+                            .map(this::mapToResponse)
+                            .toList();
     }
 
     private TeacherAssignmentResponse mapToResponse(TeacherAssignment assignment) {

@@ -17,4 +17,6 @@ public interface ClassScheduleRepository extends JpaRepository<ClassSchedule, Lo
     List<ClassSchedule> findByTeacherAssignmentClassroomIdAndTeacherAssignmentAcademicYearId(
             Long classroomId,
             Long academicYearId);
+            
+    List<ClassSchedule> findByTeacherAssignmentTeacherUserEmail(String email);
 }

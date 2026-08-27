@@ -42,4 +42,9 @@ public class TeacherAssignmentController {
     public void deleteAssignment(@PathVariable Long id) {
         teacherAssignmentService.deleteAssignment(id);
     }
+
+    @GetMapping("/me")
+    public List<TeacherAssignmentResponse> getMyAssignments() {
+        return teacherAssignmentService.getMyAssignments();
+    }
 }

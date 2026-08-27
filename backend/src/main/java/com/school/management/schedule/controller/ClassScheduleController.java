@@ -46,4 +46,9 @@ public class ClassScheduleController {
     public List<ClassScheduleResponse> getMySchedule() {
         return classScheduleService.getMySchedule();
     }
+
+    @GetMapping("/teacher/me")
+    public List<ClassScheduleResponse> getMyTeacherSchedule() {
+        return classScheduleService.getMyTeacherSchedule();
+    }
 }

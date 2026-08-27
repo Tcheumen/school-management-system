@@ -114,24 +114,31 @@ public class ClassScheduleService {
     
     public List<ClassScheduleResponse> getMySchedule() {
 
-      String email = currentUserService.getCurrentUserEmail();
+            String email = currentUserService.getCurrentUserEmail();
 
-      Enrollment enrollment = enrollmentRepository
-            .findByStudentUserEmailAndAcademicYearActiveTrue(email)
-            .orElseThrow(() ->
-                    new BusinessException("No active enrollment found")
-            );
+            Enrollment enrollment = enrollmentRepository
+                            .findByStudentUserEmailAndAcademicYearActiveTrue(email)
+                            .orElseThrow(() -> new BusinessException("No active enrollment found"));
 
-    return classScheduleRepository
-            .findByTeacherAssignmentClassroomIdAndTeacherAssignmentAcademicYearId(
-                    enrollment.getClassroom().getId(),
-                    enrollment.getAcademicYear().getId()
-            )
-            .stream()
-            .map(this::mapToResponse)
-            .toList();
-}
+            return classScheduleRepository
+                            .findByTeacherAssignmentClassroomIdAndTeacherAssignmentAcademicYearId(
+                                            enrollment.getClassroom().getId(),
+                                            enrollment.getAcademicYear().getId())
+                            .stream()
+                            .map(this::mapToResponse)
+                            .toList();
+    }
     
+    public List<ClassScheduleResponse> getMyTeacherSchedule() {
+
+            String email = currentUserService.getCurrentUserEmail();
+
+            return classScheduleRepository
+                            .findByTeacherAssignmentTeacherUserEmail(email)
+                            .stream()
+                            .map(this::mapToResponse)
+                            .toList();
+    }
 
     private ClassScheduleResponse mapToResponse(ClassSchedule schedule) {
 

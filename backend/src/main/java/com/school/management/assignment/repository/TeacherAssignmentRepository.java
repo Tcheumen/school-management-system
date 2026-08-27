@@ -1,6 +1,9 @@
 package com.school.management.assignment.repository;
 
 import com.school.management.assignment.entity.TeacherAssignment;
+
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface TeacherAssignmentRepository extends JpaRepository<TeacherAssignment, Long> {
@@ -14,5 +17,7 @@ public interface TeacherAssignmentRepository extends JpaRepository<TeacherAssign
     boolean existsByTeacherIdAndClassroomIdAndAcademicYearId(
             Long teacherId,
             Long classroomId,
-            Long academicYearId);
+                    Long academicYearId);
+            
+    List<TeacherAssignment> findByTeacherUserEmail(String email);
 }
