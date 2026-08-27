@@ -230,45 +230,47 @@ private final TeacherRepository teacherRepository;
 
         private void validateTeacherAccess(ClassSchedule classSchedule) {
 
-          Authentication authentication =
-              SecurityContextHolder.getContext().getAuthentication();
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-        boolean isAdmin = authentication.getAuthorities()
-            .stream()
-            .anyMatch(authority ->
-                    authority.getAuthority().equals("ROLE_ADMIN")
-            );
+                boolean isAdmin = authentication.getAuthorities()
+                                .stream()
+                                .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
 
-        if (isAdmin) {
-           return;
-      }
+                if (isAdmin) {
+                        return;
+                }
 
-        boolean isTeacher = authentication.getAuthorities()
-            .stream()
-            .anyMatch(authority ->
-                    authority.getAuthority().equals("ROLE_TEACHER")
-            );
+                boolean isTeacher = authentication.getAuthorities()
+                                .stream()
+                                .anyMatch(authority -> authority.getAuthority().equals("ROLE_TEACHER"));
 
-        if (!isTeacher) {
-           throw new ForbiddenOperationException("Access denied");
-      }
+                if (!isTeacher) {
+                        throw new ForbiddenOperationException("Access denied");
+                }
 
-         String email = currentUserService.getCurrentUserEmail();
+                String email = currentUserService.getCurrentUserEmail();
 
-         Teacher teacher = teacherRepository.findByUserEmail(email)
-            .orElseThrow(() ->
-                    new ForbiddenOperationException("Teacher profile not found")
-            );
+                Teacher teacher = teacherRepository.findByUserEmail(email)
+                                .orElseThrow(() -> new ForbiddenOperationException("Teacher profile not found"));
 
-       if (!classSchedule.getTeacherAssignment()
-            .getTeacher()
-            .getId()
-                       .equals(teacher.getId())) {
+                if (!classSchedule.getTeacherAssignment()
+                                .getTeacher()
+                                .getId()
+                                .equals(teacher.getId())) {
 
-               throw new ForbiddenOperationException(
-                               "You are not allowed to manage attendance for this class schedule");
+                        throw new ForbiddenOperationException(
+                                        "You are not allowed to manage attendance for this class schedule");
+                }
         }
-     }
+     
+        public List<AttendanceResponse> getMyAttendances() {
+                String email = currentUserService.getCurrentUserEmail();
+
+                return attendanceRepository.findByEnrollmentStudentUserEmail(email)
+                                .stream()
+                                .map(this::mapToResponse)
+                                .toList();
+        }
 
         private AttendanceResponse mapToResponse(Attendance attendance) {
 

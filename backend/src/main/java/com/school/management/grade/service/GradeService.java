@@ -71,7 +71,7 @@ public class GradeService {
                                 .findById(request.getTeacherAssignmentId())
                                 .orElseThrow(() -> new TeacherAssignmentNotFoundException(
                                                 request.getTeacherAssignmentId()));
-                                                
+
                 validateTeacherAccess(assignment);
                 validateGradeContext(enrollment, assignment);
 
@@ -164,45 +164,45 @@ public class GradeService {
                 }
         }
 
-      private void validateTeacherAccess(TeacherAssignment assignment) {
+        private void validateTeacherAccess(TeacherAssignment assignment) {
 
-         Authentication authentication =
-             SecurityContextHolder.getContext().getAuthentication();
+                Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
-         boolean isAdmin = authentication.getAuthorities()
-            .stream()
-            .anyMatch(authority ->
-                    authority.getAuthority().equals("ROLE_ADMIN")
-            );
+                boolean isAdmin = authentication.getAuthorities()
+                                .stream()
+                                .anyMatch(authority -> authority.getAuthority().equals("ROLE_ADMIN"));
 
-        if (isAdmin) {
-           return;
+                if (isAdmin) {
+                        return;
+                }
+
+                boolean isTeacher = authentication.getAuthorities()
+                                .stream()
+                                .anyMatch(authority -> authority.getAuthority().equals("ROLE_TEACHER"));
+
+                if (!isTeacher) {
+                        throw new ForbiddenOperationException("Access denied");
+                }
+
+                String email = currentUserService.getCurrentUserEmail();
+
+                Teacher teacher = teacherRepository.findByUserEmail(email)
+                                .orElseThrow(() -> new ForbiddenOperationException("Teacher profile not found"));
+
+                if (!assignment.getTeacher().getId().equals(teacher.getId())) {
+                        throw new ForbiddenOperationException(
+                                        "You are not allowed to manage grades for this teacher assignment");
+                }
         }
 
-        boolean isTeacher = authentication.getAuthorities()
-             .stream()
-            .anyMatch(authority ->
-                    authority.getAuthority().equals("ROLE_TEACHER")
-            );
+        public List<GradeResponse> getMyGrades() {
+                String email = currentUserService.getCurrentUserEmail();
 
-        if (!isTeacher) {
-           throw new ForbiddenOperationException("Access denied");
-       }
-
-        String email = currentUserService.getCurrentUserEmail();
-
-        Teacher teacher = teacherRepository.findByUserEmail(email)
-             .orElseThrow(() ->
-                    new ForbiddenOperationException("Teacher profile not found")
-            );
-
-        if (!assignment.getTeacher().getId().equals(teacher.getId())) {
-           throw new ForbiddenOperationException(
-                "You are not allowed to manage grades for this teacher assignment"
-         );
+                return gradeRepository.findByEnrollmentStudentUserEmail(email)
+                                .stream()
+                                .map(this::mapToResponse)
+                                .toList();
         }
-     }           
-        
 
         private GradeResponse mapToResponse(Grade grade) {
 

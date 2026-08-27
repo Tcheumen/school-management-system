@@ -20,4 +20,10 @@ public class ReportCardController {
             @RequestParam String term) {
         return reportCardService.getReportCard(enrollmentId, term);
     }
+
+    @GetMapping("/me")
+    public ReportCardResponse getMyReportCard(
+            @RequestParam String term) {
+        return reportCardService.getMyReportCard(term);
+    }
 }

@@ -48,4 +48,9 @@ public class AttendanceController {
     public void deleteAttendance(@PathVariable Long id) {
         attendanceService.deleteAttendance(id);
     }
+
+    @GetMapping("/me")
+    public List<AttendanceResponse> getMyAttendances() {
+        return attendanceService.getMyAttendances();
+    }
 }

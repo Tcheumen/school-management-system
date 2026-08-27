@@ -49,11 +49,16 @@ public class SecurityConfig {
                         .requestMatchers("/api/enrollments/**").hasRole("ADMIN")
                         .requestMatchers("/api/subjects/**").hasRole("ADMIN")
                         .requestMatchers("/api/attendances/**").hasAnyRole("ADMIN", "TEACHER")
+                        .requestMatchers("/api/attendances/me").hasRole("STUDENT")
                         .requestMatchers("/api/grades/**").hasAnyRole("ADMIN", "TEACHER")
+                        .requestMatchers("/api/grades/me").hasRole("STUDENT")
                         .requestMatchers("/api/teacher-assignments/**").hasAnyRole("ADMIN")
                         .requestMatchers("/api/class-schedules/**").hasAnyRole("ADMIN")
+                        .requestMatchers("/api/class-schedules/me").hasRole("STUDENT")
                         .requestMatchers("/api/report-cards/**").hasAnyRole("ADMIN", "TEACHER", "STUDENT")
+                        .requestMatchers("/api/report-cards/me").hasRole("STUDENT")
                         
+
                         .anyRequest().authenticated())
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

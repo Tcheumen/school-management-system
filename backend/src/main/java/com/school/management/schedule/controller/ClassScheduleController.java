@@ -41,4 +41,9 @@ public class ClassScheduleController {
     public void deleteSchedule(@PathVariable Long id) {
         classScheduleService.deleteSchedule(id);
     }
+
+    @GetMapping("/me")
+    public List<ClassScheduleResponse> getMySchedule() {
+        return classScheduleService.getMySchedule();
+    }
 }

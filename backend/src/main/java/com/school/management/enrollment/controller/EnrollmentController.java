@@ -41,4 +41,6 @@ public class EnrollmentController {
     public void deleteEnrollment(@PathVariable Long id) {
         enrollmentService.deleteEnrollment(id);
     }
+
+    
 }

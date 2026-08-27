@@ -25,6 +25,8 @@ public class GradeController {
         return gradeService.getAllGrades();
     }
 
+    
+
     @GetMapping("/{id}")
     public GradeResponse getGradeById(@PathVariable Long id) {
         return gradeService.getGradeById(id);
@@ -47,5 +49,10 @@ public class GradeController {
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteGrade(@PathVariable Long id) {
         gradeService.deleteGrade(id);
+    }
+
+    @GetMapping("/me")
+    public List<GradeResponse> getMyGrades() {
+        return gradeService.getMyGrades();
     }
 }

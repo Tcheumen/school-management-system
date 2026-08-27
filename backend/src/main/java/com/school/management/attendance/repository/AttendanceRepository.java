@@ -20,4 +20,6 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
             Long id);
             
     List<Attendance> findByEnrollmentId(Long enrollmentId);
+
+    List<Attendance> findByEnrollmentStudentUserEmail(String email);
 }

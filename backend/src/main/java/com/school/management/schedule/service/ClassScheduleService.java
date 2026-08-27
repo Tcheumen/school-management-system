@@ -3,6 +3,8 @@ package com.school.management.schedule.service;
 import com.school.management.assignment.entity.TeacherAssignment;
 import com.school.management.assignment.exception.TeacherAssignmentNotFoundException;
 import com.school.management.assignment.repository.TeacherAssignmentRepository;
+import com.school.management.enrollment.entity.Enrollment;
+import com.school.management.enrollment.repository.EnrollmentRepository;
 import com.school.management.schedule.dto.ClassScheduleRequest;
 import com.school.management.schedule.dto.ClassScheduleResponse;
 import com.school.management.schedule.entity.ClassSchedule;
@@ -11,6 +13,9 @@ import com.school.management.schedule.exception.ClassroomScheduleConflictExcepti
 import com.school.management.schedule.exception.InvalidScheduleTimeException;
 import com.school.management.schedule.exception.TeacherScheduleConflictException;
 import com.school.management.schedule.repository.ClassScheduleRepository;
+import com.school.management.shared.exception.BusinessException;
+import com.school.management.shared.security.CurrentUserService;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -20,12 +25,18 @@ public class ClassScheduleService {
 
     private final ClassScheduleRepository classScheduleRepository;
     private final TeacherAssignmentRepository teacherAssignmentRepository;
+    private final CurrentUserService currentUserService;
+    private final EnrollmentRepository enrollmentRepository;
 
     public ClassScheduleService(
             ClassScheduleRepository classScheduleRepository,
-            TeacherAssignmentRepository teacherAssignmentRepository) {
+            TeacherAssignmentRepository teacherAssignmentRepository,
+            CurrentUserService currentUserService,
+            EnrollmentRepository enrollmentRepository) {
         this.classScheduleRepository = classScheduleRepository;
         this.teacherAssignmentRepository = teacherAssignmentRepository;
+        this.currentUserService = currentUserService;
+        this.enrollmentRepository = enrollmentRepository;       
     }
 
     public List<ClassScheduleResponse> getAllSchedules() {
@@ -95,11 +106,32 @@ public class ClassScheduleService {
     }
 
     public void deleteSchedule(Long id) {
-        ClassSchedule schedule = classScheduleRepository.findById(id)
-                .orElseThrow(() -> new ClassScheduleNotFoundException(id));
+            ClassSchedule schedule = classScheduleRepository.findById(id)
+                            .orElseThrow(() -> new ClassScheduleNotFoundException(id));
 
-        classScheduleRepository.delete(schedule);
+            classScheduleRepository.delete(schedule);
     }
+    
+    public List<ClassScheduleResponse> getMySchedule() {
+
+      String email = currentUserService.getCurrentUserEmail();
+
+      Enrollment enrollment = enrollmentRepository
+            .findByStudentUserEmailAndAcademicYearActiveTrue(email)
+            .orElseThrow(() ->
+                    new BusinessException("No active enrollment found")
+            );
+
+    return classScheduleRepository
+            .findByTeacherAssignmentClassroomIdAndTeacherAssignmentAcademicYearId(
+                    enrollment.getClassroom().getId(),
+                    enrollment.getAcademicYear().getId()
+            )
+            .stream()
+            .map(this::mapToResponse)
+            .toList();
+}
+    
 
     private ClassScheduleResponse mapToResponse(ClassSchedule schedule) {
 

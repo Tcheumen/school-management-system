@@ -160,4 +160,15 @@ public class ReportCardService {
 
             throw new ForbiddenOperationException("Access denied");
     }
+
+    public ReportCardResponse getMyReportCard(String term) {
+
+            String email = currentUserService.getCurrentUserEmail();
+
+            Enrollment enrollment = enrollmentRepository
+                            .findByStudentUserEmailAndAcademicYearActiveTrue(email)
+                            .orElseThrow(() -> new BusinessException("No active enrollment found"));
+
+            return getReportCard(enrollment.getId(), term);
+    }
 }
