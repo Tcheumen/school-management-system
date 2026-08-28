@@ -44,4 +44,18 @@ export class AuthService {
     isLoggedIn(): boolean {
         return !!this.getToken();
     }
+
+    getDashboardRoute(): string {
+        const role = this.getRole();
+        switch (role) {
+            case 'ADMIN':
+                return '/admin/dashboard';
+            case 'TEACHER':
+                return '/teacher/dashboard';
+            case 'STUDENT':
+                return '/student/dashboard';
+            default:
+                return '/login';
+        }
+    }
 }

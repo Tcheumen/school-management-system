@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
 
 export const routes: Routes = [
     {
@@ -17,7 +18,8 @@ export const routes: Routes = [
 
     {
         path: 'admin/dashboard',
-        canActivate: [authGuard],
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['ADMIN'] },
         loadComponent: () =>
             import('./features/dashboard/admin-dashboard/admin-dashboard')
                 .then(m => m.AdminDashboard)
@@ -25,7 +27,8 @@ export const routes: Routes = [
 
     {
         path: 'teacher/dashboard',
-        canActivate: [authGuard],
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['TEACHER'] },
         loadComponent: () =>
             import('./features/dashboard/teacher-dashboard/teacher-dashboard')
                 .then(m => m.TeacherDashboard)
@@ -33,7 +36,8 @@ export const routes: Routes = [
 
     {
         path: 'student/dashboard',
-        canActivate: [authGuard],
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['STUDENT'] },
         loadComponent: () =>
             import('./features/dashboard/student-dashboard/student-dashboard')
                 .then(m => m.StudentDashboard)
