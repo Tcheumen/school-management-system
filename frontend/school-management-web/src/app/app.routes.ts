@@ -1,19 +1,46 @@
 import { Routes } from '@angular/router';
-
-import { Login } from './features/auth/pages/login/login';
-import { Register } from './features/auth/pages/register/register';
-
-import { AdminDashboard } from './features/dashboard/admin-dashboard/admin-dashboard';
-import { TeacherDashboard } from './features/dashboard/teacher-dashboard/teacher-dashboard';
-import { StudentDashboard } from './features/dashboard/student-dashboard/student-dashboard';
+import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
-    { path: '', redirectTo: 'login', pathMatch: 'full' },
+    {
+        path: '',
+        redirectTo: 'login',
+        pathMatch: 'full'
+    },
 
-    { path: 'login', component: Login },
-    { path: 'register', component: Register },
+    {
+        path: 'login',
+        loadComponent: () =>
+            import('./features/auth/pages/login/login')
+                .then(m => m.Login)
+    },
 
-    { path: 'admin/dashboard', component: AdminDashboard },
-    { path: 'teacher/dashboard', component: TeacherDashboard },
-    { path: 'student/dashboard', component: StudentDashboard }
+    {
+        path: 'admin/dashboard',
+        canActivate: [authGuard],
+        loadComponent: () =>
+            import('./features/dashboard/admin-dashboard/admin-dashboard')
+                .then(m => m.AdminDashboard)
+    },
+
+    {
+        path: 'teacher/dashboard',
+        canActivate: [authGuard],
+        loadComponent: () =>
+            import('./features/dashboard/teacher-dashboard/teacher-dashboard')
+                .then(m => m.TeacherDashboard)
+    },
+
+    {
+        path: 'student/dashboard',
+        canActivate: [authGuard],
+        loadComponent: () =>
+            import('./features/dashboard/student-dashboard/student-dashboard')
+                .then(m => m.StudentDashboard)
+    },
+
+    {
+        path: '**',
+        redirectTo: 'login'
+    }
 ];
