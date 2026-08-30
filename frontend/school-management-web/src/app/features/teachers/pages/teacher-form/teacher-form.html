@@ -1,0 +1,68 @@
+<div class="form-container">
+
+  <h2>
+    {{ isEditMode ? 'Edit Teacher' : 'Add Teacher' }}
+  </h2>
+
+  @if (errorMessage()) {
+  <div class="error-message">
+    {{ errorMessage() }}
+  </div>
+  }
+
+  <form #teacherForm="ngForm" (ngSubmit)="save()">
+
+    <div class="form-group">
+      <label for="firstName">First name</label>
+
+      <input id="firstName" type="text" name="firstName" [(ngModel)]="firstName" required #firstNameInput="ngModel" />
+
+      @if (firstNameInput.invalid && firstNameInput.touched) {
+      <span class="validation-error">
+        First name is required.
+      </span>
+      }
+    </div>
+
+    <div class="form-group">
+      <label for="lastName">Last name</label>
+
+      <input id="lastName" type="text" name="lastName" [(ngModel)]="lastName" required />
+    </div>
+
+    <div class="form-group">
+      <label for="email">Email</label>
+
+      <input id="email" type="email" name="email" [(ngModel)]="email" required email />
+    </div>
+
+    <div class="form-group">
+      <label for="phoneNumber">Phone</label>
+
+      <input id="phoneNumber" type="text" name="phoneNumber" [(ngModel)]="phoneNumber" required />
+    </div>
+
+    <div class="form-group">
+      <label for="specialty">Specialty</label>
+
+      <input id="specialty" type="text" name="specialty" [(ngModel)]="specialty" required />
+    </div>
+
+    <div class="form-actions">
+
+      <button type="submit" class="btn btn-primary" [disabled]="teacherForm.invalid || loading()">
+        @if (loading()) {
+        Saving...
+        } @else {
+        {{ isEditMode ? 'Update' : 'Create' }}
+        }
+      </button>
+
+      <button type="button" class="btn btn-secondary" (click)="cancel()">
+        Cancel
+      </button>
+
+    </div>
+
+  </form>
+</div>

@@ -78,6 +78,34 @@ export const routes: Routes = [
     },
 
     {
+        path: 'teachers',
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['ADMIN'] },
+        loadComponent: () =>
+            import(
+                './features/teachers/pages/teacher-list/teacher-list'
+            ).then(m => m.TeacherList)
+    },
+    {
+        path: 'teachers/new',
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['ADMIN'] },
+        loadComponent: () =>
+            import(
+                './features/teachers/pages/teacher-form/teacher-form'
+            ).then(m => m.TeacherForm)
+    },
+    {
+        path: 'teachers/:id/edit',
+        canActivate: [authGuard, roleGuard],
+        data: { roles: ['ADMIN'] },
+        loadComponent: () =>
+            import(
+                './features/teachers/pages/teacher-form/teacher-form'
+            ).then(m => m.TeacherForm)
+    },
+
+    {
         path: '**',
         redirectTo: 'login'
     }
