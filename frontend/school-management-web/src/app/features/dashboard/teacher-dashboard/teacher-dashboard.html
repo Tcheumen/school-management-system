@@ -1,1 +1,33 @@
-<p>teacher-dashboard works!</p>
+<div class="dashboard-container">
+
+  <header class="dashboard-header">
+    <div>
+      <h1>Teacher Dashboard</h1>
+      <p>Manage your classes</p>
+    </div>
+
+    <button (click)="logout()">
+      Logout
+    </button>
+  </header>
+
+  <section class="dashboard-grid">
+
+    <a routerLink="/teacher/schedule" class="dashboard-card">
+      <h2>My Schedule</h2>
+      <p>View your teaching schedule</p>
+    </a>
+
+    <a routerLink="/teacher/attendance" class="dashboard-card">
+      <h2>Attendance</h2>
+      <p>Record student attendance</p>
+    </a>
+
+    <a routerLink="/teacher/grades" class="dashboard-card">
+      <h2>Grades</h2>
+      <p>Manage student grades</p>
+    </a>
+
+  </section>
+
+</div>

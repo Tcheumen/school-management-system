@@ -48,12 +48,12 @@ Roles:
 # Phase 5 - Frontend Foundation
 - [x] Initialize Angular project
 - [x] Create Angular project structure
-- [ ] Authentication pages
-- [ ] Route Guards
-- [ ] JWT Interceptor
-- [ ] Admin dashboard
-- [ ] Teacher dashboard
-- [ ] Student dashboard
+- [x] Authentication pages
+- [x] Route Guards
+- [x] JWT Interceptor
+- [x] Admin dashboard
+- [x] Teacher dashboard
+- [x] Student dashboard
 
 ---
 

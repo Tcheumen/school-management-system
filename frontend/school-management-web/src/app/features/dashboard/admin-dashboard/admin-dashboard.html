@@ -1,1 +1,68 @@
-<p>admin-dashboard works!</p>
+<div class="dashboard-container">
+
+  <header class="dashboard-header">
+    <div>
+      <h1>Admin Dashboard</h1>
+      <p>School Management System</p>
+    </div>
+
+    <button (click)="logout()">
+      Logout
+    </button>
+  </header>
+
+  <section class="dashboard-grid">
+
+    <a class="dashboard-card" routerLink="/students">
+      <h2>Students</h2>
+      <p>Manage students</p>
+    </a>
+
+    <a class="dashboard-card" routerLink="/teachers">
+      <h2>Teachers</h2>
+      <p>Manage teachers</p>
+    </a>
+
+    <a class="dashboard-card" routerLink="/subjects">
+      <h2>Subjects</h2>
+      <p>Manage subjects</p>
+    </a>
+
+    <a class="dashboard-card" routerLink="/classrooms">
+      <h2>Classrooms</h2>
+      <p>Manage classrooms</p>
+    </a>
+
+    <a class="dashboard-card" routerLink="/academic-years">
+      <h2>Academic Years</h2>
+      <p>Manage academic years</p>
+    </a>
+
+    <a class="dashboard-card" routerLink="/enrollments">
+      <h2>Enrollments</h2>
+      <p>Manage student enrollments</p>
+    </a>
+
+    <a class="dashboard-card" routerLink="/teacher-assignments">
+      <h2>Teacher Assignments</h2>
+      <p>Assign teachers to subjects and classes</p>
+    </a>
+
+    <a class="dashboard-card" routerLink="/class-schedules">
+      <h2>Schedules</h2>
+      <p>Manage class schedules</p>
+    </a>
+
+    <a class="dashboard-card" routerLink="/attendances">
+      <h2>Attendance</h2>
+      <p>Manage attendance</p>
+    </a>
+
+    <a class="dashboard-card" routerLink="/grades">
+      <h2>Grades</h2>
+      <p>Manage grades</p>
+    </a>
+
+  </section>
+
+</div>

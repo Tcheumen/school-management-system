@@ -1,1 +1,38 @@
-<p>student-dashboard works!</p>
+<div class="dashboard-container">
+
+  <header class="dashboard-header">
+    <div>
+      <h1>Student Dashboard</h1>
+      <p>School Management System</p>
+    </div>
+
+    <button (click)="logout()">
+      Logout
+    </button>
+  </header>
+
+  <section class="dashboard-grid">
+
+    <a routerLink="/student/schedule" class="dashboard-card">
+      <h2>My Schedule</h2>
+      <p>View your class schedule</p>
+    </a>
+
+    <a routerLink="/student/attendance" class="dashboard-card">
+      <h2>Attendance</h2>
+      <p>View your attendance</p>
+    </a>
+
+    <a routerLink="/student/grades" class="dashboard-card">
+      <h2>Grades</h2>
+      <p>View your grades</p>
+    </a>
+
+    <a routerLink="/student/report-card" class="dashboard-card">
+      <h2>Report Card</h2>
+      <p>View your report card</p>
+    </a>
+
+  </section>
+
+</div>
