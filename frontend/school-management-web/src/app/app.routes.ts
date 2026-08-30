@@ -44,6 +44,40 @@ export const routes: Routes = [
     },
 
     {
+        path: 'students',
+        canActivate: [authGuard, roleGuard],
+        data: {
+            roles: ['ADMIN']
+        },
+        loadComponent: () =>
+            import(
+                './features/students/pages/student-list/student-list'
+            ).then(m => m.StudentList)
+    },
+    {
+        path: 'students/new',
+        canActivate: [authGuard, roleGuard],
+        data: {
+            roles: ['ADMIN']
+        },
+        loadComponent: () =>
+            import(
+                './features/students/pages/student-form/student-form'
+            ).then(m => m.StudentForm)
+    },
+    {
+        path: 'students/:id/edit',
+        canActivate: [authGuard, roleGuard],
+        data: {
+            roles: ['ADMIN']
+        },
+        loadComponent: () =>
+            import(
+                './features/students/pages/student-form/student-form'
+            ).then(m => m.StudentForm)
+    },
+
+    {
         path: '**',
         redirectTo: 'login'
     }

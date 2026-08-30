@@ -1,0 +1,77 @@
+<div class="form-container">
+
+  <h1>
+    {{ studentId ? 'Edit Student' : 'Add Student' }}
+  </h1>
+
+  @if (loading()) {
+  <p>Loading...</p>
+  }
+
+  @if (errorMessage()) {
+  <p class="error">
+    {{ errorMessage() }}
+  </p>
+  }
+
+  @if (!loading()) {
+
+  <form (ngSubmit)="save()">
+
+    <div>
+      <label for="firstName">
+        First name
+      </label>
+
+      <input id="firstName" type="text" name="firstName" [(ngModel)]="firstName" required />
+    </div>
+
+    <div>
+      <label for="lastName">
+        Last name
+      </label>
+
+      <input id="lastName" type="text" name="lastName" [(ngModel)]="lastName" required />
+    </div>
+
+    <div>
+      <label for="dateOfBirth">
+        Date of birth
+      </label>
+
+      <input id="dateOfBirth" type="date" name="dateOfBirth" [(ngModel)]="dateOfBirth" required />
+    </div>
+
+    <div>
+      <label for="email">
+        Email
+      </label>
+
+      <input id="email" type="email" name="email" [(ngModel)]="email" required />
+    </div>
+
+    <div>
+      <label for="phoneNumber">
+        Phone
+      </label>
+
+      <input id="phoneNumber" type="text" name="phoneNumber" [(ngModel)]="phoneNumber" required />
+    </div>
+
+    <div class="actions">
+
+      <button type="submit">
+        {{ studentId ? 'Update' : 'Create' }}
+      </button>
+
+      <button type="button" (click)="cancel()">
+        Cancel
+      </button>
+
+    </div>
+
+  </form>
+
+  }
+
+</div>

@@ -1,0 +1,102 @@
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+      <h1>Students</h1>
+      <p>Manage school students</p>
+    </div>
+
+    <a routerLink="/students/new">
+      Add Student
+    </a>
+
+  </div>
+
+  @if (loading()) {
+  <p>Loading students...</p>
+  }
+
+  @if (errorMessage()) {
+  <p class="error">
+    {{ errorMessage() }}
+  </p>
+  }
+
+  @if (!loading() && students().length === 0) {
+  <p>No students found.</p>
+  }
+
+  @if (!loading() && students().length > 0) {
+
+  <table>
+
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>First name</th>
+        <th>Last name</th>
+        <th>Date of birth</th>
+        <th>Email</th>
+        <th>Phone</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+
+    <tbody>
+
+      @for (student of students(); track student.id) {
+
+      <tr>
+
+        <td>
+          {{ student.id }}
+        </td>
+
+        <td>
+          {{ student.firstName }}
+        </td>
+
+        <td>
+          {{ student.lastName }}
+        </td>
+
+        <td>
+          {{ student.dateOfBirth }}
+        </td>
+
+        <td>
+          {{ student.email }}
+        </td>
+
+        <td>
+          {{ student.phoneNumber }}
+        </td>
+
+        <td>
+
+          <a [routerLink]="[
+                  '/students',
+                  student.id,
+                  'edit'
+                ]">
+            Edit
+          </a>
+
+          <button type="button" (click)="deleteStudent(student.id)">
+            Delete
+          </button>
+
+        </td>
+
+      </tr>
+
+      }
+
+    </tbody>
+
+  </table>
+
+  }
+
+</div>
