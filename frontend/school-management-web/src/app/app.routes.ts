@@ -106,6 +106,41 @@ export const routes: Routes = [
     },
 
     {
+        path: 'subjects',
+        canActivate: [authGuard, roleGuard],
+        data: {
+            roles: ['ADMIN']
+        },
+        loadComponent: () =>
+            import(
+                './features/subjects/pages/subject-list/subject-list'
+            ).then(m => m.SubjectList)
+    },
+    {
+        path: 'subjects/new',
+        canActivate: [authGuard, roleGuard],
+        data: {
+            roles: ['ADMIN']
+        },
+        loadComponent: () =>
+            import(
+                './features/subjects/pages/subject-form/subject-form'
+            ).then(m => m.SubjectForm)
+    },
+    {
+        path: 'subjects/:id/edit',
+        canActivate: [authGuard, roleGuard],
+        data: {
+            roles: ['ADMIN']
+        },
+        loadComponent: () =>
+            import(
+                './features/subjects/pages/subject-form/subject-form'
+            ).then(m => m.SubjectForm)
+    },
+
+    
+    {
         path: '**',
         redirectTo: 'login'
     }

@@ -1,0 +1,75 @@
+<div class="form-container">
+
+  <h2>
+    {{ isEditMode ? 'Edit Subject' : 'Add Subject' }}
+  </h2>
+
+  @if (errorMessage()) {
+  <div class="error-message">
+    {{ errorMessage() }}
+  </div>
+  }
+
+  <form #subjectForm="ngForm" (ngSubmit)="save()">
+
+    <div class="form-group">
+
+      <label for="name">
+        Name
+      </label>
+
+      <input id="name" type="text" name="name" [(ngModel)]="name" required #nameInput="ngModel" />
+
+      @if (
+      nameInput.invalid &&
+      nameInput.touched
+      ) {
+      <span class="validation-error">
+        Subject name is required.
+      </span>
+      }
+
+    </div>
+
+    <div class="form-group">
+
+      <label for="description">
+        Description
+      </label>
+
+      <textarea id="description" name="description" [(ngModel)]="description" rows="5" required
+        #descriptionInput="ngModel"></textarea>
+
+      @if (
+      descriptionInput.invalid &&
+      descriptionInput.touched
+      ) {
+      <span class="validation-error">
+        Description is required.
+      </span>
+      }
+
+    </div>
+
+    <div class="form-actions">
+
+      <button type="submit" class="btn btn-primary" [disabled]="
+          subjectForm.invalid ||
+          loading()
+        ">
+        @if (loading()) {
+        Saving...
+        } @else {
+        {{ isEditMode ? 'Update' : 'Create' }}
+        }
+      </button>
+
+      <button type="button" class="btn btn-secondary" (click)="cancel()">
+        Cancel
+      </button>
+
+    </div>
+
+  </form>
+
+</div>
