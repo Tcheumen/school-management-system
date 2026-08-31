@@ -172,7 +172,41 @@ export const routes: Routes = [
                 './features/classrooms/pages/classroom-form/classroom-form'
             ).then(m => m.ClassroomForm)
     },
-    
+
+    {
+        path: 'academic-years',
+        canActivate: [authGuard, roleGuard],
+        data: {
+            roles: ['ADMIN']
+        },
+        loadComponent: () =>
+            import(
+                './features/academic-years/pages/academic-year-list/academic-year-list'
+            ).then(m => m.AcademicYearList)
+    },
+    {
+        path: 'academic-years/new',
+        canActivate: [authGuard, roleGuard],
+        data: {
+            roles: ['ADMIN']
+        },
+        loadComponent: () =>
+            import(
+                './features/academic-years/pages/academic-year-form/academic-year-form'
+            ).then(m => m.AcademicYearForm)
+    },
+    {
+        path: 'academic-years/:id/edit',
+        canActivate: [authGuard, roleGuard],
+        data: {
+            roles: ['ADMIN']
+        },
+        loadComponent: () =>
+            import(
+                './features/academic-years/pages/academic-year-form/academic-year-form'
+            ).then(m => m.AcademicYearForm)
+    },
+
     {
         path: '**',
         redirectTo: 'login'

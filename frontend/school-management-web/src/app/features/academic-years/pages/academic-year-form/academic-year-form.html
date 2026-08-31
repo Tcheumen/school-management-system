@@ -1,0 +1,148 @@
+<div class="form-container">
+
+  <div class="form-header">
+
+    <h2>
+      {{
+        isEditMode
+          ? 'Edit Academic Year'
+          : 'Add Academic Year'
+      }}
+    </h2>
+
+    <p>
+      {{
+        isEditMode
+          ? 'Update academic year information'
+          : 'Create a new academic year'
+      }}
+    </p>
+
+  </div>
+
+  @if (errorMessage()) {
+  <div class="error-message">
+    {{ errorMessage() }}
+  </div>
+  }
+
+  @if (loading() && isEditMode) {
+
+  <div class="loading">
+    Loading academic year...
+  </div>
+
+  } @else {
+
+  <form #academicYearForm="ngForm" (ngSubmit)="save()">
+
+    <div class="form-group">
+
+      <label for="name">
+        Academic year name
+      </label>
+
+      <input id="name" type="text" name="name" [(ngModel)]="name" required #nameInput="ngModel"
+        placeholder="Example: 2026-2027" />
+
+      @if (
+      nameInput.invalid &&
+      nameInput.touched
+      ) {
+      <span class="validation-error">
+        Academic year name is required.
+      </span>
+      }
+
+    </div>
+
+    <div class="form-row">
+
+      <div class="form-group">
+
+        <label for="startDate">
+          Start date
+        </label>
+
+        <input id="startDate" type="date" name="startDate" [(ngModel)]="startDate" required #startDateInput="ngModel" />
+
+        @if (
+        startDateInput.invalid &&
+        startDateInput.touched
+        ) {
+        <span class="validation-error">
+          Start date is required.
+        </span>
+        }
+
+      </div>
+
+      <div class="form-group">
+
+        <label for="endDate">
+          End date
+        </label>
+
+        <input id="endDate" type="date" name="endDate" [(ngModel)]="endDate" required #endDateInput="ngModel" />
+
+        @if (
+        endDateInput.invalid &&
+        endDateInput.touched
+        ) {
+        <span class="validation-error">
+          End date is required.
+        </span>
+        }
+
+      </div>
+
+    </div>
+
+    <div class="checkbox-group">
+
+      <label>
+
+        <input type="checkbox" name="active" [(ngModel)]="active" />
+
+        <span>
+          Active academic year
+        </span>
+
+      </label>
+
+      <p>
+        Mark this year as the current academic year.
+      </p>
+
+    </div>
+
+    <div class="form-actions">
+
+      <button type="submit" class="btn btn-primary" [disabled]="
+            academicYearForm.invalid ||
+            loading()
+          ">
+
+        @if (loading()) {
+        Saving...
+        } @else {
+        {{
+              isEditMode
+                ? 'Update'
+                : 'Create'
+            }}
+        }
+
+      </button>
+
+      <button type="button" class="btn btn-secondary" [disabled]="loading()" (click)="cancel()">
+        Cancel
+      </button>
+
+    </div>
+
+  </form>
+
+  }
+
+</div>

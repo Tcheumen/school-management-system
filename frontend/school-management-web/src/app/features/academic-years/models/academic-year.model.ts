@@ -3,5 +3,13 @@ export interface AcademicYear {
     name: string;
     startDate: string;
     endDate: string;
-    active?: boolean;
+    active: boolean;
+}
+
+
+export interface AcademicYearRequest {
+    name: string;
+    startDate: string;
+    endDate: string;
+    active: boolean;
 }

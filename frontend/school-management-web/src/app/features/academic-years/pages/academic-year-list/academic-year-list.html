@@ -1,0 +1,128 @@
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+      <h2>Academic Years</h2>
+      <p>Manage school academic years</p>
+    </div>
+
+    <a routerLink="/academic-years/new" class="btn btn-primary">
+      Add Academic Year
+    </a>
+
+  </div>
+
+  @if (errorMessage()) {
+  <div class="error-message">
+    {{ errorMessage() }}
+  </div>
+  }
+
+  @if (loading()) {
+
+  <div class="loading">
+    Loading academic years...
+  </div>
+
+  } @else {
+
+  <div class="table-wrapper">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Start date</th>
+          <th>End date</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        @for (
+        academicYear of academicYears();
+        track academicYear.id
+        ) {
+
+        <tr>
+
+          <td>
+            {{ academicYear.id }}
+          </td>
+
+          <td class="year-name">
+            {{ academicYear.name }}
+          </td>
+
+          <td>
+            {{ academicYear.startDate }}
+          </td>
+
+          <td>
+            {{ academicYear.endDate }}
+          </td>
+
+          <td>
+
+            @if (academicYear.active) {
+
+            <span class="status status-active">
+              Active
+            </span>
+
+            } @else {
+
+            <span class="status status-inactive">
+              Inactive
+            </span>
+
+            }
+
+          </td>
+
+          <td class="actions">
+
+            <a [routerLink]="[
+                    '/academic-years',
+                    academicYear.id,
+                    'edit'
+                  ]" class="btn btn-edit">
+              Edit
+            </a>
+
+            <button type="button" class="btn btn-delete" (click)="deleteAcademicYear(
+                    academicYear.id
+                  )">
+              Delete
+            </button>
+
+          </td>
+
+        </tr>
+
+        } @empty {
+
+        <tr>
+
+          <td colspan="6" class="empty-message">
+            No academic years found.
+          </td>
+
+        </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+  }
+
+</div>
