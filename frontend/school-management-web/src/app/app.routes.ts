@@ -139,6 +139,39 @@ export const routes: Routes = [
             ).then(m => m.SubjectForm)
     },
 
+    {
+        path: 'classrooms',
+        canActivate: [authGuard, roleGuard],
+        data: {
+            roles: ['ADMIN']
+        },
+        loadComponent: () =>
+            import(
+                './features/classrooms/pages/classroom-list/classroom-list'
+            ).then(m => m.ClassroomList)
+    },
+    {
+        path: 'classrooms/new',
+        canActivate: [authGuard, roleGuard],
+        data: {
+            roles: ['ADMIN']
+        },
+        loadComponent: () =>
+            import(
+                './features/classrooms/pages/classroom-form/classroom-form'
+            ).then(m => m.ClassroomForm)
+    },
+    {
+        path: 'classrooms/:id/edit',
+        canActivate: [authGuard, roleGuard],
+        data: {
+            roles: ['ADMIN']
+        },
+        loadComponent: () =>
+            import(
+                './features/classrooms/pages/classroom-form/classroom-form'
+            ).then(m => m.ClassroomForm)
+    },
     
     {
         path: '**',

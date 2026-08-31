@@ -1,0 +1,146 @@
+<p>classroom-form works!</p>
+<div class="form-container">
+
+  <div class="form-header">
+    <h2>
+      {{ isEditMode ? 'Edit Classroom' : 'Add Classroom' }}
+    </h2>
+
+    <p>
+      {{
+        isEditMode
+          ? 'Update classroom information'
+          : 'Create a new classroom'
+      }}
+    </p>
+  </div>
+
+  @if (errorMessage()) {
+  <div class="error-message">
+    {{ errorMessage() }}
+  </div>
+  }
+
+  @if (loading() && isEditMode) {
+
+  <div class="loading">
+    Loading classroom...
+  </div>
+
+  } @else {
+
+  <form #classroomForm="ngForm" (ngSubmit)="save()">
+
+    <div class="form-group">
+
+      <label for="name">
+        Classroom name
+      </label>
+
+      <input id="name" type="text" name="name" [(ngModel)]="name" required #nameInput="ngModel"
+        placeholder="Example: Class 6A" />
+
+      @if (
+      nameInput.invalid &&
+      nameInput.touched
+      ) {
+      <span class="validation-error">
+        Classroom name is required.
+      </span>
+      }
+
+    </div>
+
+    <div class="form-group">
+
+      <label for="level">
+        Level
+      </label>
+
+      <input id="level" type="text" name="level" [(ngModel)]="level" required #levelInput="ngModel"
+        placeholder="Example: Grade 6" />
+
+      @if (
+      levelInput.invalid &&
+      levelInput.touched
+      ) {
+      <span class="validation-error">
+        Level is required.
+      </span>
+      }
+
+    </div>
+
+    <div class="form-group">
+
+      <label for="academicYear">
+        Academic year
+      </label>
+
+      <select id="academicYear" name="academicYear" [(ngModel)]="academicYearId" required #academicYearInput="ngModel">
+
+        <option [ngValue]="null" disabled>
+          Select an academic year
+        </option>
+
+        @for (
+        academicYear of academicYears();
+        track academicYear.id
+        ) {
+
+        <option [ngValue]="academicYear.id">
+          {{ academicYear.name }}
+        </option>
+
+        }
+
+      </select>
+
+      @if (loadingAcademicYears()) {
+      <span class="helper-text">
+        Loading academic years...
+      </span>
+      }
+
+      @if (
+      academicYearInput.invalid &&
+      academicYearInput.touched
+      ) {
+      <span class="validation-error">
+        Academic year is required.
+      </span>
+      }
+
+    </div>
+
+    <div class="form-actions">
+
+      <button type="submit" class="btn btn-primary" [disabled]="
+            classroomForm.invalid ||
+            loading() ||
+            loadingAcademicYears()
+          ">
+
+        @if (loading()) {
+        Saving...
+        } @else {
+        {{
+              isEditMode
+                ? 'Update'
+                : 'Create'
+            }}
+        }
+
+      </button>
+
+      <button type="button" class="btn btn-secondary" [disabled]="loading()" (click)="cancel()">
+        Cancel
+      </button>
+
+    </div>
+
+  </form>
+
+  }
+
+</div>

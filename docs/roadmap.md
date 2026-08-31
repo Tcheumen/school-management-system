@@ -62,6 +62,7 @@ Roles:
 - [ ] Teacher Management UI
 - [ ] Subject Management UI
 - [ ] Classroom Management UI
+- [ ] Academic Year Management UI
 - [ ] Attendance Management UI
 - [ ] Grade Management UI
 

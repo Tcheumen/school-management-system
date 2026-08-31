@@ -1,0 +1,108 @@
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+      <h2>Classrooms</h2>
+      <p>Manage school classrooms</p>
+    </div>
+
+    <a routerLink="/classrooms/new" class="btn btn-primary">
+      Add Classroom
+    </a>
+
+  </div>
+
+  @if (errorMessage()) {
+  <div class="error-message">
+    {{ errorMessage() }}
+  </div>
+  }
+
+  @if (loading()) {
+
+  <div class="loading">
+    Loading classrooms...
+  </div>
+
+  } @else {
+
+  <div class="table-wrapper">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Name</th>
+          <th>Level</th>
+          <th>Academic year</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        @for (
+        classroom of classrooms();
+        track classroom.id
+        ) {
+
+        <tr>
+
+          <td>
+            {{ classroom.id }}
+          </td>
+
+          <td class="classroom-name">
+            {{ classroom.name }}
+          </td>
+
+          <td>
+            {{ classroom.level }}
+          </td>
+
+          <td>
+            @if (classroom.academicYearName) {
+            {{ classroom.academicYearName }}
+            } @else {
+            ID {{ classroom.academicYearId }}
+            }
+          </td>
+
+          <td class="actions">
+
+            <a [routerLink]="[
+                    '/classrooms',
+                    classroom.id,
+                    'edit'
+                  ]" class="btn btn-edit">
+              Edit
+            </a>
+
+            <button type="button" class="btn btn-delete" (click)="deleteClassroom(classroom.id)">
+              Delete
+            </button>
+
+          </td>
+
+        </tr>
+
+        } @empty {
+
+        <tr>
+          <td colspan="5" class="empty-message">
+            No classrooms found.
+          </td>
+        </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+  }
+
+</div>
