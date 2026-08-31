@@ -1,0 +1,107 @@
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+      <h2>Student Enrollments</h2>
+      <p>Manage student classroom enrollments</p>
+    </div>
+
+    <a routerLink="/enrollments/new" class="btn btn-primary">
+      Add Enrollment
+    </a>
+
+  </div>
+
+  @if (errorMessage()) {
+  <div class="error-message">
+    {{ errorMessage() }}
+  </div>
+  }
+
+  @if (loading()) {
+
+  <div class="loading">
+    Loading enrollments...
+  </div>
+
+  } @else {
+
+  <div class="table-wrapper">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Student</th>
+          <th>Classroom</th>
+          <th>Academic Year</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        @for (
+        enrollment of enrollments();
+        track enrollment.id
+        ) {
+
+        <tr>
+
+          <td>
+            {{ enrollment.id }}
+          </td>
+
+          <td class="student-name">
+            {{ enrollment.studentFullName }}
+          </td>
+
+          <td>
+            {{ enrollment.classroomName }}
+          </td>
+
+          <td>
+            {{ enrollment.academicYearName }}
+          </td>
+
+          <td class="actions">
+
+            <a [routerLink]="[
+                    '/enrollments',
+                    enrollment.id,
+                    'edit'
+                  ]" class="btn btn-edit">
+              Edit
+            </a>
+
+            <button type="button" class="btn btn-delete" (click)="deleteEnrollment(
+                    enrollment.id
+                  )">
+              Delete
+            </button>
+
+          </td>
+
+        </tr>
+
+        } @empty {
+
+        <tr>
+          <td colspan="5" class="empty-message">
+            No enrollments found.
+          </td>
+        </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+  }
+
+</div>

@@ -208,6 +208,40 @@ export const routes: Routes = [
     },
 
     {
+        path: 'enrollments',
+        canActivate: [authGuard, roleGuard],
+        data: {
+            roles: ['ADMIN']
+        },
+        loadComponent: () =>
+            import(
+                './features/enrollments/pages/enrollment-list/enrollment-list'
+            ).then(m => m.EnrollmentList)
+    },
+    {
+        path: 'enrollments/new',
+        canActivate: [authGuard, roleGuard],
+        data: {
+            roles: ['ADMIN']
+        },
+        loadComponent: () =>
+            import(
+                './features/enrollments/pages/enrollment-form/enrollment-form'
+            ).then(m => m.EnrollmentForm)
+    },
+    {
+        path: 'enrollments/:id/edit',
+        canActivate: [authGuard, roleGuard],
+        data: {
+            roles: ['ADMIN']
+        },
+        loadComponent: () =>
+            import(
+                './features/enrollments/pages/enrollment-form/enrollment-form'
+            ).then(m => m.EnrollmentForm)
+    },
+
+    {
         path: '**',
         redirectTo: 'login'
     }

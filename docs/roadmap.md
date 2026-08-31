@@ -58,14 +58,17 @@ Roles:
 ---
 
 # Phase 6 - Frontend School Modules
-- [ ] Student Management UI
-- [ ] Teacher Management UI
-- [ ] Subject Management UI
-- [ ] Classroom Management UI
-- [ ] Academic Year Management UI
+- [x] Student Management UI
+- [x] Teacher Management UI
+- [x] Subject Management UI
+- [x] Classroom Management UI
+- [x] Academic Year Management UI
+- [ ] Student Enrollment UI
+- [ ] Teacher Assignment UI
+- [ ] Schedule Management UI
 - [ ] Attendance Management UI
 - [ ] Grade Management UI
-
+- [ ] Report Card UI
 ---
 
 # Phase 7 - Code Quality & DevOps
