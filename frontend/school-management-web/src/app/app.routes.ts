@@ -408,6 +408,28 @@ export const routes: Routes = [
                 m => m.GradeForm
             )
     },
+    {
+        path: 'report-cards',
+
+        canActivate: [
+            authGuard,
+            roleGuard
+        ],
+
+        data: {
+            roles: [
+                'ADMIN',
+                'TEACHER'
+            ]
+        },
+
+        loadComponent: () =>
+            import(
+                './features/report-cards/pages/report-card-view/report-card-view'
+            ).then(
+                m => m.ReportCardView
+            )
+    },
     
     {
         path: '**',

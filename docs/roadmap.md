@@ -66,9 +66,9 @@ Roles:
 - [x] Student Enrollment UI
 - [x] Teacher Assignment UI
 - [x] Schedule Management UI
-- [ ] Attendance Management UI
-- [ ] Grade Management UI
-- [ ] Report Card UI
+- [x] Attendance Management UI
+- [x] Grade Management UI
+- [x] Report Card UI
 ---
 
 # Phase 7 - Code Quality & DevOps

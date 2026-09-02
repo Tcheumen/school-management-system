@@ -1,0 +1,224 @@
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+      <h2>Report Card</h2>
+
+      <p>
+        View student grades by term
+      </p>
+    </div>
+
+  </div>
+
+  @if (errorMessage()) {
+
+  <div class="error-message">
+    {{ errorMessage() }}
+  </div>
+
+  }
+
+  <div class="filters">
+
+    <div class="form-group">
+
+      <label for="enrollment">
+        Student
+      </label>
+
+      <select id="enrollment" name="enrollment" [(ngModel)]="enrollmentId" [disabled]="loadingEnrollments()">
+
+        <option [ngValue]="null" disabled>
+          Select a student
+        </option>
+
+        @for (
+        enrollment of enrollments();
+        track enrollment.id
+        ) {
+
+        <option [ngValue]="enrollment.id">
+          {{ enrollment.studentFullName }}
+          —
+          {{ enrollment.classroomName }}
+          —
+          {{ enrollment.academicYearName }}
+        </option>
+
+        }
+
+      </select>
+
+    </div>
+
+    <div class="form-group">
+
+      <label for="term">
+        Term
+      </label>
+
+      <select id="term" name="term" [(ngModel)]="term">
+
+        @for (
+        item of terms;
+        track item.value
+        ) {
+
+        <option [value]="item.value">
+          {{ item.label }}
+        </option>
+
+        }
+
+      </select>
+
+    </div>
+
+    <button type="button" class="btn btn-primary" [disabled]="
+        enrollmentId === null ||
+        loading()
+      " (click)="loadReportCard()">
+      @if (loading()) {
+      Loading...
+      } @else {
+      View Report Card
+      }
+    </button>
+
+  </div>
+
+  @if (reportCard(); as report) {
+
+  <div class="report-card">
+
+    <div class="student-section">
+
+      <div>
+        <span>Student</span>
+        <strong>
+          {{ report.studentFullName }}
+        </strong>
+      </div>
+
+      <div>
+        <span>Classroom</span>
+        <strong>
+          {{ report.classroomName }}
+        </strong>
+      </div>
+
+      <div>
+        <span>Academic Year</span>
+        <strong>
+          {{ report.academicYearName }}
+        </strong>
+      </div>
+
+      <div>
+        <span>Term</span>
+        <strong>
+          {{ report.term }}
+        </strong>
+      </div>
+
+    </div>
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+
+          <tr>
+            <th>Subject</th>
+            <th>Teacher</th>
+            <th>Grade</th>
+            <th>Remarks</th>
+          </tr>
+
+        </thead>
+
+        <tbody>
+
+          @for (
+          grade of report.grades;
+          track grade.subjectId
+          ) {
+
+          <tr>
+
+            <td class="subject-name">
+              {{ grade.subjectName }}
+            </td>
+
+            <td>
+              {{ grade.teacherFullName }}
+            </td>
+
+            <td>
+
+              <span class="grade-value" [class.grade-good]="
+                      grade.value >= 14
+                    " [class.grade-average]="
+                      grade.value >= 10 &&
+                      grade.value < 14
+                    " [class.grade-low]="
+                      grade.value < 10
+                    ">
+                {{ grade.value }} / 20
+              </span>
+
+            </td>
+
+            <td>
+              {{ grade.remarks || '-' }}
+            </td>
+
+          </tr>
+
+          } @empty {
+
+          <tr>
+
+            <td colspan="4" class="empty-message">
+              No grades available for this term.
+            </td>
+
+          </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    <div class="average-section">
+
+      <span>
+        General Average
+      </span>
+
+      <strong [class]="
+            getAverageClass(
+              report.average
+            )
+          ">
+        {{
+            formatAverage(
+              report.average
+            )
+          }}
+        / 20
+      </strong>
+
+    </div>
+
+  </div>
+
+  }
+
+</div>
