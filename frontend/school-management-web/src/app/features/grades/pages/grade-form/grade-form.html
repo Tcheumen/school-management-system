@@ -1,0 +1,291 @@
+<div class="form-container">
+
+  <div class="form-header">
+
+    <h2>
+      {{
+        isEditMode
+          ? 'Edit Grade'
+          : 'Add Grade'
+      }}
+    </h2>
+
+    <p>
+      {{
+        isEditMode
+          ? 'Update student grade'
+          : 'Record a student grade'
+      }}
+    </p>
+
+  </div>
+
+  @if (errorMessage()) {
+
+  <div class="error-message">
+    {{ errorMessage() }}
+  </div>
+
+  }
+
+  @if (loadingData()) {
+
+  <div class="loading">
+    Loading grade data...
+  </div>
+
+  } @else {
+
+  <form #gradeForm="ngForm" (ngSubmit)="save()">
+
+    <div class="form-group">
+
+      <label for="assignment">
+        Teacher Assignment
+      </label>
+
+      <select id="assignment" name="assignment" [(ngModel)]="teacherAssignmentId" (ngModelChange)="onAssignmentChange()"
+        required #assignmentInput="ngModel">
+
+        <option [ngValue]="null" disabled>
+          Select a teacher assignment
+        </option>
+
+        @for (
+        assignment of assignments();
+        track assignment.id
+        ) {
+
+        <option [ngValue]="assignment.id">
+          {{ formatAssignment(assignment) }}
+        </option>
+
+        }
+
+      </select>
+
+      @if (
+      assignmentInput.invalid &&
+      assignmentInput.touched
+      ) {
+
+      <span class="validation-error">
+        Teacher assignment is required.
+      </span>
+
+      }
+
+    </div>
+
+    @if (selectedAssignment) {
+
+    <div class="assignment-summary">
+
+      <div>
+        <span>Teacher</span>
+
+        <strong>
+          {{
+                selectedAssignment.teacherFullName
+              }}
+        </strong>
+      </div>
+
+      <div>
+        <span>Subject</span>
+
+        <strong>
+          {{
+                selectedAssignment.subjectName
+              }}
+        </strong>
+      </div>
+
+      <div>
+        <span>Classroom</span>
+
+        <strong>
+          {{
+                selectedAssignment.classroomName
+              }}
+        </strong>
+      </div>
+
+      <div>
+        <span>Academic Year</span>
+
+        <strong>
+          {{
+                selectedAssignment.academicYearName
+              }}
+        </strong>
+      </div>
+
+    </div>
+
+    }
+
+    <div class="form-group">
+
+      <label for="student">
+        Student
+      </label>
+
+      <select id="student" name="student" [(ngModel)]="enrollmentId" [disabled]="
+            teacherAssignmentId === null
+          " required #studentInput="ngModel">
+
+        <option [ngValue]="null" disabled>
+
+          {{
+              teacherAssignmentId === null
+                ? 'Select an assignment first'
+                : 'Select a student'
+            }}
+
+        </option>
+
+        @for (
+        enrollment of filteredEnrollments;
+        track enrollment.id
+        ) {
+
+        <option [ngValue]="enrollment.id">
+          {{ enrollment.studentFullName }}
+        </option>
+
+        }
+
+      </select>
+
+      @if (
+      teacherAssignmentId !== null &&
+      filteredEnrollments.length === 0
+      ) {
+
+      <span class="warning-text">
+        No enrolled students found for this classroom.
+      </span>
+
+      }
+
+      @if (
+      studentInput.invalid &&
+      studentInput.touched
+      ) {
+
+      <span class="validation-error">
+        Student is required.
+      </span>
+
+      }
+
+    </div>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+
+        <label for="term">
+          Term
+        </label>
+
+        <select id="term" name="term" [(ngModel)]="term" required>
+
+          @for (
+          gradeTerm of terms;
+          track gradeTerm
+          ) {
+
+          <option [value]="gradeTerm">
+            {{ formatTerm(gradeTerm) }}
+          </option>
+
+          }
+
+        </select>
+
+      </div>
+
+      <div class="form-group">
+
+        <label for="value">
+          Grade / 20
+        </label>
+
+        <input id="value" name="value" type="number" [(ngModel)]="value" min="0" max="20" step="0.25" required
+          #valueInput="ngModel" />
+
+        @if (
+        valueInput.invalid &&
+        valueInput.touched
+        ) {
+
+        <span class="validation-error">
+
+          @if (
+          valueInput.errors?.['required']
+          ) {
+          Grade is required.
+          }
+
+          @if (
+          valueInput.errors?.['min']
+          ) {
+          Minimum grade is 0.
+          }
+
+          @if (
+          valueInput.errors?.['max']
+          ) {
+          Maximum grade is 20.
+          }
+
+        </span>
+
+        }
+
+      </div>
+
+    </div>
+
+    <div class="form-group">
+
+      <label for="remarks">
+        Remarks
+      </label>
+
+      <textarea id="remarks" name="remarks" [(ngModel)]="remarks" rows="4" placeholder="Optional remarks..."></textarea>
+
+    </div>
+
+    <div class="form-actions">
+
+      <button type="submit" class="btn btn-primary" [disabled]="
+            gradeForm.invalid ||
+            loading()
+          ">
+
+        @if (loading()) {
+        Saving...
+        } @else {
+        {{
+              isEditMode
+                ? 'Update Grade'
+                : 'Save Grade'
+            }}
+        }
+
+      </button>
+
+      <button type="button" class="btn btn-secondary" [disabled]="loading()" (click)="cancel()">
+        Cancel
+      </button>
+
+    </div>
+
+  </form>
+
+  }
+
+</div>

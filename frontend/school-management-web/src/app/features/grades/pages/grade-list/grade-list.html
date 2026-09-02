@@ -1,0 +1,134 @@
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+      <h2>Grades</h2>
+
+      <p>
+        Manage student grades
+      </p>
+    </div>
+
+    <a routerLink="/grades/new" class="btn btn-primary">
+      Add Grade
+    </a>
+
+  </div>
+
+  @if (errorMessage()) {
+  <div class="error-message">
+    {{ errorMessage() }}
+  </div>
+  }
+
+  @if (loading()) {
+
+  <div class="loading">
+    Loading grades...
+  </div>
+
+  } @else {
+
+  <div class="table-wrapper">
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>Student</th>
+          <th>Subject</th>
+          <th>Classroom</th>
+          <th>Teacher</th>
+          <th>Term</th>
+          <th>Grade</th>
+          <th>Remarks</th>
+          <th>Actions</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        @for (
+        grade of grades();
+        track grade.id
+        ) {
+
+        <tr>
+
+          <td class="student-name">
+            {{ grade.studentFullName }}
+          </td>
+
+          <td>
+            {{ grade.subjectName }}
+          </td>
+
+          <td>
+            {{ grade.classroomName }}
+          </td>
+
+          <td>
+            {{ grade.teacherFullName }}
+          </td>
+
+          <td>
+            {{ formatTerm(grade.term) }}
+          </td>
+
+          <td>
+
+            <span class="grade-value" [class.grade-good]="grade.value >= 14" [class.grade-average]="
+                    grade.value >= 10 &&
+                    grade.value < 14
+                  " [class.grade-low]="grade.value < 10">
+              {{ grade.value }} / 20
+            </span>
+
+          </td>
+
+          <td>
+            {{ grade.remarks || '-' }}
+          </td>
+
+          <td class="actions">
+
+            <a [routerLink]="[
+                    '/grades',
+                    grade.id,
+                    'edit'
+                  ]" class="btn btn-edit">
+              Edit
+            </a>
+
+            <button type="button" class="btn btn-delete" (click)="deleteGrade(grade.id)">
+              Delete
+            </button>
+
+          </td>
+
+        </tr>
+
+        } @empty {
+
+        <tr>
+
+          <td colspan="8" class="empty-message">
+            No grades found.
+          </td>
+
+        </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+  }
+
+</div>

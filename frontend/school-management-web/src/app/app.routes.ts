@@ -350,6 +350,64 @@ export const routes: Routes = [
                 m => m.AttendanceForm
             )
     },
+
+    {
+        path: 'grades',
+
+        canActivate: [
+            authGuard,
+            roleGuard
+        ],
+
+        data: {
+            roles: ['ADMIN', 'TEACHER']
+        },
+
+        loadComponent: () =>
+            import(
+                './features/grades/pages/grade-list/grade-list'
+            ).then(
+                m => m.GradeList
+            )
+    },
+    {
+        path: 'grades/new',
+
+        canActivate: [
+            authGuard,
+            roleGuard
+        ],
+
+        data: {
+            roles: ['ADMIN', 'TEACHER']
+        },
+
+        loadComponent: () =>
+            import(
+                './features/grades/pages/grade-form/grade-form'
+            ).then(
+                m => m.GradeForm
+            )
+    },
+    {
+        path: 'grades/:id/edit',
+
+        canActivate: [
+            authGuard,
+            roleGuard
+        ],
+
+        data: {
+            roles: ['ADMIN', 'TEACHER']
+        },
+
+        loadComponent: () =>
+            import(
+                './features/grades/pages/grade-form/grade-form'
+            ).then(
+                m => m.GradeForm
+            )
+    },
     
     {
         path: '**',
