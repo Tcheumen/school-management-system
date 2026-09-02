@@ -1,0 +1,188 @@
+<div class="form-container">
+
+  <div class="form-header">
+    <h2>Add Class Schedule</h2>
+
+    <p>
+      Create a teaching time slot
+    </p>
+  </div>
+
+  @if (errorMessage()) {
+  <div class="error-message">
+    {{ errorMessage() }}
+  </div>
+  }
+
+  @if (loadingData()) {
+
+  <div class="loading">
+    Loading teacher assignments...
+  </div>
+
+  } @else {
+
+  <form #scheduleForm="ngForm" (ngSubmit)="save()">
+
+    <div class="form-group">
+
+      <label for="teacherAssignment">
+        Teacher Assignment
+      </label>
+
+      <select id="teacherAssignment" name="teacherAssignment" [(ngModel)]="teacherAssignmentId" required
+        #assignmentInput="ngModel">
+
+        <option [ngValue]="null" disabled>
+          Select a teacher assignment
+        </option>
+
+        @for (
+        assignment of assignments();
+        track assignment.id
+        ) {
+
+        <option [ngValue]="assignment.id">
+          {{ assignment.teacherFullName }}
+          —
+          {{ assignment.subjectName }}
+          —
+          {{ assignment.classroomName }}
+          —
+          {{ assignment.academicYearName }}
+        </option>
+
+        }
+
+      </select>
+
+      @if (
+      assignmentInput.invalid &&
+      assignmentInput.touched
+      ) {
+      <span class="validation-error">
+        Teacher assignment is required.
+      </span>
+      }
+
+      @if (assignments().length === 0) {
+      <span class="warning-text">
+        No teacher assignments available.
+      </span>
+      }
+
+    </div>
+
+    <div class="form-group">
+
+      <label for="dayOfWeek">
+        Day
+      </label>
+
+      <select id="dayOfWeek" name="dayOfWeek" [(ngModel)]="dayOfWeek" required #dayInput="ngModel">
+
+        <option value="" disabled>
+          Select a day
+        </option>
+
+        @for (
+        day of days;
+        track day
+        ) {
+        <option [value]="day">
+          {{ formatDay(day) }}
+        </option>
+        }
+
+      </select>
+
+      @if (
+      dayInput.invalid &&
+      dayInput.touched
+      ) {
+      <span class="validation-error">
+        Day is required.
+      </span>
+      }
+
+    </div>
+
+    <div class="time-grid">
+
+      <div class="form-group">
+
+        <label for="startTime">
+          Start Time
+        </label>
+
+        <input id="startTime" name="startTime" type="time" [(ngModel)]="startTime" required #startTimeInput="ngModel" />
+
+        @if (
+        startTimeInput.invalid &&
+        startTimeInput.touched
+        ) {
+        <span class="validation-error">
+          Start time is required.
+        </span>
+        }
+
+      </div>
+
+      <div class="form-group">
+
+        <label for="endTime">
+          End Time
+        </label>
+
+        <input id="endTime" name="endTime" type="time" [(ngModel)]="endTime" required #endTimeInput="ngModel" />
+
+        @if (
+        endTimeInput.invalid &&
+        endTimeInput.touched
+        ) {
+        <span class="validation-error">
+          End time is required.
+        </span>
+        }
+
+      </div>
+
+    </div>
+
+    @if (
+    startTime &&
+    endTime &&
+    endTime <= startTime ) { <div class="validation-summary">
+      End time must be after start time.
+</div>
+}
+
+<div class="form-actions">
+
+  <button type="submit" class="btn btn-primary" [disabled]="
+            scheduleForm.invalid ||
+            loading() ||
+            (
+              startTime !== '' &&
+              endTime !== '' &&
+              endTime <= startTime
+            )
+          ">
+    @if (loading()) {
+    Saving...
+    } @else {
+    Create Schedule
+    }
+  </button>
+
+  <button type="button" class="btn btn-secondary" [disabled]="loading()" (click)="cancel()">
+    Cancel
+  </button>
+
+</div>
+
+</form>
+
+}
+
+</div>

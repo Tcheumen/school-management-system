@@ -1,0 +1,123 @@
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+      <h2>Class Schedules</h2>
+
+      <p>
+        Manage classroom teaching schedules
+      </p>
+    </div>
+
+    <a routerLink="/schedules/new" class="btn btn-primary">
+      Add Schedule
+    </a>
+
+  </div>
+
+  @if (errorMessage()) {
+
+  <div class="error-message">
+    {{ errorMessage() }}
+  </div>
+
+  }
+
+  @if (loading()) {
+
+  <div class="loading">
+    Loading schedules...
+  </div>
+
+  } @else {
+
+  <div class="table-wrapper">
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>ID</th>
+          <th>Day</th>
+          <th>Time</th>
+          <th>Classroom</th>
+          <th>Subject</th>
+          <th>Teacher</th>
+          <th>Academic Year</th>
+          <th>Actions</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        @for (
+        schedule of schedules();
+        track schedule.id
+        ) {
+
+        <tr>
+
+          <td>
+            {{ schedule.id }}
+          </td>
+
+          <td class="day">
+            {{ formatDay(schedule.dayOfWeek) }}
+          </td>
+
+          <td class="time">
+            {{ formatTime(schedule.startTime) }}
+            -
+            {{ formatTime(schedule.endTime) }}
+          </td>
+
+          <td>
+            {{ schedule.classroomName }}
+          </td>
+
+          <td>
+            {{ schedule.subjectName }}
+          </td>
+
+          <td>
+            {{ schedule.teacherFullName }}
+          </td>
+
+          <td>
+            {{ schedule.academicYearName }}
+          </td>
+
+          <td class="actions">
+
+            <button type="button" class="btn btn-delete" (click)="
+                    deleteSchedule(schedule.id)
+                  ">
+              Delete
+            </button>
+
+          </td>
+
+        </tr>
+
+        } @empty {
+
+        <tr>
+          <td colspan="8" class="empty-message">
+            No schedules found.
+          </td>
+        </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+  }
+
+</div>

@@ -263,6 +263,45 @@ export const routes: Routes = [
                 './features/teacher-assignments/pages/teacher-assignment-form/teacher-assignment-form'
             ).then(m => m.TeacherAssignmentForm)
     },
+
+    {
+        path: 'schedules',
+
+        canActivate: [
+            authGuard,
+            roleGuard
+        ],
+
+        data: {
+            roles: ['ADMIN']
+        },
+
+        loadComponent: () =>
+            import(
+                './features/schedules/pages/schedule-list/schedule-list'
+            ).then(
+                m => m.ScheduleList
+            )
+    },
+    {
+        path: 'schedules/new',
+
+        canActivate: [
+            authGuard,
+            roleGuard
+        ],
+
+        data: {
+            roles: ['ADMIN']
+        },
+
+        loadComponent: () =>
+            import(
+                './features/schedules/pages/schedule-form/schedule-form'
+            ).then(
+                m => m.ScheduleForm
+            )
+    },
     
     {
         path: '**',
