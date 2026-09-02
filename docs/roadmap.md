@@ -63,9 +63,9 @@ Roles:
 - [x] Subject Management UI
 - [x] Classroom Management UI
 - [x] Academic Year Management UI
-- [ ] Student Enrollment UI
-- [ ] Teacher Assignment UI
-- [ ] Schedule Management UI
+- [x] Student Enrollment UI
+- [x] Teacher Assignment UI
+- [x] Schedule Management UI
 - [ ] Attendance Management UI
 - [ ] Grade Management UI
 - [ ] Report Card UI

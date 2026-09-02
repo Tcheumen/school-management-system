@@ -302,6 +302,54 @@ export const routes: Routes = [
                 m => m.ScheduleForm
             )
     },
+    {
+        path: 'attendances',
+        canActivate: [
+            authGuard,
+            roleGuard
+        ],
+        data: {
+            roles: ['ADMIN', 'TEACHER']
+        },
+        loadComponent: () =>
+            import(
+                './features/attendances/pages/attendance-list/attendance-list'
+            ).then(
+                m => m.AttendanceList
+            )
+    },
+    {
+        path: 'attendances/new',
+        canActivate: [
+            authGuard,
+            roleGuard
+        ],
+        data: {
+            roles: ['ADMIN', 'TEACHER']
+        },
+        loadComponent: () =>
+            import(
+                './features/attendances/pages/attendance-form/attendance-form'
+            ).then(
+                m => m.AttendanceForm
+            )
+    },
+    {
+        path: 'attendances/:id/edit',
+        canActivate: [
+            authGuard,
+            roleGuard
+        ],
+        data: {
+            roles: ['ADMIN', 'TEACHER']
+        },
+        loadComponent: () =>
+            import(
+                './features/attendances/pages/attendance-form/attendance-form'
+            ).then(
+                m => m.AttendanceForm
+            )
+    },
     
     {
         path: '**',

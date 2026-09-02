@@ -1,0 +1,276 @@
+<div class="form-container">
+
+  <div class="form-header">
+
+    <h2>
+      {{
+        isEditMode
+          ? 'Edit Attendance'
+          : 'Add Attendance'
+      }}
+    </h2>
+
+    <p>
+      {{
+        isEditMode
+          ? 'Update student attendance'
+          : 'Record student attendance'
+      }}
+    </p>
+
+  </div>
+
+  @if (errorMessage()) {
+
+  <div class="error-message">
+    {{ errorMessage() }}
+  </div>
+
+  }
+
+  @if (loadingData()) {
+
+  <div class="loading">
+    Loading attendance data...
+  </div>
+
+  } @else {
+
+  <form #attendanceForm="ngForm" (ngSubmit)="save()">
+
+    <div class="form-group">
+
+      <label for="schedule">
+        Class Schedule
+      </label>
+
+      <select id="schedule" name="schedule" [(ngModel)]="classScheduleId" (ngModelChange)="onScheduleChange()" required
+        #scheduleInput="ngModel">
+
+        <option [ngValue]="null" disabled>
+          Select a class schedule
+        </option>
+
+        @for (
+        schedule of schedules();
+        track schedule.id
+        ) {
+
+        <option [ngValue]="schedule.id">
+          {{ formatSchedule(schedule) }}
+        </option>
+
+        }
+
+      </select>
+
+      @if (
+      scheduleInput.invalid &&
+      scheduleInput.touched
+      ) {
+
+      <span class="validation-error">
+        Class schedule is required.
+      </span>
+
+      }
+
+    </div>
+
+    @if (selectedSchedule) {
+
+    <div class="schedule-summary">
+
+      <div>
+        <span>Classroom</span>
+        <strong>
+          {{
+                selectedSchedule.classroomName
+              }}
+        </strong>
+      </div>
+
+      <div>
+        <span>Subject</span>
+        <strong>
+          {{
+                selectedSchedule.subjectName
+              }}
+        </strong>
+      </div>
+
+      <div>
+        <span>Teacher</span>
+        <strong>
+          {{
+                selectedSchedule.teacherFullName
+              }}
+        </strong>
+      </div>
+
+      <div>
+        <span>Academic Year</span>
+        <strong>
+          {{
+                selectedSchedule.academicYearName
+              }}
+        </strong>
+      </div>
+
+    </div>
+
+    }
+
+    <div class="form-group">
+
+      <label for="student">
+        Student
+      </label>
+
+      <select id="student" name="student" [(ngModel)]="enrollmentId" [disabled]="
+            classScheduleId === null
+          " required #studentInput="ngModel">
+
+        <option [ngValue]="null" disabled>
+
+          {{
+              classScheduleId === null
+                ? 'Select a schedule first'
+                : 'Select a student'
+            }}
+
+        </option>
+
+        @for (
+        enrollment of
+        filteredEnrollments;
+        track enrollment.id
+        ) {
+
+        <option [ngValue]="enrollment.id">
+          {{
+                enrollment.studentFullName
+              }}
+        </option>
+
+        }
+
+      </select>
+
+      @if (
+      classScheduleId !== null &&
+      filteredEnrollments.length === 0
+      ) {
+
+      <span class="warning-text">
+        No enrolled students found for this classroom.
+      </span>
+
+      }
+
+      @if (
+      studentInput.invalid &&
+      studentInput.touched
+      ) {
+
+      <span class="validation-error">
+        Student is required.
+      </span>
+
+      }
+
+    </div>
+
+    <div class="form-grid">
+
+      <div class="form-group">
+
+        <label for="attendanceDate">
+          Attendance Date
+        </label>
+
+        <input id="attendanceDate" name="attendanceDate" type="date" [(ngModel)]="attendanceDate" required
+          #dateInput="ngModel" />
+
+        @if (
+        dateInput.invalid &&
+        dateInput.touched
+        ) {
+
+        <span class="validation-error">
+          Attendance date is required.
+        </span>
+
+        }
+
+      </div>
+
+      <div class="form-group">
+
+        <label for="status">
+          Status
+        </label>
+
+        <select id="status" name="status" [(ngModel)]="status" required>
+
+          @for (
+          attendanceStatus of statuses;
+          track attendanceStatus
+          ) {
+
+          <option [value]="attendanceStatus">
+            {{
+                  formatStatus(
+                    attendanceStatus
+                  )
+                }}
+          </option>
+
+          }
+
+        </select>
+
+      </div>
+
+    </div>
+
+    <div class="form-group">
+
+      <label for="remarks">
+        Remarks
+      </label>
+
+      <textarea id="remarks" name="remarks" [(ngModel)]="remarks" rows="4" placeholder="Optional remarks..."></textarea>
+
+    </div>
+
+    <div class="form-actions">
+
+      <button type="submit" class="btn btn-primary" [disabled]="
+            attendanceForm.invalid ||
+            loading()
+          ">
+
+        @if (loading()) {
+        Saving...
+        } @else {
+        {{
+              isEditMode
+                ? 'Update Attendance'
+                : 'Save Attendance'
+            }}
+        }
+
+      </button>
+
+      <button type="button" class="btn btn-secondary" [disabled]="loading()" (click)="cancel()">
+        Cancel
+      </button>
+
+    </div>
+
+  </form>
+
+  }
+
+</div>
