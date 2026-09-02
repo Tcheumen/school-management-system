@@ -242,6 +242,29 @@ export const routes: Routes = [
     },
 
     {
+        path: 'teacher-assignments',
+        canActivate: [authGuard, roleGuard],
+        data: {
+            roles: ['ADMIN']
+        },
+        loadComponent: () =>
+            import(
+                './features/teacher-assignments/pages/teacher-assignment-list/teacher-assignment-list'
+            ).then(m => m.TeacherAssignmentList)
+    },
+    {
+        path: 'teacher-assignments/new',
+        canActivate: [authGuard, roleGuard],
+        data: {
+            roles: ['ADMIN']
+        },
+        loadComponent: () =>
+            import(
+                './features/teacher-assignments/pages/teacher-assignment-form/teacher-assignment-form'
+            ).then(m => m.TeacherAssignmentForm)
+    },
+    
+    {
         path: '**',
         redirectTo: 'login'
     }

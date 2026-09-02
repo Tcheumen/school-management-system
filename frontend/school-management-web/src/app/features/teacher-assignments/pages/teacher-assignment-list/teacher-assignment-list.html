@@ -1,0 +1,106 @@
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+      <h2>Teacher Assignments</h2>
+      <p>
+        Assign teachers to subjects and classrooms
+      </p>
+    </div>
+
+    <a routerLink="/teacher-assignments/new" class="btn btn-primary">
+      Add Assignment
+    </a>
+
+  </div>
+
+  @if (errorMessage()) {
+  <div class="error-message">
+    {{ errorMessage() }}
+  </div>
+  }
+
+  @if (loading()) {
+
+  <div class="loading">
+    Loading teacher assignments...
+  </div>
+
+  } @else {
+
+  <div class="table-wrapper">
+
+    <table>
+
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Teacher</th>
+          <th>Subject</th>
+          <th>Classroom</th>
+          <th>Academic Year</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+
+      <tbody>
+
+        @for (
+        assignment of assignments();
+        track assignment.id
+        ) {
+
+        <tr>
+
+          <td>
+            {{ assignment.id }}
+          </td>
+
+          <td class="teacher-name">
+            {{ assignment.teacherFullName }}
+          </td>
+
+          <td>
+            {{ assignment.subjectName }}
+          </td>
+
+          <td>
+            {{ assignment.classroomName }}
+          </td>
+
+          <td>
+            {{ assignment.academicYearName }}
+          </td>
+
+          <td class="actions">
+
+            <button type="button" class="btn btn-delete" (click)="deleteAssignment(
+                    assignment.id
+                  )">
+              Delete
+            </button>
+
+          </td>
+
+        </tr>
+
+        } @empty {
+
+        <tr>
+          <td colspan="6" class="empty-message">
+            No teacher assignments found.
+          </td>
+        </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+  }
+
+</div>
