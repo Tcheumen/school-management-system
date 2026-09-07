@@ -1,0 +1,100 @@
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+      <h2>My Schedule</h2>
+
+      <p>
+        Your weekly teaching schedule
+      </p>
+    </div>
+
+  </div>
+
+  @if (errorMessage()) {
+
+  <div class="error-message">
+    {{ errorMessage() }}
+  </div>
+
+  }
+
+  @if (loading()) {
+
+  <div class="loading">
+    Loading schedule...
+  </div>
+
+  } @else {
+
+  <div class="table-wrapper">
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>Day</th>
+          <th>Time</th>
+          <th>Subject</th>
+          <th>Classroom</th>
+          <th>Academic Year</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        @for (
+        schedule of schedules();
+        track schedule.id
+        ) {
+
+        <tr>
+
+          <td class="day">
+            {{ formatDay(schedule.dayOfWeek) }}
+          </td>
+
+          <td class="time">
+            {{ formatTime(schedule.startTime) }}
+            -
+            {{ formatTime(schedule.endTime) }}
+          </td>
+
+          <td>
+            {{ schedule.subjectName }}
+          </td>
+
+          <td>
+            {{ schedule.classroomName }}
+          </td>
+
+          <td>
+            {{ schedule.academicYearName }}
+          </td>
+
+        </tr>
+
+        } @empty {
+
+        <tr>
+
+          <td colspan="5" class="empty">
+            No scheduled classes found.
+          </td>
+
+        </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+  }
+
+</div>

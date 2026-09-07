@@ -33,6 +33,12 @@ export class ClassScheduleService {
         );
     }
 
+    getMineForTeacher(): Observable<ClassSchedule[]> {
+        return this.http.get<ClassSchedule[]>(
+            `${this.apiUrl}/teacher/me`
+        );
+    }
+
     create(
         request: ClassScheduleRequest
     ): Observable<ClassSchedule> {

@@ -1,0 +1,118 @@
+:host {
+  display: block;
+  min-height: 100vh;
+  padding: 2rem;
+  background: #f5f7fb;
+}
+
+.page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+
+  padding: 2rem;
+
+  border-radius: 12px;
+
+  background: white;
+
+  box-shadow:
+    0 4px 16px
+    rgba(0, 0, 0, 0.08);
+}
+
+.page-header {
+  margin-bottom: 1.5rem;
+
+  h2 {
+    margin: 0;
+    color: #1f2937;
+    font-size: 1.7rem;
+  }
+
+  p {
+    margin: 0.4rem 0 0;
+    color: #64748b;
+  }
+}
+
+.table-wrapper {
+  overflow-x: auto;
+}
+
+table {
+  width: 100%;
+  min-width: 750px;
+
+  border-collapse: collapse;
+}
+
+thead {
+  background: #f8fafc;
+}
+
+th,
+td {
+  padding: 1rem;
+
+  border-bottom:
+    1px solid #e5e7eb;
+
+  text-align: left;
+}
+
+th {
+  color: #475569;
+
+  font-size: 0.8rem;
+
+  text-transform: uppercase;
+}
+
+td {
+  color: #374151;
+}
+
+tbody tr:hover {
+  background: #f8fafc;
+}
+
+.day {
+  font-weight: 600;
+  color: #1f2937;
+}
+
+.time {
+  white-space: nowrap;
+}
+
+.error-message {
+  margin-bottom: 1rem;
+
+  padding: 0.8rem 1rem;
+
+  border-radius: 7px;
+
+  background: #fee2e2;
+
+  color: #b91c1c;
+}
+
+.loading,
+.empty {
+  padding: 2rem;
+
+  text-align: center;
+
+  color: #64748b;
+}
+
+@media (max-width: 700px) {
+
+  :host {
+    padding: 1rem;
+  }
+
+  .page-container {
+    padding: 1.2rem;
+  }
+}

@@ -1,0 +1,78 @@
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+      <h2>My Assignments</h2>
+
+      <p>
+        Subjects and classrooms assigned to you
+      </p>
+    </div>
+
+  </div>
+
+  @if (errorMessage()) {
+
+  <div class="error-message">
+    {{ errorMessage() }}
+  </div>
+
+  }
+
+  @if (loading()) {
+
+  <div class="loading">
+    Loading assignments...
+  </div>
+
+  } @else {
+
+  <div class="cards-grid">
+
+    @for (
+    assignment of assignments();
+    track assignment.id
+    ) {
+
+    <div class="assignment-card">
+
+      <div class="subject">
+        {{ assignment.subjectName }}
+      </div>
+
+      <div class="assignment-info">
+
+        <div>
+          <span>Classroom</span>
+
+          <strong>
+            {{ assignment.classroomName }}
+          </strong>
+        </div>
+
+        <div>
+          <span>Academic Year</span>
+
+          <strong>
+            {{ assignment.academicYearName }}
+          </strong>
+        </div>
+
+      </div>
+
+    </div>
+
+    } @empty {
+
+    <div class="empty">
+      No assignments found.
+    </div>
+
+    }
+
+  </div>
+
+  }
+
+</div>

@@ -31,6 +31,12 @@ export class TeacherAssignmentService {
         );
     }
 
+    getMine(): Observable<TeacherAssignment[]> {
+        return this.http.get<TeacherAssignment[]>(
+            `${this.apiUrl}/me`
+        );
+    }
+
     create(
         request: TeacherAssignmentRequest
     ): Observable<TeacherAssignment> {
@@ -45,4 +51,5 @@ export class TeacherAssignmentService {
             `${this.apiUrl}/${id}`
         );
     }
+    
 }

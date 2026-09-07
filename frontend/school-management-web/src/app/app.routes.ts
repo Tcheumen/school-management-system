@@ -430,6 +430,45 @@ export const routes: Routes = [
                 m => m.ReportCardView
             )
     },
+
+    {
+        path: 'teacher/assignments',
+
+        canActivate: [
+            authGuard,
+            roleGuard
+        ],
+
+        data: {
+            roles: ['TEACHER']
+        },
+
+        loadComponent: () =>
+            import(
+                './features/teachers/pages/my-assignments/my-assignments'
+            ).then(
+                m => m.MyAssignments
+            )
+    },
+    {
+        path: 'teacher/schedule',
+
+        canActivate: [
+            authGuard,
+            roleGuard
+        ],
+
+        data: {
+            roles: ['TEACHER']
+        },
+
+        loadComponent: () =>
+            import(
+                './features/teachers/pages/my-schedule/my-schedule'
+            ).then(
+                m => m.MySchedule
+            )
+    },
     
     {
         path: '**',
