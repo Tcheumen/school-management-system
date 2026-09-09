@@ -16,11 +16,17 @@ export class AuthService {
     constructor(private http: HttpClient) { }
 
     login(request: LoginRequest): Observable<AuthResponse> {
-        return this.http.post<AuthResponse>(`${this.apiUrl}/login`, request);
+        return this.http.post<AuthResponse>(
+            `${this.apiUrl}/login`,
+            request
+        );
     }
 
     register(request: RegisterRequest): Observable<AuthResponse> {
-        return this.http.post<AuthResponse>(`${this.apiUrl}/register`, request);
+        return this.http.post<AuthResponse>(
+            `${this.apiUrl}/register`,
+            request
+        );
     }
 
     saveAuth(response: AuthResponse): void {
@@ -37,8 +43,14 @@ export class AuthService {
         return localStorage.getItem('role');
     }
 
+    getEmail(): string | null {
+        return localStorage.getItem('email');
+    }
+
     logout(): void {
-        localStorage.clear();
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
+        localStorage.removeItem('email');
     }
 
     isLoggedIn(): boolean {
@@ -47,13 +59,17 @@ export class AuthService {
 
     getDashboardRoute(): string {
         const role = this.getRole();
+
         switch (role) {
             case 'ADMIN':
                 return '/admin/dashboard';
+
             case 'TEACHER':
                 return '/teacher/dashboard';
+
             case 'STUDENT':
                 return '/student/dashboard';
+
             default:
                 return '/login';
         }

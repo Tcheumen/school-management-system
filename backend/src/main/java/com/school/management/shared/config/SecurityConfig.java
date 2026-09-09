@@ -18,6 +18,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
+import org.springframework.http.HttpMethod;
+
 import com.school.management.shared.security.JwtAuthenticationFilter;
 
 @Configuration
@@ -50,10 +52,12 @@ public class SecurityConfig {
                         // =========================
                         // PUBLIC
                         // =========================
+                        .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
 
                         .requestMatchers(
                                 "/api/auth/register",
-                                "/api/auth/login")
+                                "/api/auth/login",
+                                "/error")
                         .permitAll()
 
                         .requestMatchers(
@@ -89,10 +93,17 @@ public class SecurityConfig {
                         .requestMatchers(
                                 "/api/teacher-assignments/me")
                         .hasRole("TEACHER")
+                        .requestMatchers("/api/attendances/teacher/me")
+                        .hasRole("TEACHER")
 
                         .requestMatchers(
                                 "/api/class-schedules/teacher/me")
                         .hasRole("TEACHER")
+                        
+                        .requestMatchers(
+                                "/api/enrollments/teacher/me")
+                        .hasRole("TEACHER")
+
 
                         // =========================
                         // ADMIN ONLY
@@ -128,7 +139,10 @@ public class SecurityConfig {
 
                         .requestMatchers(
                                 "/api/class-schedules/**")
-                        .hasRole("ADMIN")
+                                        .hasRole("ADMIN")
+                        
+                        .requestMatchers("/api/enrollments/**").hasRole("ADMIN")
+                        
 
                         // =========================
                         // ADMIN + TEACHER

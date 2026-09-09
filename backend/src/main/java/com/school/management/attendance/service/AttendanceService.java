@@ -34,7 +34,7 @@ public class AttendanceService {
         private final EnrollmentRepository enrollmentRepository;
         private final ClassScheduleRepository classScheduleRepository;
         private final CurrentUserService currentUserService;
-private final TeacherRepository teacherRepository;
+        private final TeacherRepository teacherRepository;
 
         public AttendanceService(
                         AttendanceRepository attendanceRepository,
@@ -58,6 +58,8 @@ private final TeacherRepository teacherRepository;
 
         public AttendanceResponse getAttendanceById(Long id) {
                 Attendance attendance = getAttendanceEntityById(id);
+
+                validateTeacherAccess(attendance.getClassSchedule());
 
                 return mapToResponse(attendance);
         }
@@ -96,6 +98,8 @@ private final TeacherRepository teacherRepository;
                         AttendanceRequest request) {
                 Attendance attendance = getAttendanceEntityById(id);
 
+                validateTeacherAccess(attendance.getClassSchedule());
+                
                 Enrollment enrollment = getEnrollmentById(request.getEnrollmentId());
                 ClassSchedule classSchedule = getClassScheduleById(request.getClassScheduleId());
 
@@ -271,6 +275,23 @@ private final TeacherRepository teacherRepository;
                                 .map(this::mapToResponse)
                                 .toList();
         }
+
+        public List<AttendanceResponse> getAttendancesForCurrentTeacher() {
+
+                String email = currentUserService.getCurrentUserEmail();
+
+                Teacher teacher = teacherRepository
+                                .findByUserEmail(email)
+                                .orElseThrow(() -> new ForbiddenOperationException("Teacher profilenot found"));
+
+                return attendanceRepository
+                                .findByClassScheduleTeacherAssignmentTeacherId(teacher.getId())
+                                                
+                                .stream()
+                                .map(this::mapToResponse)
+                                .toList();
+        }
+
 
         private AttendanceResponse mapToResponse(Attendance attendance) {
 

@@ -53,4 +53,10 @@ public class AttendanceController {
     public List<AttendanceResponse> getMyAttendances() {
         return attendanceService.getMyAttendances();
     }
+
+    @GetMapping("/teacher/me")
+    public List<AttendanceResponse> getMyTeacherAttendances() {
+        return attendanceService.getAttendancesForCurrentTeacher();
+    }
+
 }

@@ -22,4 +22,6 @@ public interface AttendanceRepository extends JpaRepository<Attendance, Long> {
     List<Attendance> findByEnrollmentId(Long enrollmentId);
 
     List<Attendance> findByEnrollmentStudentUserEmail(String email);
+
+    List<Attendance> findByClassScheduleTeacherAssignmentTeacherId(Long teacherId);
 }

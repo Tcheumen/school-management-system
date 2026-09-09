@@ -30,6 +30,13 @@ public class EnrollmentController {
         return enrollmentService.getEnrollmentById(id);
     }
 
+    @GetMapping("/teacher/me")
+    public List<EnrollmentResponse> getMyTeacherEnrollments() {
+
+        return enrollmentService
+                .getEnrollmentsForCurrentTeacher();
+    }
+
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public EnrollmentResponse createEnrollment(@Valid @RequestBody EnrollmentRequest request) {

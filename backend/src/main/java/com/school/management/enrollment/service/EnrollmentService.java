@@ -17,6 +17,12 @@ import com.school.management.student.entity.Student;
 import com.school.management.student.exception.StudentNotFoundException;
 import com.school.management.student.repository.StudentRepository;
 
+import com.school.management.assignment.repository.TeacherAssignmentRepository;
+import com.school.management.shared.exception.ForbiddenOperationException;
+import com.school.management.shared.security.CurrentUserService;
+import com.school.management.teacher.entity.Teacher;
+import com.school.management.teacher.repository.TeacherRepository;
+
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -29,19 +35,61 @@ public class EnrollmentService {
     private final ClassroomRepository classroomRepository;
     private final AcademicYearRepository academicYearRepository;
 
+    private final CurrentUserService currentUserService;
+    private final TeacherRepository teacherRepository;
+    private final TeacherAssignmentRepository teacherAssignmentRepository;
+
     public EnrollmentService(
             EnrollmentRepository enrollmentRepository,
             StudentRepository studentRepository,
             ClassroomRepository classroomRepository,
-            AcademicYearRepository academicYearRepository) {
+            AcademicYearRepository academicYearRepository,
+            CurrentUserService currentUserService,
+            TeacherRepository teacherRepository,
+            TeacherAssignmentRepository teacherAssignmentRepository) {
         this.enrollmentRepository = enrollmentRepository;
         this.studentRepository = studentRepository;
         this.classroomRepository = classroomRepository;
         this.academicYearRepository = academicYearRepository;
+        this.currentUserService = currentUserService;
+        this.teacherRepository = teacherRepository;
+        this.teacherAssignmentRepository = teacherAssignmentRepository;
     }
 
     public List<EnrollmentResponse> getAllEnrollments() {
         return enrollmentRepository.findAll()
+                .stream()
+                .map(this::mapToResponse)
+                .toList();
+    }
+
+    public List<EnrollmentResponse> getEnrollmentsForCurrentTeacher() {
+
+        String email = currentUserService
+                .getCurrentUserEmail();
+
+        Teacher teacher = teacherRepository
+                .findByUserEmail(email)
+                .orElseThrow(() -> new ForbiddenOperationException(
+                        "Teacher profile not found"));
+
+        List<Long> classroomIds = teacherAssignmentRepository
+                .findByTeacherId(
+                        teacher.getId())
+                .stream()
+                .map(assignment -> assignment
+                        .getClassroom()
+                        .getId())
+                .distinct()
+                .toList();
+
+        if (classroomIds.isEmpty()) {
+            return List.of();
+        }
+
+        return enrollmentRepository
+                .findByClassroomIdIn(
+                        classroomIds)
                 .stream()
                 .map(this::mapToResponse)
                 .toList();

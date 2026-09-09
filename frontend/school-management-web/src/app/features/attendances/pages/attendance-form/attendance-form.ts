@@ -8,6 +8,8 @@ import {
   FormsModule
 } from '@angular/forms';
 
+import { forkJoin } from 'rxjs';
+
 import {
   ActivatedRoute,
   Router
@@ -37,6 +39,8 @@ import {
 import {
   EnrollmentService
 } from '../../../enrollments/services/enrollment.service';
+
+import { AuthService} from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-attendance-form',
@@ -77,6 +81,7 @@ export class AttendanceForm implements OnInit {
     private attendanceService: AttendanceService,
     private classScheduleService: ClassScheduleService,
     private enrollmentService: EnrollmentService,
+    private authService: AuthService,
     private route: ActivatedRoute,
     private router: Router
   ) { }
@@ -93,93 +98,76 @@ export class AttendanceForm implements OnInit {
 
     this.loadReferenceData();
   }
-
   loadReferenceData(): void {
 
     this.loadingData.set(true);
     this.errorMessage.set('');
 
-    let schedulesLoaded = false;
-    let enrollmentsLoaded = false;
+    const role =
+      this.authService.getRole();
 
-    const checkComplete = () => {
+    const schedulesRequest$ =
+      role === 'TEACHER'
+        ? this.classScheduleService
+          .getMineForTeacher()
+        : this.classScheduleService
+          .getAll();
 
-      if (
-        schedulesLoaded &&
-        enrollmentsLoaded
-      ) {
+    const enrollmentsRequest$ =
+      role === 'TEACHER'
+        ? this.enrollmentService
+          .getMineForTeacher()
+        : this.enrollmentService
+          .getAll();
+
+    forkJoin({
+      schedules: schedulesRequest$,
+      enrollments: enrollmentsRequest$
+    }).subscribe({
+
+      next: ({
+        schedules,
+        enrollments
+      }) => {
+
+        this.schedules.set(
+          schedules
+        );
+
+        this.enrollments.set(
+          enrollments
+        );
 
         if (
           this.isEditMode &&
           this.attendanceId
         ) {
+
           this.loadAttendance(
             this.attendanceId
           );
+
         } else {
+
           this.loadingData.set(false);
         }
+      },
+
+      error: (error) => {
+
+        console.error(
+          'Error loading attendance reference data:',
+          error
+        );
+
+        this.errorMessage.set(
+          error?.error?.message ??
+          'Unable to load attendance data'
+        );
+
+        this.loadingData.set(false);
       }
-    };
-
-    this.classScheduleService
-      .getAll()
-      .subscribe({
-
-        next: (schedules) => {
-          this.schedules.set(schedules);
-
-          schedulesLoaded = true;
-          checkComplete();
-        },
-
-        error: (error) => {
-
-          console.error(
-            'Error loading schedules:',
-            error
-          );
-
-          this.errorMessage.set(
-            error?.error?.message ??
-            'Unable to load schedules'
-          );
-
-          schedulesLoaded = true;
-          checkComplete();
-        }
-      });
-
-    this.enrollmentService
-      .getAll()
-      .subscribe({
-
-        next: (enrollments) => {
-
-          this.enrollments.set(
-            enrollments
-          );
-
-          enrollmentsLoaded = true;
-          checkComplete();
-        },
-
-        error: (error) => {
-
-          console.error(
-            'Error loading enrollments:',
-            error
-          );
-
-          this.errorMessage.set(
-            error?.error?.message ??
-            'Unable to load enrollments'
-          );
-
-          enrollmentsLoaded = true;
-          checkComplete();
-        }
-      });
+    });
   }
 
   loadAttendance(

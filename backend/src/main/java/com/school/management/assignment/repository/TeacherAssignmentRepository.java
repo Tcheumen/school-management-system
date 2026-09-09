@@ -20,4 +20,6 @@ public interface TeacherAssignmentRepository extends JpaRepository<TeacherAssign
                     Long academicYearId);
             
     List<TeacherAssignment> findByTeacherUserEmail(String email);
+
+    List<TeacherAssignment> findByTeacherId(Long teacherId);
 }

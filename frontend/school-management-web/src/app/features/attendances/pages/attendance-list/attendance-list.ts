@@ -1,20 +1,12 @@
-import {
-  Component,
-  OnInit,
-  signal
-} from '@angular/core';
+import { Component, OnInit,signal} from '@angular/core';
 
-import {
-  RouterLink
-} from '@angular/router';
+import { RouterLink} from '@angular/router';
 
-import {
-  Attendance
-} from '../../models/attendance.model';
+import { Attendance } from '../../models/attendance.model';
 
-import {
-  AttendanceService
-} from '../../services/attendance.service';
+import {  AttendanceService} from '../../services/attendance.service';
+
+import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-attendance-list',
@@ -31,8 +23,8 @@ export class AttendanceList implements OnInit {
   errorMessage = signal('');
 
   constructor(
-    private attendanceService:
-      AttendanceService
+    private attendanceService: AttendanceService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -43,32 +35,38 @@ export class AttendanceList implements OnInit {
     this.loading.set(true);
     this.errorMessage.set('');
 
-    this.attendanceService
-      .getAll()
-      .subscribe({
+    const role =
+      this.authService.getRole();
 
-        next: (attendances) => {
-          this.attendances.set(
-            this.sortAttendances(attendances)
-          );
+    const request$ =
+      role === 'TEACHER'
+        ? this.attendanceService.getMineForTeacher()
+        : this.attendanceService.getAll();
 
-          this.loading.set(false);
-        },
+    request$.subscribe({
 
-        error: (error) => {
-          console.error(
-            'Error loading attendances:',
-            error
-          );
+      next: (attendances) => {
+        this.attendances.set(
+          this.sortAttendances(attendances)
+        );
 
-          this.errorMessage.set(
-            error?.error?.message ??
-            'Unable to load attendances'
-          );
+        this.loading.set(false);
+      },
 
-          this.loading.set(false);
-        }
-      });
+      error: (error) => {
+        console.error(
+          'Error loading attendances:',
+          error
+        );
+
+        this.errorMessage.set(
+          error?.error?.message ??
+          'Unable to load attendances'
+        );
+
+        this.loading.set(false);
+      }
+    });
   }
 
   deleteAttendance(
