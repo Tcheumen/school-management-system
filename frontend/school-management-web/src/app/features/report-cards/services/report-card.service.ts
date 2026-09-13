@@ -1,6 +1,14 @@
-import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {
+    Injectable
+} from '@angular/core';
+
+import {
+    HttpClient
+} from '@angular/common/http';
+
+import {
+    Observable
+} from 'rxjs';
 
 import {
     ReportCard
@@ -25,6 +33,20 @@ export class ReportCardService {
 
         return this.http.get<ReportCard>(
             `${this.apiUrl}/enrollments/${enrollmentId}`,
+            {
+                params: {
+                    term
+                }
+            }
+        );
+    }
+
+    getMine(
+        term: string
+    ): Observable<ReportCard> {
+
+        return this.http.get<ReportCard>(
+            `${this.apiUrl}/me`,
             {
                 params: {
                     term

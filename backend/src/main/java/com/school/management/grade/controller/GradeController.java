@@ -55,4 +55,10 @@ public class GradeController {
     public List<GradeResponse> getMyGrades() {
         return gradeService.getMyGrades();
     }
+
+    @GetMapping("/teacher/me")
+    public List<GradeResponse> getMyTeacherGrades() {
+        return gradeService
+                .getGradesForCurrentTeacher();
+    }
 }

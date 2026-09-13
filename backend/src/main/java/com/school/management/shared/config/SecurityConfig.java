@@ -102,7 +102,8 @@ public class SecurityConfig {
                         
                         .requestMatchers(
                                 "/api/enrollments/teacher/me")
-                        .hasRole("TEACHER")
+                                        .hasRole("TEACHER")
+                        .requestMatchers("/api/grades/teacher/me").hasRole("TEACHER")
 
 
                         // =========================
@@ -141,8 +142,9 @@ public class SecurityConfig {
                                 "/api/class-schedules/**")
                                         .hasRole("ADMIN")
                         
-                        .requestMatchers("/api/enrollments/**").hasRole("ADMIN")
+                       .requestMatchers("/api/enrollments/**").hasRole("ADMIN")
                         
+                       
 
                         // =========================
                         // ADMIN + TEACHER

@@ -4,6 +4,8 @@ import {
   signal
 } from '@angular/core';
 
+import { forkJoin } from 'rxjs';
+
 import {
   FormsModule
 } from '@angular/forms';
@@ -37,6 +39,11 @@ import {
 import {
   EnrollmentService
 } from '../../../enrollments/services/enrollment.service';
+
+import {
+  AuthService
+} from '../../../../core/services/auth.service';
+
 
 @Component({
   selector: 'app-grade-form',
@@ -82,6 +89,7 @@ export class GradeForm implements OnInit {
       TeacherAssignmentService,
     private enrollmentService:
       EnrollmentService,
+    private authService: AuthService,
     private route: ActivatedRoute,
     private router: Router
   ) { }
@@ -104,94 +112,71 @@ export class GradeForm implements OnInit {
     this.loadingData.set(true);
     this.errorMessage.set('');
 
-    let assignmentsLoaded = false;
-    let enrollmentsLoaded = false;
+    const role =
+      this.authService.getRole();
 
-    const checkComplete = () => {
+    const assignmentsRequest$ =
+      role === 'TEACHER'
+        ? this.teacherAssignmentService
+          .getMine()
+        : this.teacherAssignmentService
+          .getAll();
 
-      if (
-        assignmentsLoaded &&
-        enrollmentsLoaded
-      ) {
+    const enrollmentsRequest$ =
+      role === 'TEACHER'
+        ? this.enrollmentService
+          .getMineForTeacher()
+        : this.enrollmentService
+          .getAll();
+
+    forkJoin({
+      assignments: assignmentsRequest$,
+      enrollments: enrollmentsRequest$
+    }).subscribe({
+
+      next: ({
+        assignments,
+        enrollments
+      }) => {
+
+        this.assignments.set(
+          assignments
+        );
+
+        this.enrollments.set(
+          enrollments
+        );
 
         if (
           this.isEditMode &&
           this.gradeId
         ) {
+
           this.loadGrade(
             this.gradeId
           );
+
         } else {
+
           this.loadingData.set(false);
         }
+      },
+
+      error: (error) => {
+
+        console.error(
+          'Error loading grade reference data:',
+          error
+        );
+
+        this.errorMessage.set(
+          error?.error?.message ??
+          'Unable to load grade data'
+        );
+
+        this.loadingData.set(false);
       }
-    };
-
-    this.teacherAssignmentService
-      .getAll()
-      .subscribe({
-
-        next: (assignments) => {
-
-          this.assignments.set(
-            assignments
-          );
-
-          assignmentsLoaded = true;
-
-          checkComplete();
-        },
-
-        error: (error) => {
-
-          console.error(
-            'Error loading teacher assignments:',
-            error
-          );
-
-          this.errorMessage.set(
-            error?.error?.message ??
-            'Unable to load teacher assignments'
-          );
-
-          assignmentsLoaded = true;
-
-          checkComplete();
-        }
-      });
-
-    this.enrollmentService
-      .getAll()
-      .subscribe({
-
-        next: (enrollments) => {
-
-          this.enrollments.set(
-            enrollments
-          );
-
-          enrollmentsLoaded = true;
-
-          checkComplete();
-        },
-
-        error: (error) => {
-
-          console.error(
-            'Error loading enrollments:',
-            error
-          );
-
-          this.errorMessage.set(
-            error?.error?.message ??
-            'Unable to load enrollments'
-          );
-
-          enrollmentsLoaded = true;
-
-          checkComplete();
-        }
-      });
+    });
   }
 
   loadGrade(

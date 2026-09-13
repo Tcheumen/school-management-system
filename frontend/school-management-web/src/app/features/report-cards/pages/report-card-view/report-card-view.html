@@ -22,6 +22,8 @@
 
   <div class="filters">
 
+    @if (role !== 'STUDENT') {
+
     <div class="form-group">
 
       <label for="enrollment">
@@ -40,11 +42,13 @@
         ) {
 
         <option [ngValue]="enrollment.id">
+
           {{ enrollment.studentFullName }}
           —
           {{ enrollment.classroomName }}
           —
           {{ enrollment.academicYearName }}
+
         </option>
 
         }
@@ -52,6 +56,8 @@
       </select>
 
     </div>
+
+    }
 
     <div class="form-group">
 
@@ -77,14 +83,19 @@
     </div>
 
     <button type="button" class="btn btn-primary" [disabled]="
-        enrollmentId === null ||
-        loading()
+        loading() ||
+        (
+          role !== 'STUDENT' &&
+          enrollmentId === null
+        )
       " (click)="loadReportCard()">
+
       @if (loading()) {
       Loading...
       } @else {
       View Report Card
       }
+
     </button>
 
   </div>
@@ -97,6 +108,7 @@
 
       <div>
         <span>Student</span>
+
         <strong>
           {{ report.studentFullName }}
         </strong>
@@ -104,6 +116,7 @@
 
       <div>
         <span>Classroom</span>
+
         <strong>
           {{ report.classroomName }}
         </strong>
@@ -111,6 +124,7 @@
 
       <div>
         <span>Academic Year</span>
+
         <strong>
           {{ report.academicYearName }}
         </strong>
@@ -118,8 +132,9 @@
 
       <div>
         <span>Term</span>
+
         <strong>
-          {{ report.term }}
+          {{ formatTerm(report.term) }}
         </strong>
       </div>
 
@@ -143,37 +158,39 @@
         <tbody>
 
           @for (
-          grade of report.grades;
-          track grade.subjectId
+          subject of report.subjects;
+          track subject.subjectId
           ) {
 
           <tr>
 
             <td class="subject-name">
-              {{ grade.subjectName }}
+              {{ subject.subjectName }}
             </td>
 
             <td>
-              {{ grade.teacherFullName }}
+              {{ subject.teacherFullName }}
             </td>
 
             <td>
 
               <span class="grade-value" [class.grade-good]="
-                      grade.value >= 14
+                      subject.value >= 14
                     " [class.grade-average]="
-                      grade.value >= 10 &&
-                      grade.value < 14
+                      subject.value >= 10 &&
+                      subject.value < 14
                     " [class.grade-low]="
-                      grade.value < 10
+                      subject.value < 10
                     ">
-                {{ grade.value }} / 20
+
+                {{ subject.value }} / 20
+
               </span>
 
             </td>
 
             <td>
-              {{ grade.remarks || '-' }}
+              {{ subject.remarks || '-' }}
             </td>
 
           </tr>
@@ -198,22 +215,52 @@
 
     <div class="average-section">
 
-      <span>
-        General Average
-      </span>
+      <div>
 
-      <strong [class]="
-            getAverageClass(
-              report.average
-            )
-          ">
-        {{
-            formatAverage(
-              report.average
-            )
-          }}
-        / 20
-      </strong>
+        <span>
+          Absences
+        </span>
+
+        <strong>
+          {{ report.totalAbsences }}
+        </strong>
+
+      </div>
+
+      <div>
+
+        <span>
+          Late
+        </span>
+
+        <strong>
+          {{ report.totalLate }}
+        </strong>
+
+      </div>
+
+      <div>
+
+        <span>
+          General Average
+        </span>
+
+        <strong [class]="
+              getAverageClass(
+                report.average
+              )
+            ">
+
+          {{
+              formatAverage(
+                report.average
+              )
+            }}
+          / 20
+
+        </strong>
+
+      </div>
 
     </div>
 

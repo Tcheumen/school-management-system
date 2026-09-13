@@ -1,8 +1,7 @@
-export interface ReportCardGrade {
+export interface ReportCardSubject {
     subjectId: number;
     subjectName: string;
 
-    teacherId: number;
     teacherFullName: string;
 
     value: number;
@@ -23,7 +22,10 @@ export interface ReportCard {
 
     term: string;
 
-    grades: ReportCardGrade[];
-
     average: number;
+
+    totalAbsences: number;
+    totalLate: number;
+
+    subjects: ReportCardSubject[];
 }

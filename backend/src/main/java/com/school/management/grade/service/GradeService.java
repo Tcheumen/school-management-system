@@ -58,6 +58,8 @@ public class GradeService {
                 Grade grade = gradeRepository.findById(id)
                                 .orElseThrow(() -> new GradeNotFoundException(id));
 
+                validateTeacherAccess(grade.getTeacherAssignment());
+
                 return mapToResponse(grade);
         }
 
@@ -105,6 +107,8 @@ public class GradeService {
                         GradeRequest request) {
                 Grade grade = gradeRepository.findById(id)
                                 .orElseThrow(() -> new GradeNotFoundException(id));
+                                
+                validateTeacherAccess(grade.getTeacherAssignment());
 
                 Enrollment enrollment = enrollmentRepository
                                 .findById(request.getEnrollmentId())
@@ -146,7 +150,8 @@ public class GradeService {
         public void deleteGrade(Long id) {
                 Grade grade = gradeRepository.findById(id)
                                 .orElseThrow(() -> new GradeNotFoundException(id));
-
+                validateTeacherAccess(grade.getTeacherAssignment());
+                
                 gradeRepository.delete(grade);
         }
 
@@ -199,6 +204,24 @@ public class GradeService {
                 String email = currentUserService.getCurrentUserEmail();
 
                 return gradeRepository.findByEnrollmentStudentUserEmail(email)
+                                .stream()
+                                .map(this::mapToResponse)
+                                .toList();
+        }
+
+        public List<GradeResponse> getGradesForCurrentTeacher() {
+
+                String email = currentUserService
+                                .getCurrentUserEmail();
+
+                Teacher teacher = teacherRepository
+                                .findByUserEmail(email)
+                                .orElseThrow(() -> new ForbiddenOperationException(
+                                                "Teacher profile not found"));
+
+                return gradeRepository
+                                .findByTeacherAssignmentTeacherId(
+                                                teacher.getId())
                                 .stream()
                                 .map(this::mapToResponse)
                                 .toList();

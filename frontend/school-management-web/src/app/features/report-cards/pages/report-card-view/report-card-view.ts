@@ -23,6 +23,10 @@ import {
   ReportCardService
 } from '../../services/report-card.service';
 
+import {
+  AuthService
+} from '../../../../core/services/auth.service';
+
 @Component({
   selector: 'app-report-card-view',
   standalone: true,
@@ -63,45 +67,60 @@ export class ReportCardView {
   constructor(
     private enrollmentService:
       EnrollmentService,
+
     private reportCardService:
-      ReportCardService
+      ReportCardService,
+
+    private authService:
+      AuthService
   ) {
     this.loadEnrollments();
   }
 
+  get role(): string | null {
+    return this.authService.getRole();
+  }
+
   loadEnrollments(): void {
+
+    if (this.role === 'STUDENT') {
+      return;
+    }
 
     this.loadingEnrollments.set(true);
     this.errorMessage.set('');
 
-    this.enrollmentService
-      .getAll()
-      .subscribe({
+    const request$ =
+      this.role === 'TEACHER'
+        ? this.enrollmentService.getMineForTeacher()
+        : this.enrollmentService.getAll();
 
-        next: (enrollments) => {
+    request$.subscribe({
 
-          this.enrollments.set(
-            enrollments
-          );
+      next: (enrollments) => {
 
-          this.loadingEnrollments.set(false);
-        },
+        this.enrollments.set(
+          enrollments
+        );
 
-        error: (error) => {
+        this.loadingEnrollments.set(false);
+      },
 
-          console.error(
-            'Error loading enrollments:',
-            error
-          );
+      error: (error) => {
 
-          this.errorMessage.set(
-            error?.error?.message ??
-            'Unable to load enrollments'
-          );
+        console.error(
+          'Error loading enrollments:',
+          error
+        );
 
-          this.loadingEnrollments.set(false);
-        }
-      });
+        this.errorMessage.set(
+          error?.error?.message ??
+          'Unable to load enrollments'
+        );
+
+        this.loadingEnrollments.set(false);
+      }
+    });
   }
 
   loadReportCard(): void {
@@ -109,19 +128,61 @@ export class ReportCardView {
     this.errorMessage.set('');
     this.reportCard.set(null);
 
-    if (
-      this.enrollmentId === null ||
-      !this.term
-    ) {
+    if (!this.term) {
 
       this.errorMessage.set(
-        'Student enrollment and term are required'
+        'Term is required'
       );
 
       return;
     }
 
     this.loading.set(true);
+
+    if (this.role === 'STUDENT') {
+
+      this.reportCardService
+        .getMine(this.term)
+        .subscribe({
+
+          next: (reportCard) => {
+
+            this.reportCard.set(
+              reportCard
+            );
+
+            this.loading.set(false);
+          },
+
+          error: (error) => {
+
+            console.error(
+              'Error loading report card:',
+              error
+            );
+
+            this.errorMessage.set(
+              error?.error?.message ??
+              'Unable to load report card'
+            );
+
+            this.loading.set(false);
+          }
+        });
+
+      return;
+    }
+
+    if (this.enrollmentId === null) {
+
+      this.errorMessage.set(
+        'Student enrollment is required'
+      );
+
+      this.loading.set(false);
+
+      return;
+    }
 
     this.reportCardService
       .getByEnrollment(
@@ -183,5 +244,24 @@ export class ReportCardView {
     }
 
     return 'average-low';
+  }
+
+  formatTerm(
+    term: string
+  ): string {
+
+    switch (term) {
+      case 'TERM_1':
+        return 'Term 1';
+
+      case 'TERM_2':
+        return 'Term 2';
+
+      case 'TERM_3':
+        return 'Term 3';
+
+      default:
+        return term;
+    }
   }
 }

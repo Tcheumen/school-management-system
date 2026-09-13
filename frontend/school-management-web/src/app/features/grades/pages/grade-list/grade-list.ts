@@ -16,6 +16,10 @@ import {
   GradeService
 } from '../../services/grade.service';
 
+import {
+  AuthService
+} from '../../../../core/services/auth.service';
+
 @Component({
   selector: 'app-grade-list',
   standalone: true,
@@ -31,7 +35,8 @@ export class GradeList implements OnInit {
   errorMessage = signal('');
 
   constructor(
-    private gradeService: GradeService
+    private gradeService: GradeService,
+    private authService: AuthService
   ) { }
 
   ngOnInit(): void {
@@ -39,32 +44,46 @@ export class GradeList implements OnInit {
   }
 
   loadGrades(): void {
+
     this.loading.set(true);
     this.errorMessage.set('');
 
-    this.gradeService
-      .getAll()
-      .subscribe({
+    const role =
+      this.authService.getRole();
 
-        next: (grades) => {
-          this.grades.set(grades);
-          this.loading.set(false);
-        },
+    const request$ =
+      role === 'TEACHER'
+        ? this.gradeService
+          .getMineForTeacher()
+        : this.gradeService
+          .getAll();
 
-        error: (error) => {
-          console.error(
-            'Error loading grades:',
-            error
-          );
+    request$.subscribe({
 
-          this.errorMessage.set(
-            error?.error?.message ??
-            'Unable to load grades'
-          );
+      next: (grades) => {
 
-          this.loading.set(false);
-        }
-      });
+        this.grades.set(
+          grades
+        );
+
+        this.loading.set(false);
+      },
+
+      error: (error) => {
+
+        console.error(
+          'Error loading grades:',
+          error
+        );
+
+        this.errorMessage.set(
+          error?.error?.message ??
+          'Unable to load grades'
+        );
+
+        this.loading.set(false);
+      }
+    });
   }
 
   deleteGrade(
