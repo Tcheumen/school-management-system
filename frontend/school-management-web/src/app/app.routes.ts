@@ -460,7 +460,7 @@ export const routes: Routes = [
 
         data: {
             roles: ['TEACHER']
-        },
+        },  
 
         loadComponent: () =>
             import(
@@ -469,7 +469,87 @@ export const routes: Routes = [
                 m => m.MySchedule
             )
     },
-    
+
+    {
+        path: 'student/schedule',
+
+        canActivate: [
+            authGuard,
+            roleGuard
+        ],
+
+        data: {
+            roles: ['STUDENT']
+        },
+
+        loadComponent: () =>
+            import(
+                './features/students/pages/student-schedule/student-schedule'
+            ).then(
+                m => m.StudentSchedule
+            )
+    },
+
+    {
+        path: 'student/attendance',
+
+        canActivate: [
+            authGuard,
+            roleGuard
+        ],
+
+        data: {
+            roles: ['STUDENT']
+        },
+
+        loadComponent: () =>
+            import(
+                './features/students/pages/student-attendance/student-attendance'
+            ).then(
+                m => m.StudentAttendance
+            )
+    },
+
+    {
+        path: 'student/grades',
+
+        canActivate: [
+            authGuard,
+            roleGuard
+        ],
+
+        data: {
+            roles: ['STUDENT']
+        },
+
+        loadComponent: () =>
+            import(
+                './features/students/pages/student-grades/student-grades'
+            ).then(
+                m => m.StudentGrades
+            )
+    },
+
+    {
+        path: 'student/report-card',
+
+        canActivate: [
+            authGuard,
+            roleGuard
+        ],
+
+        data: {
+            roles: ['STUDENT']
+        },
+
+        loadComponent: () =>
+            import(
+                './features/students/pages/student-report-card/student-report-card'
+            ).then(
+                m => m.StudentReportCard
+            )
+    },
+
     {
         path: '**',
         redirectTo: 'login'

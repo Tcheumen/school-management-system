@@ -1,0 +1,105 @@
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+
+      <a routerLink="/student/dashboard" class="back-link">
+        ← Back to Dashboard
+      </a>
+
+      <h2>My Schedule</h2>
+
+      <p>
+        View your weekly class schedule
+      </p>
+
+    </div>
+
+  </div>
+
+  @if (errorMessage()) {
+
+  <div class="error-message">
+    {{ errorMessage() }}
+  </div>
+
+  }
+
+  @if (loading()) {
+
+  <div class="loading-message">
+    Loading schedule...
+  </div>
+
+  } @else {
+
+  <div class="schedule-grid">
+
+    @for (
+    day of days;
+    track day
+    ) {
+
+    <section class="day-card">
+
+      <h3>
+        {{ formatDay(day) }}
+      </h3>
+
+      <div class="day-content">
+
+        @for (
+        schedule of getSchedulesForDay(day);
+        track schedule.id
+        ) {
+
+        <div class="schedule-item">
+
+          <div class="schedule-time">
+
+            {{ formatTime(schedule.startTime) }}
+
+            <span>—</span>
+
+            {{ formatTime(schedule.endTime) }}
+
+          </div>
+
+          <div class="schedule-info">
+
+            <strong>
+              {{ schedule.subjectName }}
+            </strong>
+
+            <span>
+              {{ schedule.teacherFullName }}
+            </span>
+
+            <span>
+              {{ schedule.classroomName }}
+            </span>
+
+          </div>
+
+        </div>
+
+        } @empty {
+
+        <div class="empty-day">
+          No classes
+        </div>
+
+        }
+
+      </div>
+
+    </section>
+
+    }
+
+  </div>
+
+  }
+
+</div>

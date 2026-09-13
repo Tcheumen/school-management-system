@@ -5,14 +5,19 @@ import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-student-dashboard',
+  standalone: true,
   imports: [RouterLink],
   templateUrl: './student-dashboard.html',
-  styleUrl: './student-dashboard.scss',
+  styleUrl: './student-dashboard.scss'
 })
 export class StudentDashboard {
-  constructor(private authService: AuthService, private router: Router) { }
 
-  logout() {
+  constructor(
+    private authService: AuthService,
+    private router: Router
+  ) { }
+
+  logout(): void {
     this.authService.logout();
     this.router.navigate(['/login']);
   }

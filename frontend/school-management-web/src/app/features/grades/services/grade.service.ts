@@ -39,6 +39,12 @@ export class GradeService {
         );
     }
 
+    getMineForStudent(): Observable<Grade[]> {
+        return this.http.get<Grade[]>(
+            `${this.apiUrl}/me`
+        );
+    }
+    
     create(
         request: GradeRequest
     ): Observable<Grade> {

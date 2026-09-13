@@ -1,0 +1,114 @@
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+
+      <a routerLink="/student/dashboard" class="back-link">
+        ← Back to Dashboard
+      </a>
+
+      <h2>My Grades</h2>
+
+      <p>
+        View your grades by subject and term
+      </p>
+
+    </div>
+
+  </div>
+
+  @if (errorMessage()) {
+
+  <div class="error-message">
+    {{ errorMessage() }}
+  </div>
+
+  }
+
+  @if (loading()) {
+
+  <div class="loading-message">
+    Loading grades...
+  </div>
+
+  } @else {
+
+  <div class="table-wrapper">
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>Subject</th>
+          <th>Teacher</th>
+          <th>Term</th>
+          <th>Grade</th>
+          <th>Remarks</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        @for (
+        grade of grades();
+        track grade.id
+        ) {
+
+        <tr>
+
+          <td class="subject-name">
+            {{ grade.subjectName }}
+          </td>
+
+          <td>
+            {{ grade.teacherFullName }}
+          </td>
+
+          <td>
+            {{ formatTerm(grade.term) }}
+          </td>
+
+          <td>
+
+            <span class="grade-badge" [class]="
+                    getGradeClass(
+                      grade.value
+                    )
+                  ">
+
+              {{ grade.value }} / 20
+
+            </span>
+
+          </td>
+
+          <td>
+            {{ grade.remarks || '-' }}
+          </td>
+
+        </tr>
+
+        } @empty {
+
+        <tr>
+
+          <td colspan="5" class="empty-message">
+            No grades available.
+          </td>
+
+        </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+  }
+
+</div>

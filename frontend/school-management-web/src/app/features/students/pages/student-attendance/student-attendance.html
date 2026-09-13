@@ -1,0 +1,126 @@
+<p>student-attendance works!</p>
+<div class="page-container">
+
+  <div class="page-header">
+
+    <div>
+
+      <a routerLink="/student/dashboard" class="back-link">
+        ← Back to Dashboard
+      </a>
+
+      <h2>My Attendance</h2>
+
+      <p>
+        View your attendance history
+      </p>
+
+    </div>
+
+  </div>
+
+  @if (errorMessage()) {
+
+  <div class="error-message">
+    {{ errorMessage() }}
+  </div>
+
+  }
+
+  @if (loading()) {
+
+  <div class="loading-message">
+    Loading attendance...
+  </div>
+
+  } @else {
+
+  <div class="table-wrapper">
+
+    <table>
+
+      <thead>
+
+        <tr>
+          <th>Date</th>
+          <th>Subject</th>
+          <th>Teacher</th>
+          <th>Time</th>
+          <th>Status</th>
+          <th>Remarks</th>
+        </tr>
+
+      </thead>
+
+      <tbody>
+
+        @for (
+        attendance of attendances();
+        track attendance.id
+        ) {
+
+        <tr>
+
+          <td>
+            {{ attendance.attendanceDate }}
+          </td>
+
+          <td class="subject-name">
+            {{ attendance.subjectName }}
+          </td>
+
+          <td>
+            {{ attendance.teacherFullName }}
+          </td>
+
+          <td>
+            {{ attendance.startTime }}
+            -
+            {{ attendance.endTime }}
+          </td>
+
+          <td>
+
+            <span class="status-badge" [class]="
+                    getStatusClass(
+                      attendance.status
+                    )
+                  ">
+
+              {{
+                    formatStatus(
+                      attendance.status
+                    )
+                  }}
+
+            </span>
+
+          </td>
+
+          <td>
+            {{ attendance.remarks || '-' }}
+          </td>
+
+        </tr>
+
+        } @empty {
+
+        <tr>
+
+          <td colspan="6" class="empty-message">
+            No attendance records available.
+          </td>
+
+        </tr>
+
+        }
+
+      </tbody>
+
+    </table>
+
+  </div>
+
+  }
+
+</div>

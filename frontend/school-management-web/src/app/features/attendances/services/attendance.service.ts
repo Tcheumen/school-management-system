@@ -39,6 +39,12 @@ export class AttendanceService {
         );
     }
 
+    getMineForStudent(): Observable<Attendance[]> {
+        return this.http.get<Attendance[]>(
+            `${this.apiUrl}/me`
+        );
+    }
+
     create(
         request: AttendanceRequest
     ): Observable<Attendance> {
