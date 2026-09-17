@@ -1,76 +1,631 @@
-<div class="dashboard-container">
+<div class="dashboard-content">
 
-  <header class="dashboard-header">
+  <!-- HEADER -->
+  <section class="dashboard-heading">
+
     <div>
-      <h1>Admin Dashboard</h1>
-      <p>School Management System</p>
-    </div>
 
-    <button (click)="logout()">
-      Logout
-    </button>
-  </header>
-
-  <section class="dashboard-grid">
-
-    <a class="dashboard-card" routerLink="/students">
-      <h2>Students</h2>
-      <p>Manage students</p>
-    </a>
-
-    <a class="dashboard-card" routerLink="/teachers">
-      <h2>Teachers</h2>
-      <p>Manage teachers</p>
-    </a>
-
-    <a class="dashboard-card" routerLink="/subjects">
-      <h2>Subjects</h2>
-      <p>Manage subjects</p>
-    </a>
-
-    <a class="dashboard-card" routerLink="/classrooms">
-      <h2>Classrooms</h2>
-      <p>Manage classrooms</p>
-    </a>
-
-    <a class="dashboard-card" routerLink="/academic-years">
-      <h2>Academic Years</h2>
-      <p>Manage academic years</p>
-    </a>
-
-    <a class="dashboard-card" routerLink="/enrollments">
-      <h2>Enrollments</h2>
-      <p>Manage student enrollments</p>
-    </a>
-
-    <a class="dashboard-card" routerLink="/teacher-assignments">
-      <h2>Teacher Assignments</h2>
-      <p>Assign teachers to subjects and classes</p>
-    </a>
-
-    <a class="dashboard-card" routerLink="/schedules">
-      <h2>Schedules</h2>
-      <p>Manage class schedules</p>
-    </a>
-
-    <a class="dashboard-card" routerLink="/attendances">
-      <h2>Attendance</h2>
-      <p>Manage attendance</p>
-    </a>
-
-    <a class="dashboard-card" routerLink="/grades">
-      <h2>Grades</h2>
-      <p>Manage grades</p>
-    </a>
-
-    <a routerLink="/report-cards" class="dashboard-card">
-      <h2>Report Cards</h2>
+      <h1>
+        Welcome back, Admin! 👋
+      </h1>
 
       <p>
-        View student report cards
+        Here's what's happening in your school today.
       </p>
-    </a>
+
+    </div>
+
+    <button type="button" class="refresh-button" (click)="refreshDashboard()">
+      @if (loading) {
+      ↻ Refreshing...
+      } @else {
+      ↻ Refresh
+      }
+    </button>
 
   </section>
+
+
+  @if (errorMessage) {
+
+  <div class="dashboard-error">
+    {{ errorMessage }}
+  </div>
+
+  }
+
+
+  <!-- STATISTICS -->
+  <section class="stats-grid">
+
+    <div class="stat-card">
+
+      <div class="stat-icon purple">
+        👥
+      </div>
+
+      <div class="stat-info">
+
+        <strong>
+          {{ studentCount }}
+        </strong>
+
+        <span>Students</span>
+
+        <small>
+          Registered students
+        </small>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon blue">
+        👤
+      </div>
+
+      <div class="stat-info">
+
+        <strong>
+          {{ teacherCount }}
+        </strong>
+
+        <span>Teachers</span>
+
+        <small>
+          Registered teachers
+        </small>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon green">
+        📖
+      </div>
+
+      <div class="stat-info">
+
+        <strong>
+          {{ subjectCount }}
+        </strong>
+
+        <span>Subjects</span>
+
+        <small>
+          Available subjects
+        </small>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon orange">
+        🏫
+      </div>
+
+      <div class="stat-info">
+
+        <strong>
+          {{ classroomCount }}
+        </strong>
+
+        <span>Classrooms</span>
+
+        <small>
+          Available classrooms
+        </small>
+
+      </div>
+
+    </div>
+
+
+    <div class="stat-card">
+
+      <div class="stat-icon pink">
+        📅
+      </div>
+
+      <div class="stat-info">
+
+        <strong class="academic-year-value">
+          {{ activeAcademicYear }}
+        </strong>
+
+        <span>
+          Academic Year
+        </span>
+
+        <small class="positive">
+          Current
+        </small>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- QUICK ACTIONS -->
+  <section class="section">
+
+    <h2 class="section-title">
+      Quick Actions
+    </h2>
+
+    <div class="quick-actions">
+
+      <a routerLink="/students" class="quick-card">
+        <div class="quick-icon purple">
+          👥
+        </div>
+
+        <div class="quick-content">
+          <strong>Students</strong>
+          <span>Manage students</span>
+        </div>
+
+        <span class="arrow">›</span>
+      </a>
+
+
+      <a routerLink="/teachers" class="quick-card">
+        <div class="quick-icon blue">
+          👤
+        </div>
+
+        <div class="quick-content">
+          <strong>Teachers</strong>
+          <span>Manage teachers</span>
+        </div>
+
+        <span class="arrow">›</span>
+      </a>
+
+
+      <a routerLink="/subjects" class="quick-card">
+        <div class="quick-icon green">
+          📖
+        </div>
+
+        <div class="quick-content">
+          <strong>Subjects</strong>
+          <span>Manage subjects</span>
+        </div>
+
+        <span class="arrow">›</span>
+      </a>
+
+
+      <a routerLink="/classrooms" class="quick-card">
+        <div class="quick-icon orange">
+          🏫
+        </div>
+
+        <div class="quick-content">
+          <strong>Classrooms</strong>
+          <span>Manage classrooms</span>
+        </div>
+
+        <span class="arrow">›</span>
+      </a>
+
+
+      <a routerLink="/academic-years" class="quick-card">
+        <div class="quick-icon pink">
+          📅
+        </div>
+
+        <div class="quick-content">
+          <strong>Academic Years</strong>
+          <span>Manage academic years</span>
+        </div>
+
+        <span class="arrow">›</span>
+      </a>
+
+
+      <a routerLink="/enrollments" class="quick-card">
+        <div class="quick-icon cyan">
+          🗂
+        </div>
+
+        <div class="quick-content">
+          <strong>Enrollments</strong>
+          <span>
+            Manage student enrollments
+          </span>
+        </div>
+
+        <span class="arrow">›</span>
+      </a>
+
+
+      <a routerLink="/teacher-assignments" class="quick-card">
+        <div class="quick-icon violet">
+          🧑‍🏫
+        </div>
+
+        <div class="quick-content">
+          <strong>
+            Teacher Assignments
+          </strong>
+
+          <span>
+            Assign teachers to subjects
+          </span>
+        </div>
+
+        <span class="arrow">›</span>
+      </a>
+
+
+      <a routerLink="/schedules" class="quick-card">
+        <div class="quick-icon blue">
+          🗓
+        </div>
+
+        <div class="quick-content">
+          <strong>Schedules</strong>
+          <span>
+            Manage class schedules
+          </span>
+        </div>
+
+        <span class="arrow">›</span>
+      </a>
+
+
+      <a routerLink="/attendances" class="quick-card">
+        <div class="quick-icon green">
+          ☑
+        </div>
+
+        <div class="quick-content">
+          <strong>Attendance</strong>
+          <span>Manage attendance</span>
+        </div>
+
+        <span class="arrow">›</span>
+      </a>
+
+
+      <a routerLink="/grades" class="quick-card">
+        <div class="quick-icon red">
+          📊
+        </div>
+
+        <div class="quick-content">
+          <strong>Grades</strong>
+          <span>Manage grades</span>
+        </div>
+
+        <span class="arrow">›</span>
+      </a>
+
+
+      <a routerLink="/report-cards" class="quick-card">
+        <div class="quick-icon pink">
+          📈
+        </div>
+
+        <div class="quick-content">
+          <strong>Report Cards</strong>
+          <span>
+            View student report cards
+          </span>
+        </div>
+
+        <span class="arrow">›</span>
+      </a>
+
+    </div>
+
+  </section>
+
+
+  <!-- ANALYTICS -->
+  <section class="analytics-grid">
+
+
+    <!-- ENROLLMENTS -->
+    <div class="panel enrollment-panel">
+
+      <div class="panel-header">
+
+        <h3>
+          Enrollment Overview
+        </h3>
+
+        <select>
+          <option>
+            This Year
+          </option>
+        </select>
+
+      </div>
+
+
+      <div class="chart-container">
+
+        <div class="chart-y-axis">
+          <span>1500</span>
+          <span>1200</span>
+          <span>900</span>
+          <span>600</span>
+          <span>300</span>
+          <span>0</span>
+        </div>
+
+        <div class="chart">
+
+          <div class="chart-lines">
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
+          <svg viewBox="0 0 700 250" preserveAspectRatio="none">
+
+            <defs>
+
+              <linearGradient id="areaGradient" x1="0" x2="0" y1="0" y2="1">
+
+                <stop offset="0%" stop-color="#5966f7" stop-opacity=".30" />
+
+                <stop offset="100%" stop-color="#5966f7" stop-opacity=".03" />
+
+              </linearGradient>
+
+            </defs>
+
+            <path class="area" d="
+                M0,175
+                L60,150
+                L120,115
+                L180,150
+                L240,130
+                L300,155
+                L360,112
+                L420,150
+                L480,155
+                L540,130
+                L600,112
+                L650,98
+                L700,74
+                L700,250
+                L0,250
+                Z
+              " />
+
+            <polyline class="line" points="
+                0,175
+                60,150
+                120,115
+                180,150
+                240,130
+                300,155
+                360,112
+                420,150
+                480,155
+                540,130
+                600,112
+                650,98
+                700,74
+              " />
+
+          </svg>
+
+          <div class="months">
+            <span>Jan</span>
+            <span>Feb</span>
+            <span>Mar</span>
+            <span>Apr</span>
+            <span>May</span>
+            <span>Jun</span>
+            <span>Jul</span>
+            <span>Aug</span>
+            <span>Sep</span>
+            <span>Oct</span>
+            <span>Nov</span>
+            <span>Dec</span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ATTENDANCE -->
+    <div class="panel attendance-panel">
+
+      <div class="panel-header">
+        <h3>
+          Attendance Overview
+        </h3>
+      </div>
+
+      <div class="attendance-content">
+
+        <div class="donut" [style.background]="getDonutStyle()">
+
+          <div class="donut-center">
+
+            <strong>
+              {{ presentPercentage }}%
+            </strong>
+
+            <span>
+              Present
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <div class="attendance-legend">
+
+          <div>
+
+            <span class="dot present"></span>
+
+            <span>Present</span>
+
+            <strong>
+              {{ presentPercentage }}%
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span class="dot late"></span>
+
+            <span>Late</span>
+
+            <strong>
+              {{ latePercentage }}%
+            </strong>
+
+          </div>
+
+          <div>
+
+            <span class="dot absent"></span>
+
+            <span>Absent</span>
+
+            <strong>
+              {{ absentPercentage }}%
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- RECENT ACTIVITIES -->
+    <div class="panel activity-panel">
+
+      <div class="panel-header">
+
+        <h3>
+          Recent Activities
+        </h3>
+
+        <button type="button">
+          View All
+        </button>
+
+      </div>
+
+      <div class="activity-list">
+
+        <div class="activity">
+
+          <div class="activity-icon blue">
+            👥
+          </div>
+
+          <div class="activity-text">
+            <strong>
+              Student management
+            </strong>
+
+            <span>
+              Manage school students
+            </span>
+          </div>
+
+        </div>
+
+
+        <div class="activity">
+
+          <div class="activity-icon green">
+            ☑
+          </div>
+
+          <div class="activity-text">
+            <strong>
+              Attendance
+            </strong>
+
+            <span>
+              Attendance records
+            </span>
+          </div>
+
+        </div>
+
+
+        <div class="activity">
+
+          <div class="activity-icon orange">
+            📖
+          </div>
+
+          <div class="activity-text">
+            <strong>
+              Subjects
+            </strong>
+
+            <span>
+              Manage school subjects
+            </span>
+          </div>
+
+        </div>
+
+
+        <div class="activity">
+
+          <div class="activity-icon violet">
+            🗓
+          </div>
+
+          <div class="activity-text">
+            <strong>
+              Schedules
+            </strong>
+
+            <span>
+              Manage class schedules
+            </span>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <footer class="footer">
+    © 2026 School Management System.
+    All rights reserved.
+  </footer>
 
 </div>

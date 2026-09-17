@@ -1,0 +1,148 @@
+<div class="admin-layout" [class.sidebar-collapsed]="!sidebarOpen">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <div class="brand">
+
+      <div class="brand-logo">
+        🏫
+      </div>
+
+      <div class="brand-text">
+        <strong>School MS</strong>
+        <span>Admin</span>
+      </div>
+
+    </div>
+
+    <nav class="sidebar-nav">
+
+      <a routerLink="/admin/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <span class="nav-icon">⌂</span>
+        <span class="nav-label">Dashboard</span>
+      </a>
+
+      <a routerLink="/students" routerLinkActive="active">
+        <span class="nav-icon">👥</span>
+        <span class="nav-label">Students</span>
+      </a>
+
+      <a routerLink="/teachers" routerLinkActive="active">
+        <span class="nav-icon">👤</span>
+        <span class="nav-label">Teachers</span>
+      </a>
+
+      <a routerLink="/subjects" routerLinkActive="active">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">Subjects</span>
+      </a>
+
+      <a routerLink="/classrooms" routerLinkActive="active">
+        <span class="nav-icon">🏫</span>
+        <span class="nav-label">Classrooms</span>
+      </a>
+
+      <a routerLink="/academic-years" routerLinkActive="active">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">Academic Years</span>
+      </a>
+
+      <a routerLink="/enrollments" routerLinkActive="active">
+        <span class="nav-icon">🗂</span>
+        <span class="nav-label">Enrollments</span>
+      </a>
+
+      <a routerLink="/teacher-assignments" routerLinkActive="active">
+        <span class="nav-icon">🧑‍🏫</span>
+        <span class="nav-label">
+          Teacher Assignments
+        </span>
+      </a>
+
+      <a routerLink="/schedules" routerLinkActive="active">
+        <span class="nav-icon">🗓</span>
+        <span class="nav-label">Schedules</span>
+      </a>
+
+      <a routerLink="/attendances" routerLinkActive="active">
+        <span class="nav-icon">☑</span>
+        <span class="nav-label">Attendance</span>
+      </a>
+
+      <a routerLink="/grades" routerLinkActive="active">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Grades</span>
+      </a>
+
+      <a routerLink="/report-cards" routerLinkActive="active">
+        <span class="nav-icon">📈</span>
+        <span class="nav-label">Reports</span>
+      </a>
+
+    </nav>
+
+    <!-- PROFILE -->
+    <div class="sidebar-profile">
+
+      <div class="profile-avatar">
+        AD
+      </div>
+
+      <div class="profile-info">
+        <strong>Admin User</strong>
+        <span>{{ adminEmail }}</span>
+      </div>
+
+    </div>
+
+  </aside>
+
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+
+      <button type="button" class="menu-button" (click)="toggleSidebar()">
+        ☰
+      </button>
+
+      <div class="topbar-right">
+
+        <div class="search-box">
+
+          <span class="search-icon">
+            ⌕
+          </span>
+
+          <input type="text" placeholder="Search anything..." />
+
+        </div>
+
+        <button type="button" class="notification-button">
+          🔔
+
+          <span class="notification-badge">
+            3
+          </span>
+        </button>
+
+        <button type="button" class="logout-button" (click)="logout()">
+          <span>↪</span>
+          Logout
+        </button>
+
+      </div>
+
+    </header>
+
+    <!-- PAGES ADMIN -->
+    <div class="page-content">
+      <router-outlet />
+    </div>
+
+  </main>
+
+</div>

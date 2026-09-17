@@ -8,4 +8,6 @@ import com.school.management.teacher.entity.Teacher;
 public interface TeacherRepository extends JpaRepository<Teacher, Long> {
 
     Optional<Teacher> findByUserEmail(String email);
+
+    Optional<Teacher> findByEmailIgnoreCase(String email);
 }

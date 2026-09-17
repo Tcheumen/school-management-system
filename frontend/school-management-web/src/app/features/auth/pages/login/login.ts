@@ -1,21 +1,25 @@
 import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 
 import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
   selector: 'app-login',
-  imports: [FormsModule, CommonModule],
+  standalone: true,
+  imports: [
+    FormsModule,
+    RouterLink
+  ],
   templateUrl: './login.html',
-  styleUrl: './login.scss',
+  styleUrl: './login.scss'
 })
 export class Login {
 
   email = '';
   password = '';
   errorMessage = '';
+  loading = false;
 
   constructor(
     private authService: AuthService,
@@ -23,13 +27,24 @@ export class Login {
   ) { }
 
   login(): void {
+
     this.errorMessage = '';
+
+    if (!this.email || !this.password) {
+      this.errorMessage =
+        'Email and password are required';
+      return;
+    }
+
+    this.loading = true;
 
     this.authService.login({
       email: this.email,
       password: this.password
     }).subscribe({
-      next: response => {
+
+      next: (response) => {
+
         this.authService.saveAuth(response);
 
         if (response.role === 'ADMIN') {
@@ -40,8 +55,19 @@ export class Login {
           this.router.navigate(['/student/dashboard']);
         }
       },
-      error: () => {
-        this.errorMessage = 'Invalid email or password';
+
+      error: (error) => {
+
+        console.error(
+          'Login error:',
+          error
+        );
+
+        this.errorMessage =
+          error?.error?.message ??
+          'Invalid email or password';
+
+        this.loading = false;
       }
     });
   }

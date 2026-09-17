@@ -12,15 +12,14 @@ import com.school.management.shared.user.User;
 import com.school.management.shared.user.UserRepository;
 
 import com.school.management.student.entity.Student;
-import com.school.management.student.exception.StudentNotFoundException;
 import com.school.management.student.repository.StudentRepository;
 
 import com.school.management.teacher.entity.Teacher;
-import com.school.management.teacher.exception.TeacherNotFoundException;
 import com.school.management.teacher.repository.TeacherRepository;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class AuthService {
@@ -37,6 +36,7 @@ public class AuthService {
             JwtService jwtService,
             StudentRepository studentRepository,
             TeacherRepository teacherRepository) {
+
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtService = jwtService;
@@ -44,25 +44,42 @@ public class AuthService {
         this.teacherRepository = teacherRepository;
     }
 
-    public AuthResponse register(RegisterRequest request) {
+    @Transactional
+    public AuthResponse register(
+            RegisterRequest request) {
 
-        if (userRepository.existsByEmail(request.getEmail())) {
-            throw new BusinessException("Email already exists");
+        if (userRepository.existsByEmail(
+                request.getEmail())) {
+
+            throw new BusinessException(
+                    "Email already exists");
         }
 
         validateRegistrationRequest(request);
 
         User user = new User();
-        user.setFullName(request.getFullName());
-        user.setEmail(request.getEmail());
-        user.setPassword(passwordEncoder.encode(request.getPassword()));
-        user.setRole(request.getRole());
+
+        user.setFullName(
+                request.getFullName());
+
+        user.setEmail(
+                request.getEmail());
+
+        user.setPassword(
+                passwordEncoder.encode(
+                        request.getPassword()));
+
+        user.setRole(
+                request.getRole());
 
         User savedUser = userRepository.save(user);
 
-        linkUserToDomainProfile(savedUser, request);
+        linkUserToDomainProfile(
+                savedUser,
+                request);
 
-        String token = jwtService.generateToken(savedUser);
+        String token = jwtService.generateToken(
+                savedUser);
 
         return new AuthResponse(
                 token,
@@ -70,15 +87,22 @@ public class AuthService {
                 savedUser.getRole());
     }
 
-    public AuthResponse login(LoginRequest request) {
+    public AuthResponse login(
+            LoginRequest request) {
 
-        User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new BusinessException("Invalid email or password"));
+        User user = userRepository
+                .findByEmail(
+                        request.getEmail())
+                .orElseThrow(
+                        () -> new BusinessException(
+                                "Invalid email or password"));
 
         if (!passwordEncoder.matches(
                 request.getPassword(),
                 user.getPassword())) {
-            throw new BusinessException("Invalid email or password");
+
+            throw new BusinessException(
+                    "Invalid email or password");
         }
 
         String token = jwtService.generateToken(user);
@@ -89,10 +113,14 @@ public class AuthService {
                 user.getRole());
     }
 
-    public UserResponse getCurrentUser(String email) {
+    public UserResponse getCurrentUser(
+            String email) {
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new BusinessException("User not found"));
+        User user = userRepository
+                .findByEmail(email)
+                .orElseThrow(
+                        () -> new BusinessException(
+                                "User not found"));
 
         return new UserResponse(
                 user.getId(),
@@ -101,18 +129,13 @@ public class AuthService {
                 user.getRole());
     }
 
-    private void validateRegistrationRequest(RegisterRequest request) {
+    private void validateRegistrationRequest(
+            RegisterRequest request) {
 
-        if (request.getRole() == Role.STUDENT
-                && request.getStudentId() == null) {
-            throw new BusinessException(
-                    "Student id is required for STUDENT role");
-        }
+        if (request.getRole() == Role.ADMIN) {
 
-        if (request.getRole() == Role.TEACHER
-                && request.getTeacherId() == null) {
             throw new BusinessException(
-                    "Teacher id is required for TEACHER role");
+                    "Admin accounts cannot be created through public registration");
         }
     }
 
@@ -122,41 +145,61 @@ public class AuthService {
 
         switch (request.getRole()) {
 
-            case STUDENT -> linkStudent(savedUser, request.getStudentId());
+            case STUDENT ->
+                linkStudent(
+                        savedUser,
+                        request.getEmail());
 
-            case TEACHER -> linkTeacher(savedUser, request.getTeacherId());
+            case TEACHER ->
+                linkTeacher(
+                        savedUser,
+                        request.getEmail());
 
             case ADMIN -> {
-                // Admin does not require Student or Teacher profile.
+                // Already blocked by validation.
             }
         }
     }
 
-    private void linkStudent(User user, Long studentId) {
+    private void linkStudent(
+            User user,
+            String email) {
 
-        Student student = studentRepository.findById(studentId)
-                .orElseThrow(() -> new StudentNotFoundException(studentId));
+        Student student = studentRepository
+                .findByEmailIgnoreCase(email)
+                .orElseThrow(
+                        () -> new BusinessException(
+                                "No student profile found with this email"));
 
         if (student.getUser() != null) {
+
             throw new BusinessException(
                     "Student already has a user account");
         }
 
         student.setUser(user);
+
         studentRepository.save(student);
     }
 
-    private void linkTeacher(User user, Long teacherId) {
+    private void linkTeacher(
+            User user,
+            String email) {
 
-        Teacher teacher = teacherRepository.findById(teacherId)
-                .orElseThrow(() -> new TeacherNotFoundException(teacherId));
+        Teacher teacher = teacherRepository
+                .findByEmailIgnoreCase(email)
+                .orElseThrow(
+                        () -> new BusinessException(
+                                "No teacher profile found with this email"));
 
         if (teacher.getUser() != null) {
+
             throw new BusinessException(
                     "Teacher already has a user account");
         }
 
         teacher.setUser(user);
+
         teacherRepository.save(teacher);
     }
 }
