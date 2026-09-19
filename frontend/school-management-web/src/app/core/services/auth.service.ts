@@ -5,6 +5,7 @@ import { Observable } from 'rxjs';
 import { LoginRequest } from '../models/login-request';
 import { RegisterRequest } from '../models/register-request';
 import { AuthResponse } from '../models/auth-response';
+import { UserResponse } from '../models/user-response';
 
 @Injectable({
     providedIn: 'root'
@@ -98,5 +99,11 @@ export class AuthService {
             default:
                 return '/login';
         }
+    }
+
+    getCurrentUser(): Observable<UserResponse> {
+        return this.http.get<UserResponse>(
+            `${this.apiUrl}/me`
+        );
     }
 }

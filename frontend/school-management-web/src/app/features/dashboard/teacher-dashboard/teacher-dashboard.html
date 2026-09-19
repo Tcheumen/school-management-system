@@ -1,237 +1,387 @@
-<div class="dashboard">
+<div class="teacher-dashboard">
 
-  <div class="dashboard-header">
+  <!-- =========================================
+       WELCOME + QUICK ACTIONS
+  ========================================== -->
 
-    <div>
-      <h1>Teacher Dashboard</h1>
+  <section class="welcome-section">
+
+    <div class="welcome-text">
+
+      <h1>
+        Welcome Back, <span>{{ teacherFirstName }}</span>
+      </h1>
 
       <p>
-        School Management System
+        Here's what's happening with your classes today.
       </p>
+
     </div>
 
-    <button type="button" class="logout-btn" (click)="logout()">
-      Logout
-    </button>
 
-  </div>
+    <div class="quick-actions">
 
-  @if (errorMessage()) {
+      <!-- MARK ATTENDANCE -->
+      <a routerLink="/attendances/new" class="quick-action-card">
 
-  <div class="error-message">
-    {{ errorMessage() }}
+        <span class="quick-icon">
+          ✓
+        </span>
+
+        <span>
+          Mark Attendance
+        </span>
+
+      </a>
+
+
+      <!-- UPLOAD MATERIAL -->
+      <button type="button" class="quick-action-card" (click)="uploadMaterial()">
+
+        <span class="quick-icon">
+          ☁
+        </span>
+
+        <span>
+          Upload Material
+        </span>
+
+      </button>
+
+    </div>
+
+  </section>
+
+
+  <!-- =========================================
+       LOADING / ERROR
+  ========================================== -->
+
+  @if (loading) {
+
+  <div class="dashboard-message">
+    Loading dashboard...
   </div>
 
   }
 
-  <div class="stats-grid">
 
-    <div class="stat-card">
+  @if (errorMessage) {
 
-      <span>
-        My Assignments
-      </span>
-
-      <strong>
-        {{ assignments().length }}
-      </strong>
-
-    </div>
-
-    <div class="stat-card">
-
-      <span>
-        Scheduled Classes
-      </span>
-
-      <strong>
-        {{ schedules().length }}
-      </strong>
-
-    </div>
-
+  <div class="dashboard-message error">
+    {{ errorMessage }}
   </div>
 
-  <div class="menu-grid">
+  }
 
-    <a routerLink="/teacher/assignments" class="menu-card">
-      <h2>My Assignments</h2>
 
-      <p>
-        View subjects and classrooms assigned to you
-      </p>
+  <!-- =========================================
+       STATISTICS
+  ========================================== -->
+
+  <section class="stats-grid">
+
+    <!-- CLASSES -->
+    <a routerLink="/teacher/assignments" class="stat-card">
+
+      <div class="stat-icon purple">
+        📖
+      </div>
+
+      <div class="stat-content">
+
+        <span>
+          Total Classes
+        </span>
+
+        <strong>
+          {{ totalClasses }}
+        </strong>
+
+        <small>
+          Assigned classes
+        </small>
+
+      </div>
+
     </a>
 
-    <a routerLink="/teacher/schedule" class="menu-card">
-      <h2>My Schedule</h2>
 
-      <p>
-        View your teaching schedule
-      </p>
-    </a>
+    <!-- STUDENTS -->
+    <div class="stat-card">
 
-    <a routerLink="/attendances" class="menu-card">
-      <h2>Attendance</h2>
+      <div class="stat-icon blue">
+        🎓
+      </div>
 
-      <p>
-        Manage student attendance
-      </p>
-    </a>
+      <div class="stat-content">
 
-    <a routerLink="/grades" class="menu-card">
-      <h2>Grades</h2>
+        <span>
+          Total Students
+        </span>
 
-      <p>
-        Manage student grades
-      </p>
-    </a>
+        <strong>
+          {{ totalStudents }}
+        </strong>
 
-    <a routerLink="/report-cards" class="menu-card">
-      <h2>Report Cards</h2>
+        <small>
+          Your students
+        </small>
 
-      <p>
-        View student report cards
-      </p>
-    </a>
-
-  </div>
-
-  <section class="section">
-
-    <div class="section-header">
-      <h2>My Assignments</h2>
-    </div>
-
-    @if (loading()) {
-
-    <div class="loading">
-      Loading dashboard...
-    </div>
-
-    } @else {
-
-    <div class="table-wrapper">
-
-      <table>
-
-        <thead>
-          <tr>
-            <th>Subject</th>
-            <th>Classroom</th>
-            <th>Academic Year</th>
-          </tr>
-        </thead>
-
-        <tbody>
-
-          @for (
-          assignment of assignments();
-          track assignment.id
-          ) {
-
-          <tr>
-
-            <td>
-              {{ assignment.subjectName }}
-            </td>
-
-            <td>
-              {{ assignment.classroomName }}
-            </td>
-
-            <td>
-              {{ assignment.academicYearName }}
-            </td>
-
-          </tr>
-
-          } @empty {
-
-          <tr>
-
-            <td colspan="3" class="empty">
-              No assignments found.
-            </td>
-
-          </tr>
-
-          }
-
-        </tbody>
-
-      </table>
+      </div>
 
     </div>
 
-    }
+
+    <!-- ASSIGNMENTS -->
+    <a routerLink="/teacher/assignments" class="stat-card">
+
+      <div class="stat-icon orange">
+        📋
+      </div>
+
+      <div class="stat-content">
+
+        <span>
+          Assignments
+        </span>
+
+        <strong>
+          {{ totalAssignments }}
+        </strong>
+
+        <small>
+          Teaching assignments
+        </small>
+
+      </div>
+
+    </a>
+
+
+    <!-- ATTENDANCE -->
+    <a routerLink="/attendances" class="stat-card">
+
+      <div class="stat-icon red">
+        📅
+      </div>
+
+      <div class="stat-content">
+
+        <span>
+          Attendance
+        </span>
+
+        <strong>
+          {{ totalAttendances }}
+        </strong>
+
+        <small>
+          Attendance records
+        </small>
+
+      </div>
+
+    </a>
 
   </section>
 
-  <section class="section">
 
-    <div class="section-header">
-      <h2>My Schedule</h2>
-    </div>
+  <!-- =========================================
+       DASHBOARD DETAILS
+  ========================================== -->
 
-    <div class="table-wrapper">
+  <section class="dashboard-grid">
 
-      <table>
 
-        <thead>
-          <tr>
-            <th>Day</th>
-            <th>Time</th>
-            <th>Subject</th>
-            <th>Classroom</th>
-          </tr>
-        </thead>
+    <!-- =========================================
+         RECENT GRADES
+    ========================================== -->
 
-        <tbody>
+    <article class="panel">
 
-          @for (
-          schedule of schedules();
-          track schedule.id
-          ) {
+      <div class="panel-header">
 
-          <tr>
+        <div>
+          <h2>Recent Grades</h2>
 
-            <td>
-              {{ formatDay(schedule.dayOfWeek) }}
-            </td>
+          <p>
+            Latest grades recorded for your students.
+          </p>
+        </div>
 
-            <td>
+        <a routerLink="/grades">
+          View All
+        </a>
+
+      </div>
+
+
+      <div class="activity-list">
+
+        @if (!loading && recentGrades.length === 0) {
+
+        <div class="empty-state">
+
+          <div class="empty-icon">
+            📊
+          </div>
+
+          <strong>
+            No grades available
+          </strong>
+
+          <span>
+            Recent grades will appear here.
+          </span>
+
+        </div>
+
+        }
+
+
+        @for (
+        grade of recentGrades;
+        track grade.id
+        ) {
+
+        <div class="activity-item">
+
+          <div class="student-avatar">
+
+            {{
+                grade.studentFullName
+                  .charAt(0)
+                  .toUpperCase()
+              }}
+
+          </div>
+
+
+          <div class="activity-info">
+
+            <strong>
+              {{ grade.studentFullName }}
+            </strong>
+
+            <span>
+              {{ grade.subjectName }}
+              ·
+              {{ grade.term }}
+            </span>
+
+          </div>
+
+
+          <div class="grade-value">
+            {{ grade.value }}
+          </div>
+
+        </div>
+
+        }
+
+      </div>
+
+    </article>
+
+
+    <!-- =========================================
+         UPCOMING CLASSES
+    ========================================== -->
+
+    <article class="panel">
+
+      <div class="panel-header">
+
+        <div>
+
+          <h2>
+            Upcoming Classes
+          </h2>
+
+          <p>
+            Your scheduled classes.
+          </p>
+
+        </div>
+
+        <a routerLink="/teacher/schedule">
+          View Calendar
+        </a>
+
+      </div>
+
+
+      <div class="classes-list">
+
+        @if (!loading && upcomingClasses.length === 0) {
+
+        <div class="empty-state">
+
+          <div class="empty-icon">
+            🗓
+          </div>
+
+          <strong>
+            No scheduled classes
+          </strong>
+
+          <span>
+            Your upcoming classes will appear here.
+          </span>
+
+        </div>
+
+        }
+
+
+        @for (
+        schedule of upcomingClasses;
+        track schedule.id
+        ) {
+
+        <div class="class-row">
+
+          <div class="class-time">
+
+            <strong>
               {{ formatTime(schedule.startTime) }}
-              -
+            </strong>
+
+            <span>
               {{ formatTime(schedule.endTime) }}
-            </td>
+            </span>
 
-            <td>
+          </div>
+
+
+          <div class="class-info">
+
+            <strong>
               {{ schedule.subjectName }}
-            </td>
+            </strong>
 
-            <td>
+            <span>
               {{ schedule.classroomName }}
-            </td>
+              ·
+              {{ formatDay(schedule.dayOfWeek) }}
+            </span>
 
-          </tr>
+          </div>
 
-          } @empty {
 
-          <tr>
+          <a routerLink="/teacher/schedule" class="view-class">
+            View
+          </a>
 
-            <td colspan="4" class="empty">
-              No scheduled classes found.
-            </td>
+        </div>
 
-          </tr>
+        }
 
-          }
+      </div>
 
-        </tbody>
-
-      </table>
-
-    </div>
+    </article>
 
   </section>
 

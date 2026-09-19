@@ -1,8 +1,11 @@
 <div class="admin-layout" [class.sidebar-collapsed]="!sidebarOpen">
 
-  <!-- SIDEBAR -->
+  <!-- =========================================
+       SIDEBAR
+  ========================================== -->
   <aside class="sidebar">
 
+    <!-- BRAND -->
     <div class="brand">
 
       <div class="brand-logo">
@@ -16,6 +19,8 @@
 
     </div>
 
+
+    <!-- NAVIGATION -->
     <nav class="sidebar-nav">
 
       <a routerLink="/admin/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
@@ -23,35 +28,42 @@
         <span class="nav-label">Dashboard</span>
       </a>
 
+
       <a routerLink="/students" routerLinkActive="active">
         <span class="nav-icon">👥</span>
         <span class="nav-label">Students</span>
       </a>
+
 
       <a routerLink="/teachers" routerLinkActive="active">
         <span class="nav-icon">👤</span>
         <span class="nav-label">Teachers</span>
       </a>
 
+
       <a routerLink="/subjects" routerLinkActive="active">
         <span class="nav-icon">📖</span>
         <span class="nav-label">Subjects</span>
       </a>
+
 
       <a routerLink="/classrooms" routerLinkActive="active">
         <span class="nav-icon">🏫</span>
         <span class="nav-label">Classrooms</span>
       </a>
 
+
       <a routerLink="/academic-years" routerLinkActive="active">
         <span class="nav-icon">📅</span>
         <span class="nav-label">Academic Years</span>
       </a>
 
+
       <a routerLink="/enrollments" routerLinkActive="active">
         <span class="nav-icon">🗂</span>
         <span class="nav-label">Enrollments</span>
       </a>
+
 
       <a routerLink="/teacher-assignments" routerLinkActive="active">
         <span class="nav-icon">🧑‍🏫</span>
@@ -60,20 +72,24 @@
         </span>
       </a>
 
+
       <a routerLink="/schedules" routerLinkActive="active">
         <span class="nav-icon">🗓</span>
         <span class="nav-label">Schedules</span>
       </a>
+
 
       <a routerLink="/attendances" routerLinkActive="active">
         <span class="nav-icon">☑</span>
         <span class="nav-label">Attendance</span>
       </a>
 
+
       <a routerLink="/grades" routerLinkActive="active">
         <span class="nav-icon">📊</span>
         <span class="nav-label">Grades</span>
       </a>
+
 
       <a routerLink="/report-cards" routerLinkActive="active">
         <span class="nav-icon">📈</span>
@@ -82,16 +98,28 @@
 
     </nav>
 
-    <!-- PROFILE -->
+
+    <!-- SIDEBAR PROFILE -->
     <div class="sidebar-profile">
 
       <div class="profile-avatar">
-        AD
+        {{ adminInitial }}
       </div>
 
       <div class="profile-info">
-        <strong>Admin User</strong>
-        <span>{{ adminEmail }}</span>
+
+        <strong>
+          {{ adminName || 'Admin' }}
+        </strong>
+
+        <span>
+          {{ adminEmail }}
+        </span>
+
+        <small>
+          {{ adminRole || 'ADMIN' }}
+        </small>
+
       </div>
 
     </div>
@@ -99,46 +127,246 @@
   </aside>
 
 
-  <!-- MAIN -->
+  <!-- =========================================
+       MAIN
+  ========================================== -->
   <main class="main-content">
 
-    <!-- TOPBAR -->
+
+    <!-- =========================================
+         TOPBAR
+    ========================================== -->
     <header class="topbar">
 
-      <button type="button" class="menu-button" (click)="toggleSidebar()">
-        ☰
-      </button>
 
-      <div class="topbar-right">
+      <!-- LEFT -->
+      <div class="topbar-left">
 
-        <div class="search-box">
+        <!-- SIDEBAR BUTTON -->
+        <button type="button" class="menu-button" (click)="toggleSidebar()" aria-label="Toggle sidebar">
+          ☰
+        </button>
+
+
+        <!-- SEARCH -->
+        <form class="admin-search" (ngSubmit)="search()">
 
           <span class="search-icon">
             ⌕
           </span>
 
-          <input type="text" placeholder="Search anything..." />
+          <input type="text" name="search" [(ngModel)]="searchTerm" placeholder="Search students, teachers, classes..."
+            autocomplete="off" />
+
+
+          @if (searchTerm) {
+
+          <button type="button" class="clear-search" (click)="clearSearch()" aria-label="Clear search">
+            ×
+          </button>
+
+          }
+
+        </form>
+
+      </div>
+
+
+      <!-- =========================================
+           RIGHT ACTIONS
+      ========================================== -->
+
+      <div class="top-actions">
+
+
+        <!-- NOTIFICATIONS -->
+        <div class="action-wrapper">
+
+          <button type="button" class="circle-action" (click)="toggleNotifications()" aria-label="Notifications">
+            🔔
+
+            @if (notificationCount > 0) {
+            <span class="notification-dot"></span>
+            }
+
+          </button>
+
+
+          @if (notificationOpen) {
+
+          <div class="top-dropdown">
+
+            <div class="dropdown-title">
+
+              <strong>
+                Notifications
+              </strong>
+
+              <span>
+                {{ notificationCount }}
+              </span>
+
+            </div>
+
+
+            <div class="dropdown-placeholder">
+              Notifications will appear here.
+            </div>
+
+          </div>
+
+          }
 
         </div>
 
-        <button type="button" class="notification-button">
-          🔔
 
-          <span class="notification-badge">
-            3
-          </span>
+        <!-- MESSAGES -->
+        <div class="action-wrapper">
+
+          <button type="button" class="circle-action" (click)="toggleMessages()" aria-label="Messages">
+            💬
+
+            @if (messageCount > 0) {
+            <span class="notification-dot"></span>
+            }
+
+          </button>
+
+
+          @if (messageOpen) {
+
+          <div class="top-dropdown">
+
+            <div class="dropdown-title">
+
+              <strong>
+                Messages
+              </strong>
+
+              <span>
+                {{ messageCount }}
+              </span>
+
+            </div>
+
+
+            <div class="dropdown-placeholder">
+              Messages will appear here.
+            </div>
+
+          </div>
+
+          }
+
+        </div>
+
+
+        <!-- SETTINGS -->
+        <button type="button" class="circle-action" (click)="openSettings()" aria-label="Settings">
+          ⚙
         </button>
 
-        <button type="button" class="logout-button" (click)="logout()">
-          <span>↪</span>
-          Logout
-        </button>
+
+        <div class="top-separator"></div>
+
+
+        <!-- =========================================
+             ADMIN PROFILE
+        ========================================== -->
+
+        <div class="profile-wrapper">
+
+          <button type="button" class="admin-profile" (click)="toggleProfile()">
+
+            <div class="admin-avatar">
+              {{ adminInitial }}
+            </div>
+
+
+            <div class="admin-identity">
+
+              <strong>
+                {{ adminName || 'Admin' }}
+              </strong>
+
+              <span>
+                {{ adminRole || 'ADMIN' }}
+              </span>
+
+            </div>
+
+
+            <span class="profile-chevron">
+              ⌄
+            </span>
+
+          </button>
+
+
+          @if (profileOpen) {
+
+          <div class="profile-dropdown">
+
+
+            <!-- USER -->
+            <div class="profile-dropdown-user">
+
+              <div class="profile-large-avatar">
+                {{ adminInitial }}
+              </div>
+
+
+              <div class="profile-dropdown-identity">
+
+                <strong>
+                  {{ adminName || 'Admin' }}
+                </strong>
+
+                <span>
+                  {{ adminEmail }}
+                </span>
+
+                <small>
+                  {{ adminRole || 'ADMIN' }}
+                </small>
+
+              </div>
+
+            </div>
+
+
+            <!-- PROFILE -->
+            <button type="button" (click)="openProfile()">
+              👤 My Profile
+            </button>
+
+
+            <!-- SETTINGS -->
+            <button type="button" (click)="openSettings()">
+              ⚙ Settings
+            </button>
+
+
+            <!-- LOGOUT -->
+            <button type="button" class="logout-option" (click)="logout()">
+              ↪ Logout
+            </button>
+
+          </div>
+
+          }
+
+        </div>
 
       </div>
 
     </header>
 
-    <!-- PAGES ADMIN -->
+
+    <!-- =========================================
+         ADMIN PAGES
+    ========================================== -->
+
     <div class="page-content">
       <router-outlet />
     </div>

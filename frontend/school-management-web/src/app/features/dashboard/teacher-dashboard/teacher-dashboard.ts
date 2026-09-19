@@ -1,11 +1,9 @@
 import {
   Component,
-  OnInit,
-  signal
+  OnInit
 } from '@angular/core';
 
 import {
-  Router,
   RouterLink
 } from '@angular/router';
 
@@ -26,191 +24,481 @@ import {
 } from '../../schedules/services/class-schedule.service';
 
 import {
+  Enrollment
+} from '../../enrollments/models/enrollment.model';
+
+import {
+  EnrollmentService
+} from '../../enrollments/services/enrollment.service';
+
+import {
+  Attendance
+} from '../../attendances/models/attendance.model';
+
+import {
+  AttendanceService
+} from '../../attendances/services/attendance.service';
+
+import {
+  Grade
+} from '../../grades/models/grade.model';
+
+import {
+  GradeService
+} from '../../grades/services/grade.service';
+
+import {
   AuthService
 } from '../../../core/services/auth.service';
 
+
 @Component({
   selector: 'app-teacher-dashboard',
+
   standalone: true,
-  imports: [RouterLink],
+
+  imports: [
+    RouterLink
+  ],
+
   templateUrl: './teacher-dashboard.html',
+
   styleUrl: './teacher-dashboard.scss'
 })
 export class TeacherDashboard implements OnInit {
 
-  assignments =
-    signal<TeacherAssignment[]>([]);
+  /* ========================================
+     DATA
+  ======================================== */
 
-  schedules =
-    signal<ClassSchedule[]>([]);
+  assignments: TeacherAssignment[] = [];
 
-  loading = signal(false);
+  schedules: ClassSchedule[] = [];
 
-  errorMessage = signal('');
+  enrollments: Enrollment[] = [];
+
+  attendances: Attendance[] = [];
+
+  grades: Grade[] = [];
+
+
+  /* ========================================
+     STATE
+  ======================================== */
+
+  loading = false;
+
+  errorMessage = '';
+
+  showUploadMessage = false;
+
+  private pendingRequests = 0;
+
+
+  /* ========================================
+     CURRENT TEACHER
+  ======================================== */
+
+  teacherName = '';
+
 
   constructor(
     private teacherAssignmentService:
       TeacherAssignmentService,
+
     private classScheduleService:
       ClassScheduleService,
+
+    private enrollmentService:
+      EnrollmentService,
+
+    private attendanceService:
+      AttendanceService,
+
+    private gradeService:
+      GradeService,
+
     private authService:
-      AuthService,
-    private router:
-      Router
+      AuthService
   ) { }
 
+
+  /* ========================================
+     INIT
+  ======================================== */
+
   ngOnInit(): void {
+
+    this.loadCurrentUser();
+
     this.loadDashboard();
   }
 
+
+  /* ========================================
+     CURRENT USER
+
+     Seulement nécessaire ici pour afficher :
+     "Welcome Back, Daniela"
+
+     Le profil complet est géré par TeacherLayout.
+  ======================================== */
+
+  private loadCurrentUser(): void {
+
+    this.authService
+      .getCurrentUser()
+      .subscribe({
+
+        next: user => {
+
+          this.teacherName =
+            user.fullName;
+        },
+
+        error: error => {
+
+          console.error(
+            'Error loading current teacher:',
+            error
+          );
+
+          this.teacherName =
+            'Teacher';
+        }
+
+      });
+  }
+
+
+  /* ========================================
+     LOAD DASHBOARD
+  ======================================== */
+
   loadDashboard(): void {
 
-    this.loading.set(true);
-    this.errorMessage.set('');
+    this.errorMessage = '';
 
-    let assignmentsLoaded = false;
-    let schedulesLoaded = false;
+    this.pendingRequests = 5;
 
-    const checkComplete = () => {
-      if (
-        assignmentsLoaded &&
-        schedulesLoaded
-      ) {
-        this.loading.set(false);
-      }
-    };
+    this.loading = true;
+
+
+    /* ASSIGNMENTS */
 
     this.teacherAssignmentService
       .getMine()
       .subscribe({
 
-        next: (assignments) => {
+        next: assignments => {
 
-          this.assignments.set(
-            assignments
-          );
+          this.assignments =
+            assignments;
 
-          assignmentsLoaded = true;
-
-          checkComplete();
+          this.requestFinished();
         },
 
-        error: (error) => {
+        error: error => {
 
-          console.error(
-            'Error loading assignments:',
+          this.handleError(
+            'assignments',
             error
           );
-
-          this.errorMessage.set(
-            error?.error?.message ??
-            'Unable to load teacher assignments'
-          );
-
-          assignmentsLoaded = true;
-
-          checkComplete();
         }
+
       });
+
+
+    /* SCHEDULE */
 
     this.classScheduleService
       .getMineForTeacher()
       .subscribe({
 
-        next: (schedules) => {
+        next: schedules => {
 
-          this.schedules.set(
-            this.sortSchedules(
-              schedules
-            )
-          );
+          this.schedules =
+            [...schedules].sort(
+              (a, b) =>
+                a.startTime.localeCompare(
+                  b.startTime
+                )
+            );
 
-          schedulesLoaded = true;
-
-          checkComplete();
+          this.requestFinished();
         },
 
-        error: (error) => {
+        error: error => {
 
-          console.error(
-            'Error loading schedules:',
+          this.handleError(
+            'schedule',
             error
           );
-
-          this.errorMessage.set(
-            error?.error?.message ??
-            'Unable to load teacher schedule'
-          );
-
-          schedulesLoaded = true;
-
-          checkComplete();
         }
+
+      });
+
+
+    /* STUDENTS */
+
+    this.enrollmentService
+      .getMineForTeacher()
+      .subscribe({
+
+        next: enrollments => {
+
+          this.enrollments =
+            enrollments;
+
+          this.requestFinished();
+        },
+
+        error: error => {
+
+          this.handleError(
+            'students',
+            error
+          );
+        }
+
+      });
+
+
+    /* ATTENDANCES */
+
+    this.attendanceService
+      .getMineForTeacher()
+      .subscribe({
+
+        next: attendances => {
+
+          this.attendances =
+            attendances;
+
+          this.requestFinished();
+        },
+
+        error: error => {
+
+          this.handleError(
+            'attendance',
+            error
+          );
+        }
+
+      });
+
+
+    /* GRADES */
+
+    this.gradeService
+      .getMineForTeacher()
+      .subscribe({
+
+        next: grades => {
+
+          this.grades =
+            grades;
+
+          this.requestFinished();
+        },
+
+        error: error => {
+
+          this.handleError(
+            'grades',
+            error
+          );
+        }
+
       });
   }
 
-  private sortSchedules(
-    schedules: ClassSchedule[]
-  ): ClassSchedule[] {
 
-    const days: Record<string, number> = {
-      MONDAY: 1,
-      TUESDAY: 2,
-      WEDNESDAY: 3,
-      THURSDAY: 4,
-      FRIDAY: 5,
-      SATURDAY: 6,
-      SUNDAY: 7
-    };
+  /* ========================================
+     REQUEST STATE
+  ======================================== */
 
-    return [...schedules].sort(
-      (a, b) => {
+  private requestFinished(): void {
 
-        const dayComparison =
-          days[a.dayOfWeek] -
-          days[b.dayOfWeek];
+    this.pendingRequests--;
 
-        if (dayComparison !== 0) {
-          return dayComparison;
-        }
+    if (this.pendingRequests <= 0) {
 
-        return a.startTime.localeCompare(
-          b.startTime
-        );
-      }
+      this.pendingRequests = 0;
+
+      this.loading = false;
+    }
+  }
+
+
+  private handleError(
+    source: string,
+    error: unknown
+  ): void {
+
+    console.error(
+      `Error loading teacher ${source}:`,
+      error
     );
+
+    this.errorMessage =
+      'Some dashboard data could not be loaded.';
+
+    this.requestFinished();
   }
 
-  formatDay(
-    day: string
-  ): string {
 
-    const labels: Record<string, string> = {
-      MONDAY: 'Monday',
-      TUESDAY: 'Tuesday',
-      WEDNESDAY: 'Wednesday',
-      THURSDAY: 'Thursday',
-      FRIDAY: 'Friday',
-      SATURDAY: 'Saturday',
-      SUNDAY: 'Sunday'
-    };
+  /* ========================================
+     STATISTICS
+  ======================================== */
 
-    return labels[day] ?? day;
+  get totalClasses(): number {
+
+    const classroomIds =
+      this.assignments.map(
+        assignment =>
+          assignment.classroomId
+      );
+
+    return new Set(
+      classroomIds
+    ).size;
   }
+
+
+  get totalStudents(): number {
+
+    const studentIds =
+      this.enrollments.map(
+        enrollment =>
+          enrollment.studentId
+      );
+
+    return new Set(
+      studentIds
+    ).size;
+  }
+
+
+  get totalAssignments(): number {
+
+    return this.assignments.length;
+  }
+
+
+  get totalAttendances(): number {
+
+    return this.attendances.length;
+  }
+
+
+  /* ========================================
+     RECENT GRADES
+  ======================================== */
+
+  get recentGrades(): Grade[] {
+
+    return this.grades
+      .slice()
+      .reverse()
+      .slice(0, 4);
+  }
+
+
+  /* ========================================
+     UPCOMING CLASSES
+  ======================================== */
+
+  get upcomingClasses(): ClassSchedule[] {
+
+    return this.schedules
+      .slice(0, 4);
+  }
+
+
+  /* ========================================
+     TEACHER NAME
+  ======================================== */
+
+  get teacherFirstName(): string {
+
+    if (!this.teacherName) {
+
+      return 'Teacher';
+    }
+
+    return this.teacherName
+      .trim()
+      .split(/\s+/)[0];
+  }
+
+
+  /* ========================================
+     FORMAT TIME
+  ======================================== */
 
   formatTime(
     time: string
   ): string {
 
-    return time?.substring(0, 5) ?? '';
+    if (!time) {
+
+      return '';
+    }
+
+    return time.substring(
+      0,
+      5
+    );
   }
 
-  logout(): void {
 
-    this.authService.logout();
+  /* ========================================
+     FORMAT DAY
+  ======================================== */
 
-    this.router.navigate([
-      '/login'
-    ]);
+  formatDay(
+    day: string
+  ): string {
+
+    const days:
+      Record<string, string> = {
+
+      MONDAY: 'Monday',
+
+      TUESDAY: 'Tuesday',
+
+      WEDNESDAY: 'Wednesday',
+
+      THURSDAY: 'Thursday',
+
+      FRIDAY: 'Friday',
+
+      SATURDAY: 'Saturday',
+
+      SUNDAY: 'Sunday'
+
+    };
+
+    return days[day] ?? day;
   }
+
+
+  /* ========================================
+     UPLOAD MATERIAL
+     Backend plus tard
+  ======================================== */
+
+  uploadMaterial(): void {
+
+    this.showUploadMessage = true;
+  }
+
+
+  closeUploadMessage(): void {
+
+    this.showUploadMessage = false;
+  }
+
 }

@@ -1,0 +1,304 @@
+<div class="teacher-layout" [class.sidebar-collapsed]="!sidebarOpen">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+
+    <!-- BRAND -->
+    <div class="brand">
+
+      <div class="brand-logo">
+        🎓
+      </div>
+
+      <div class="brand-text">
+        <strong>School MS</strong>
+        <span>Teacher</span>
+      </div>
+
+    </div>
+
+
+    <!-- NAVIGATION -->
+    <nav class="sidebar-nav">
+
+      <a routerLink="/teacher/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <span class="nav-icon">⌂</span>
+        <span class="nav-label">Dashboard</span>
+      </a>
+
+
+      <a routerLink="/teacher/assignments" routerLinkActive="active">
+        <span class="nav-icon">📖</span>
+        <span class="nav-label">My Assignments</span>
+      </a>
+
+
+      <a routerLink="/teacher/schedule" routerLinkActive="active">
+        <span class="nav-icon">🗓</span>
+        <span class="nav-label">My Schedule</span>
+      </a>
+
+
+      <a routerLink="/attendances" routerLinkActive="active">
+        <span class="nav-icon">☑</span>
+        <span class="nav-label">Attendance</span>
+      </a>
+
+
+      <a routerLink="/grades" routerLinkActive="active">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Grades</span>
+      </a>
+
+
+      <a routerLink="/report-cards" routerLinkActive="active">
+        <span class="nav-icon">📈</span>
+        <span class="nav-label">Report Cards</span>
+      </a>
+
+    </nav>
+
+
+    <!-- PROFILE -->
+    <div class="sidebar-profile">
+
+      <div class="profile-avatar">
+        {{ teacherInitial }}
+      </div>
+
+      <div class="profile-info">
+
+        <strong>
+          {{ teacherName || 'Teacher' }}
+        </strong>
+
+        <span>
+          {{ teacherEmail }}
+        </span>
+
+        <small>
+          {{ teacherRole || 'TEACHER' }}
+        </small>
+
+      </div>
+
+    </div>
+
+  </aside>
+
+
+  <!-- MAIN -->
+  <main class="main-content">
+
+    <!-- TOPBAR -->
+   <header class="topbar">
+
+     <!-- LEFT -->
+     <div class="topbar-left">
+
+       <button type="button" class="menu-button" (click)="toggleSidebar()" aria-label="Toggle sidebar">
+         ☰
+       </button>
+
+
+       <!-- SEARCH -->
+       <form class="teacher-search" (ngSubmit)="search()">
+
+         <span class="search-icon">
+           ⌕
+         </span>
+
+         <input type="text" name="search" [(ngModel)]="searchTerm"
+           placeholder="Search classes, assignments, students..." autocomplete="off" />
+
+         @if (searchTerm) {
+         <button type="button" class="clear-search" (click)="clearSearch()" aria-label="Clear search">
+           ×
+         </button>
+         }
+
+       </form>
+
+     </div>
+
+
+     <!-- RIGHT -->
+     <div class="top-actions">
+
+       <!-- NOTIFICATIONS -->
+       <div class="action-wrapper">
+
+         <button type="button" class="circle-action" (click)="toggleNotifications()" aria-label="Notifications">
+           🔔
+
+           @if (notificationCount > 0) {
+           <span class="notification-dot"></span>
+           }
+         </button>
+
+
+         @if (notificationOpen) {
+
+         <div class="top-dropdown">
+
+           <div class="dropdown-title">
+
+             <strong>
+               Notifications
+             </strong>
+
+             <span>
+               {{ notificationCount }}
+             </span>
+
+           </div>
+
+           <div class="dropdown-placeholder">
+             Notifications will appear here.
+           </div>
+
+         </div>
+
+         }
+
+       </div>
+
+
+       <!-- MESSAGES -->
+       <div class="action-wrapper">
+
+         <button type="button" class="circle-action" (click)="toggleMessages()" aria-label="Messages">
+           💬
+
+           @if (messageCount > 0) {
+           <span class="notification-dot"></span>
+           }
+         </button>
+
+
+         @if (messageOpen) {
+
+         <div class="top-dropdown">
+
+           <div class="dropdown-title">
+
+             <strong>
+               Messages
+             </strong>
+
+             <span>
+               {{ messageCount }}
+             </span>
+
+           </div>
+
+           <div class="dropdown-placeholder">
+             Messages will appear here.
+           </div>
+
+         </div>
+
+         }
+
+       </div>
+
+
+       <!-- SETTINGS -->
+       <button type="button" class="circle-action" (click)="openSettings()" aria-label="Settings">
+         ⚙
+       </button>
+
+
+       <div class="top-separator"></div>
+
+
+       <!-- PROFILE -->
+       <div class="profile-wrapper">
+
+         <button type="button" class="teacher-profile" (click)="toggleProfile()">
+
+           <div class="teacher-avatar">
+             {{ teacherInitial }}
+           </div>
+
+
+           <div class="teacher-identity">
+
+             <strong>
+               {{ teacherName || 'Teacher' }}
+             </strong>
+
+             <span>
+               {{ teacherRole || 'TEACHER' }}
+             </span>
+
+           </div>
+
+
+           <span class="profile-chevron">
+             ⌄
+           </span>
+
+         </button>
+
+
+         @if (profileOpen) {
+
+         <div class="profile-dropdown">
+
+           <div class="profile-dropdown-user">
+
+             <div class="profile-large-avatar">
+               {{ teacherInitial }}
+             </div>
+
+
+             <div class="profile-dropdown-identity">
+
+               <strong>
+                 {{ teacherName || 'Teacher' }}
+               </strong>
+
+               <span>
+                 {{ teacherEmail }}
+               </span>
+
+               <small>
+                 {{ teacherRole || 'TEACHER' }}
+               </small>
+
+             </div>
+
+           </div>
+
+
+           <button type="button" (click)="openProfile()">
+             👤 My Profile
+           </button>
+
+           <button type="button" (click)="openSettings()">
+             ⚙ Settings
+           </button>
+
+           <button type="button" class="logout-option" (click)="logout()">
+             ↪ Logout
+           </button>
+
+         </div>
+
+         }
+
+       </div>
+
+     </div>
+
+   </header>
+
+    <!-- TEACHER PAGES -->
+    <div class="page-content">
+      <router-outlet />
+    </div>
+
+  </main>
+
+</div>
