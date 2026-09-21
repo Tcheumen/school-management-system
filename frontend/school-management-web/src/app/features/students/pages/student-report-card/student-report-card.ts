@@ -59,7 +59,11 @@ export class StudentReportCard {
       ReportCardService
   ) { }
 
+
+
   loadReportCard(): void {
+
+   
 
     this.errorMessage.set('');
     this.reportCard.set(null);
@@ -81,6 +85,7 @@ export class StudentReportCard {
 
         next: (reportCard) => {
 
+
           this.reportCard.set(
             reportCard
           );
@@ -90,10 +95,7 @@ export class StudentReportCard {
 
         error: (error) => {
 
-          console.error(
-            'Error loading student report card:',
-            error
-          );
+          
 
           this.errorMessage.set(
             error?.error?.message ??
@@ -102,6 +104,7 @@ export class StudentReportCard {
 
           this.loading.set(false);
         }
+
       });
   }
 

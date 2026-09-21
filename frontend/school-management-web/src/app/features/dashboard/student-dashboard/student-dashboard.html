@@ -1,48 +1,480 @@
-<div class="dashboard-container">
+<div class="student-dashboard">
 
-  <header class="dashboard-header">
+  <!-- ========================================
+       WELCOME
+  ========================================= -->
 
-    <div>
-      <h1>Student Dashboard</h1>
-      <p>School Management System</p>
+  <section class="welcome-section">
+
+    <div class="welcome-text">
+
+      <h1>
+        Welcome back,
+        <span>{{ studentFirstName }}!</span>
+        👋
+      </h1>
+
+      <p>
+        Here's an overview of your academic progress.
+      </p>
+
     </div>
 
-    <button type="button" class="logout-button" (click)="logout()">
-      Logout
-    </button>
+  </section>
 
-  </header>
 
-  <section class="dashboard-grid">
+  <!-- ========================================
+       ERROR
+  ========================================= -->
 
-    <a routerLink="/student/schedule" class="dashboard-card">
+  @if (errorMessage) {
 
-      <h2>My Schedule</h2>
-      <p>View your class schedule</p>
+  <div class="error-message">
+    {{ errorMessage }}
+  </div>
+
+  }
+
+
+  <!-- ========================================
+       LOADING
+  ========================================= -->
+
+  @if (loading) {
+
+  <div class="loading-state">
+    Loading your dashboard...
+  </div>
+
+  } @else {
+
+
+  <!-- ========================================
+         STAT CARDS
+    ========================================= -->
+
+  <section class="stats-grid">
+
+
+    <!-- SCHEDULE -->
+
+    <a routerLink="/student/schedule" class="stat-card">
+
+      <div class="stat-icon schedule-icon">
+        📅
+      </div>
+
+      <div class="stat-content">
+
+        <span>
+          My Schedule
+        </span>
+
+        <strong>
+          {{ totalClasses }}
+        </strong>
+
+        <small>
+          Scheduled classes
+        </small>
+
+      </div>
 
     </a>
 
-    <a routerLink="/student/attendance" class="dashboard-card">
 
-      <h2>Attendance</h2>
-      <p>View your attendance</p>
+    <!-- ATTENDANCE -->
+
+    <a routerLink="/student/attendance" class="stat-card">
+
+      <div class="stat-icon attendance-icon">
+        ✓
+      </div>
+
+      <div class="stat-content">
+
+        <span>
+          Attendance
+        </span>
+
+        <strong>
+          {{ attendancePercentage }}%
+        </strong>
+
+        <small>
+          Overall attendance
+        </small>
+
+      </div>
 
     </a>
 
-    <a routerLink="/student/grades" class="dashboard-card">
 
-      <h2>Grades</h2>
-      <p>View your grades</p>
+    <!-- GRADES -->
+
+    <a routerLink="/student/grades" class="stat-card">
+
+      <div class="stat-icon grade-icon">
+        📊
+      </div>
+
+      <div class="stat-content">
+
+        <span>
+          Grades
+        </span>
+
+        <strong>
+          {{ averageGrade }}
+        </strong>
+
+        <small>
+          Average grade
+        </small>
+
+      </div>
 
     </a>
 
-    <a routerLink="/student/report-card" class="dashboard-card">
 
-      <h2>Report Card</h2>
-      <p>View your report card</p>
+    <!-- REPORT CARD -->
+
+    <a routerLink="/student/report-card" class="stat-card">
+
+      <div class="stat-icon report-icon">
+        📄
+      </div>
+
+      <div class="stat-content">
+
+        <span>
+          Report Card
+        </span>
+
+        <strong class="view-text">
+          View
+        </strong>
+
+        <small>
+          Check your results
+        </small>
+
+      </div>
 
     </a>
 
   </section>
+
+
+  <!-- ========================================
+         MAIN GRID
+    ========================================= -->
+
+  <section class="dashboard-grid">
+
+
+    <!-- ======================================
+           SCHEDULE
+      ======================================= -->
+
+    <article class="panel schedule-panel">
+
+      <div class="panel-header">
+
+        <div class="panel-title">
+
+          <span class="panel-icon">
+            📅
+          </span>
+
+          <h2>
+            My Schedule
+          </h2>
+
+        </div>
+
+
+        <a routerLink="/student/schedule">
+          View Full Schedule
+        </a>
+
+      </div>
+
+
+      <div class="schedule-list">
+
+        @if (upcomingClasses.length === 0) {
+
+        <div class="empty-state">
+
+          <span class="empty-icon">
+            📅
+          </span>
+
+          <strong>
+            No classes scheduled
+          </strong>
+
+          <span>
+            Your scheduled classes will appear here.
+          </span>
+
+        </div>
+
+        }
+
+
+        @for (
+        schedule of upcomingClasses;
+        track schedule.id
+        ) {
+
+        <div class="schedule-row">
+
+          <div class="schedule-time">
+
+            <strong>
+              {{ formatTime(schedule.startTime) }}
+            </strong>
+
+            <span>
+              {{ formatTime(schedule.endTime) }}
+            </span>
+
+          </div>
+
+
+          <div class="schedule-indicator"></div>
+
+
+          <div class="schedule-info">
+
+            <strong>
+              {{ schedule.subjectName }}
+            </strong>
+
+            <span>
+              {{ schedule.teacherFullName }}
+            </span>
+
+          </div>
+
+
+          <div class="schedule-room">
+
+            {{ schedule.classroomName }}
+
+            <small>
+              {{ formatDay(schedule.dayOfWeek) }}
+            </small>
+
+          </div>
+
+        </div>
+
+        }
+
+      </div>
+
+    </article>
+
+
+    <!-- ======================================
+           RECENT GRADES
+      ======================================= -->
+
+    <article class="panel grades-panel">
+
+      <div class="panel-header">
+
+        <div class="panel-title">
+
+          <span class="panel-icon">
+            📊
+          </span>
+
+          <h2>
+            Recent Grades
+          </h2>
+
+        </div>
+
+
+        <a routerLink="/student/grades">
+          View All
+        </a>
+
+      </div>
+
+
+      <div class="grades-list">
+
+        @if (recentGrades.length === 0) {
+
+        <div class="empty-state">
+
+          <span class="empty-icon">
+            📊
+          </span>
+
+          <strong>
+            No grades available
+          </strong>
+
+          <span>
+            Your latest grades will appear here.
+          </span>
+
+        </div>
+
+        }
+
+
+        @for (
+        grade of recentGrades;
+        track grade.id
+        ) {
+
+        <div class="grade-row">
+
+          <div class="grade-subject-icon">
+            📖
+          </div>
+
+
+          <div class="grade-info">
+
+            <strong>
+              {{ grade.subjectName }}
+            </strong>
+
+            <span>
+              {{ grade.term }}
+            </span>
+
+          </div>
+
+
+          <div class="grade-badge" [class]="
+                  'grade-badge ' +
+                  getGradeClass(grade.value)
+                ">
+            {{ grade.value }}
+          </div>
+
+        </div>
+
+        }
+
+      </div>
+
+    </article>
+
+
+    <!-- ======================================
+           ATTENDANCE
+      ======================================= -->
+
+    <article class="panel attendance-panel">
+
+      <div class="panel-header">
+
+        <div class="panel-title">
+
+          <span class="panel-icon">
+            ◷
+          </span>
+
+          <h2>
+            Attendance Overview
+          </h2>
+
+        </div>
+
+
+        <a routerLink="/student/attendance">
+          View Details
+        </a>
+
+      </div>
+
+
+      <div class="attendance-content">
+
+
+        <!-- CIRCLE -->
+
+        <div class="attendance-circle" [style.--present]="attendancePercentage" [style.--absent]="absentPercentage">
+
+          <div class="attendance-circle-inner">
+
+            <strong>
+              {{ attendancePercentage }}%
+            </strong>
+
+            <span>
+              Present
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- LEGEND -->
+
+        <div class="attendance-legend">
+
+
+          <div class="legend-row">
+
+            <div>
+              <span class="legend-dot present"></span>
+              Present
+            </div>
+
+            <strong>
+              {{ attendancePercentage }}%
+            </strong>
+
+          </div>
+
+
+          <div class="legend-row">
+
+            <div>
+              <span class="legend-dot absent"></span>
+              Absent
+            </div>
+
+            <strong>
+              {{ absentPercentage }}%
+            </strong>
+
+          </div>
+
+
+          <div class="legend-row">
+
+            <div>
+              <span class="legend-dot late"></span>
+              Late
+            </div>
+
+            <strong>
+              {{ latePercentage }}%
+            </strong>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </article>
+
+  </section>
+
+  }
 
 </div>

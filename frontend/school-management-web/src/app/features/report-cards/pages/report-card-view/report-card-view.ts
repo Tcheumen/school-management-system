@@ -147,6 +147,7 @@ export class ReportCardView {
 
           next: (reportCard) => {
 
+            
             this.reportCard.set(
               reportCard
             );

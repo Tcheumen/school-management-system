@@ -1,0 +1,303 @@
+<div class="student-layout" [class.sidebar-collapsed]="!sidebarOpen">
+
+  <!-- =========================================
+       SIDEBAR
+  ========================================== -->
+  <aside class="sidebar">
+
+    <div class="brand">
+
+      <div class="brand-logo">
+        🎓
+      </div>
+
+      <div class="brand-text">
+        <strong>School MS</strong>
+        <span>Student Portal</span>
+      </div>
+
+    </div>
+
+
+    <!-- NAVIGATION -->
+    <nav class="sidebar-nav">
+
+      <a routerLink="/student/dashboard" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+        <span class="nav-icon">⌂</span>
+        <span class="nav-label">Dashboard</span>
+      </a>
+
+
+      <a routerLink="/student/schedule" routerLinkActive="active">
+        <span class="nav-icon">📅</span>
+        <span class="nav-label">My Schedule</span>
+      </a>
+
+
+      <a routerLink="/student/attendance" routerLinkActive="active">
+        <span class="nav-icon">☑</span>
+        <span class="nav-label">Attendance</span>
+      </a>
+
+
+      <a routerLink="/student/grades" routerLinkActive="active">
+        <span class="nav-icon">📊</span>
+        <span class="nav-label">Grades</span>
+      </a>
+
+
+      <a routerLink="/student/report-card" routerLinkActive="active">
+        <span class="nav-icon">📈</span>
+        <span class="nav-label">Report Card</span>
+      </a>
+
+    </nav>
+
+
+    <!-- SIDEBAR PROFILE -->
+    <div class="sidebar-profile">
+
+      <div class="profile-avatar">
+        {{ studentInitial }}
+      </div>
+
+      <div class="profile-info">
+
+        <strong>
+          {{ studentName || 'Student' }}
+        </strong>
+
+        <span>
+          {{ studentEmail }}
+        </span>
+
+        <small>
+          {{ studentRole || 'STUDENT' }}
+        </small>
+
+      </div>
+
+    </div>
+
+  </aside>
+
+
+  <!-- =========================================
+       MAIN
+  ========================================== -->
+  <main class="main-content">
+
+    <!-- TOPBAR -->
+    <header class="topbar">
+
+      <div class="topbar-left">
+
+        <button type="button" class="menu-button" (click)="toggleSidebar()" aria-label="Toggle sidebar">
+          ☰
+        </button>
+
+
+        <!-- SEARCH -->
+        <form class="student-search" (ngSubmit)="search()">
+
+          <span class="search-icon">
+            ⌕
+          </span>
+
+          <input type="text" name="search" [(ngModel)]="searchTerm" placeholder="Search subjects, classes, grades..."
+            autocomplete="off" />
+
+          @if (searchTerm) {
+
+          <button type="button" class="clear-search" (click)="clearSearch()" aria-label="Clear search">
+            ×
+          </button>
+
+          }
+
+        </form>
+
+      </div>
+
+
+      <!-- =========================================
+           ACTIONS
+      ========================================== -->
+      <div class="top-actions">
+
+        <!-- NOTIFICATIONS -->
+        <div class="action-wrapper">
+
+          <button type="button" class="circle-action" (click)="toggleNotifications()" aria-label="Notifications">
+            🔔
+
+            @if (notificationCount > 0) {
+            <span class="notification-dot"></span>
+            }
+
+          </button>
+
+
+          @if (notificationOpen) {
+
+          <div class="top-dropdown">
+
+            <div class="dropdown-title">
+              <strong>Notifications</strong>
+
+              <span>
+                {{ notificationCount }}
+              </span>
+            </div>
+
+            <div class="dropdown-placeholder">
+              Notifications will appear here.
+            </div>
+
+          </div>
+
+          }
+
+        </div>
+
+
+        <!-- MESSAGES -->
+        <div class="action-wrapper">
+
+          <button type="button" class="circle-action" (click)="toggleMessages()" aria-label="Messages">
+            💬
+
+            @if (messageCount > 0) {
+            <span class="notification-dot"></span>
+            }
+
+          </button>
+
+
+          @if (messageOpen) {
+
+          <div class="top-dropdown">
+
+            <div class="dropdown-title">
+              <strong>Messages</strong>
+
+              <span>
+                {{ messageCount }}
+              </span>
+            </div>
+
+            <div class="dropdown-placeholder">
+              Messages will appear here.
+            </div>
+
+          </div>
+
+          }
+
+        </div>
+
+
+        <!-- SETTINGS -->
+        <button type="button" class="circle-action" (click)="openSettings()" aria-label="Settings">
+          ⚙
+        </button>
+
+
+        <div class="top-separator"></div>
+
+
+        <!-- PROFILE -->
+        <div class="profile-wrapper">
+
+          <button type="button" class="student-profile" (click)="toggleProfile()">
+
+            <div class="student-avatar">
+              {{ studentInitial }}
+            </div>
+
+
+            <div class="student-identity">
+
+              <strong>
+                {{ studentName || 'Student' }}
+              </strong>
+
+              <span>
+                {{ studentRole || 'STUDENT' }}
+              </span>
+
+            </div>
+
+
+            <span class="profile-chevron">
+              ⌄
+            </span>
+
+          </button>
+
+
+          @if (profileOpen) {
+
+          <div class="profile-dropdown">
+
+            <div class="profile-dropdown-user">
+
+              <div class="profile-large-avatar">
+                {{ studentInitial }}
+              </div>
+
+
+              <div class="profile-dropdown-identity">
+
+                <strong>
+                  {{ studentName || 'Student' }}
+                </strong>
+
+                <span>
+                  {{ studentEmail }}
+                </span>
+
+                <small>
+                  {{ studentRole || 'STUDENT' }}
+                </small>
+
+              </div>
+
+            </div>
+
+
+            <button type="button" (click)="openProfile()">
+              👤 My Profile
+            </button>
+
+
+            <button type="button" (click)="openSettings()">
+              ⚙ Settings
+            </button>
+
+
+            <button type="button" class="logout-option" (click)="logout()">
+              ↪ Logout
+            </button>
+
+          </div>
+
+          }
+
+        </div>
+
+      </div>
+
+    </header>
+
+
+    <!-- =========================================
+         STUDENT PAGES
+    ========================================== -->
+    <div class="page-content">
+      <router-outlet />
+    </div>
+
+  </main>
+
+</div>

@@ -175,15 +175,15 @@
             <td>
 
               <span class="grade-value" [class.grade-good]="
-                      subject.value >= 14
+                      subject.grade >= 14
                     " [class.grade-average]="
-                      subject.value >= 10 &&
-                      subject.value < 14
+                      subject.grade >= 10 &&
+                      subject.grade < 14
                     " [class.grade-low]="
-                      subject.value < 10
+                      subject.grade < 10
                     ">
 
-                {{ subject.value }} / 20
+                {{ subject.grade }} / 20
 
               </span>
 

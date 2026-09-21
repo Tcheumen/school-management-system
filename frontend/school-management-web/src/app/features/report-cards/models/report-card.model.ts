@@ -4,7 +4,7 @@ export interface ReportCardSubject {
 
     teacherFullName: string;
 
-    value: number;
+    grade: number;
     remarks?: string;
 }
 
@@ -28,4 +28,6 @@ export interface ReportCard {
     totalLate: number;
 
     subjects: ReportCardSubject[];
+
+    
 }

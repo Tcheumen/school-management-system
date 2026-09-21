@@ -574,103 +574,54 @@ export const routes: Routes = [
     ===================================================== */
 
     {
-        path: 'student/dashboard',
-
-        canActivate: [
-            authGuard,
-            roleGuard
-        ],
-
+        path: '',
+        canActivate: [authGuard, roleGuard],
         data: {
             roles: ['STUDENT']
         },
 
         loadComponent: () =>
-            import(
-                './features/dashboard/student-dashboard/student-dashboard'
-            ).then(
-                m => m.StudentDashboard
-            )
-    },
+            import('./features/layouts/student-layout/student-layout')
+                .then(m => m.StudentLayout),
 
-    {
-        path: 'student/schedule',
+        children: [
 
-        canActivate: [
-            authGuard,
-            roleGuard
-        ],
+            {
+                path: 'student/dashboard',
+                loadComponent: () =>
+                    import('./features/dashboard/student-dashboard/student-dashboard')
+                        .then(m => m.StudentDashboard)
+            },
 
-        data: {
-            roles: ['STUDENT']
-        },
+            {
+                path: 'student/schedule',
+                loadComponent: () =>
+                    import('./features/students/pages/student-schedule/student-schedule')
+                        .then(m => m.StudentSchedule)
+            },
 
-        loadComponent: () =>
-            import(
-                './features/students/pages/student-schedule/student-schedule'
-            ).then(
-                m => m.StudentSchedule
-            )
-    },
+            {
+                path: 'student/attendance',
+                loadComponent: () =>
+                    import('./features/students/pages/student-attendance/student-attendance')
+                        .then(m => m.StudentAttendance)
+            },
 
-    {
-        path: 'student/attendance',
+            {
+                path: 'student/grades',
+                loadComponent: () =>
+                    import('./features/students/pages/student-grades/student-grades')
+                        .then(m => m.StudentGrades)
+            },
 
-        canActivate: [
-            authGuard,
-            roleGuard
-        ],
+            {
+                path: 'student/report-card',
+                loadComponent: () =>
+                    import('./features/students/pages/student-report-card/student-report-card')
+                        .then(m => m.StudentReportCard)
+            }
 
-        data: {
-            roles: ['STUDENT']
-        },
-
-        loadComponent: () =>
-            import(
-                './features/students/pages/student-attendance/student-attendance'
-            ).then(
-                m => m.StudentAttendance
-            )
-    },
-
-    {
-        path: 'student/grades',
-
-        canActivate: [
-            authGuard,
-            roleGuard
-        ],
-
-        data: {
-            roles: ['STUDENT']
-        },
-
-        loadComponent: () =>
-            import(
-                './features/students/pages/student-grades/student-grades'
-            ).then(
-                m => m.StudentGrades
-            )
-    },
-
-    {
-        path: 'student/report-card',
-
-        canActivate: [
-            authGuard,
-            roleGuard
-        ],
-
-        data: {
-            roles: ['STUDENT']
-        },
-
-        loadComponent: () =>
-            import(
-                './features/students/pages/student-report-card/student-report-card'
-            ).then(
-                m => m.StudentReportCard
-            )
+        ]
     },
 
 
