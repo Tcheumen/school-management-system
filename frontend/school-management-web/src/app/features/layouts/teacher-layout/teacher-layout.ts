@@ -224,8 +224,9 @@ export class TeacherLayout implements OnInit {
 
     this.profileOpen = false;
 
-    // Page profile à implémenter plus tard
-    console.log('Open teacher profile');
+    this.router.navigate([
+      '/teacher/profile'
+    ]);
   }
 
 

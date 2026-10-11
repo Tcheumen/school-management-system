@@ -129,6 +129,10 @@ export class StudentLayout implements OnInit {
   openProfile(): void {
     this.profileOpen = false;
 
+    this.router.navigate([
+      '/student/profile'
+    ]);
+
     // Page Profile plus tard
     console.log('Open student profile');
   }

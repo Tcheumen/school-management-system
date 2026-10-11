@@ -142,12 +142,6 @@ export class StudentDashboard implements OnInit {
 
         next: result => {
 
-          console.log(
-            'STUDENT DASHBOARD:',
-            result
-          );
-
-
           /* USER */
 
           this.studentName =
@@ -247,23 +241,22 @@ export class StudentDashboard implements OnInit {
   /* ========================================
      ATTENDANCE
   ======================================== */
-
   get attendancePercentage(): number {
 
     if (this.attendances.length === 0) {
-
       return 0;
     }
 
-    const present =
+    const attended =
       this.attendances.filter(
         attendance =>
-          attendance.status === 'PRESENT'
+          attendance.status === 'PRESENT' ||
+          attendance.status === 'LATE'
       ).length;
 
     return Math.round(
       (
-        present /
+        attended /
         this.attendances.length
       ) * 100
     );

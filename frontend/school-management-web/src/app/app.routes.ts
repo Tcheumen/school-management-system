@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 
-import { authGuard } from './core/guards/auth.guard';
-import { roleGuard } from './core/guards/role.guard';
+
+import { roleMatchGuard } from './core/guards/role-match.guard';
 
 export const routes: Routes = [
 
@@ -43,9 +43,8 @@ export const routes: Routes = [
     {
         path: '',
 
-        canActivate: [
-            authGuard,
-            roleGuard
+        canMatch: [
+            roleMatchGuard
         ],
 
         data: {
@@ -74,6 +73,17 @@ export const routes: Routes = [
                     )
             },
 
+            /* PROFILE */
+            {
+                path: 'admin/profile',
+
+                loadComponent: () =>
+                    import(
+                        './features/profile/pages/my-profile/my-profile'
+                    ).then(
+                        m => m.MyProfile
+                    )
+            },
 
             /* STUDENTS */
 
@@ -437,9 +447,8 @@ export const routes: Routes = [
     {
         path: '',
 
-        canActivate: [
-            authGuard,
-            roleGuard
+        canMatch: [
+            roleMatchGuard
         ],
 
         data: {
@@ -563,6 +572,17 @@ export const routes: Routes = [
                     ).then(
                         m => m.ReportCardView
                     )
+            },
+
+            {
+                path: 'teacher/profile',
+
+                loadComponent: () =>
+                    import(
+                        './features/profile/pages/my-profile/my-profile'
+                    ).then(
+                        m => m.MyProfile
+                    )
             }
 
         ]
@@ -575,7 +595,7 @@ export const routes: Routes = [
 
     {
         path: '',
-        canActivate: [authGuard, roleGuard],
+        canMatch: [roleMatchGuard],
         data: {
             roles: ['STUDENT']
         },
@@ -619,10 +639,22 @@ export const routes: Routes = [
                 loadComponent: () =>
                     import('./features/students/pages/student-report-card/student-report-card')
                         .then(m => m.StudentReportCard)
+            },
+
+            {
+                path: 'student/profile',
+
+                loadComponent: () =>
+                    import(
+                        './features/profile/pages/my-profile/my-profile'
+                    ).then(
+                        m => m.MyProfile
+                    )
             }
 
         ]
     },
+
 
 
     /* =====================================================

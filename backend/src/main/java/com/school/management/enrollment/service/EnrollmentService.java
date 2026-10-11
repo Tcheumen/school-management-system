@@ -16,6 +16,7 @@ import com.school.management.enrollment.repository.EnrollmentRepository;
 import com.school.management.student.entity.Student;
 import com.school.management.student.exception.StudentNotFoundException;
 import com.school.management.student.repository.StudentRepository;
+import com.school.management.enrollment.exception.StudentEnrollmentNotFoundException;
 
 import com.school.management.assignment.repository.TeacherAssignmentRepository;
 import com.school.management.shared.exception.ForbiddenOperationException;
@@ -65,36 +66,51 @@ public class EnrollmentService {
 
     public List<EnrollmentResponse> getEnrollmentsForCurrentTeacher() {
 
-        String email = currentUserService
-                .getCurrentUserEmail();
+            String email = currentUserService
+                            .getCurrentUserEmail();
 
-        Teacher teacher = teacherRepository
-                .findByUserEmail(email)
-                .orElseThrow(() -> new ForbiddenOperationException(
-                        "Teacher profile not found"));
+            Teacher teacher = teacherRepository
+                            .findByUserEmail(email)
+                            .orElseThrow(() -> new ForbiddenOperationException(
+                                            "Teacher profile not found"));
 
-        List<Long> classroomIds = teacherAssignmentRepository
-                .findByTeacherId(
-                        teacher.getId())
-                .stream()
-                .map(assignment -> assignment
-                        .getClassroom()
-                        .getId())
-                .distinct()
-                .toList();
+            List<Long> classroomIds = teacherAssignmentRepository
+                            .findByTeacherId(
+                                            teacher.getId())
+                            .stream()
+                            .map(assignment -> assignment
+                                            .getClassroom()
+                                            .getId())
+                            .distinct()
+                            .toList();
 
-        if (classroomIds.isEmpty()) {
-            return List.of();
-        }
+            if (classroomIds.isEmpty()) {
+                    return List.of();
+            }
 
-        return enrollmentRepository
-                .findByClassroomIdIn(
-                        classroomIds)
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
+            return enrollmentRepository
+                            .findByClassroomIdIn(
+                                            classroomIds)
+                            .stream()
+                            .map(this::mapToResponse)
+                            .toList();
     }
 
+    
+    public EnrollmentResponse getEnrollmentForCurrentStudent() {
+
+            String email = currentUserService
+                            .getCurrentUserEmail();
+
+            Enrollment enrollment = enrollmentRepository
+                            .findByStudentUserEmailAndAcademicYearActiveTrue(
+                                            email)
+                            .orElseThrow(
+                                            StudentEnrollmentNotFoundException::new);
+
+            return mapToResponse(enrollment);
+    }
+    
     public EnrollmentResponse getEnrollmentById(Long id) {
         Enrollment enrollment = enrollmentRepository.findById(id)
                 .orElseThrow(() -> new EnrollmentNotFoundException(id));

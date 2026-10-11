@@ -1,0 +1,978 @@
+<div class="profile-page">
+
+  <!-- =====================================================
+       PAGE HEADER
+  ====================================================== -->
+
+  <div class="page-header">
+    <div>
+      <h1>My Profile</h1>
+
+      <p>
+        View your personal, account and academic information.
+      </p>
+    </div>
+  </div>
+
+
+  <!-- =====================================================
+       LOADING
+  ====================================================== -->
+
+  @if (loading) {
+
+    <div class="state-card">
+      <div class="loader"></div>
+
+      <span>
+        Loading your profile...
+      </span>
+    </div>
+
+  }
+
+
+  <!-- =====================================================
+       ERROR
+  ====================================================== -->
+
+  @if (!loading && errorMessage) {
+
+    <div class="error-message">
+
+      <div class="error-content">
+        <span class="error-icon">!</span>
+
+        <span>
+          {{ errorMessage }}
+        </span>
+      </div>
+
+      <button
+        type="button"
+        (click)="loadProfile()"
+      >
+        Try again
+      </button>
+
+    </div>
+
+  }
+
+
+  <!-- =====================================================
+       PROFILE CONTENT
+  ====================================================== -->
+
+  @if (!loading && !errorMessage) {
+
+
+    <!-- =================================================
+         PROFILE HERO
+    ================================================== -->
+
+    <section class="profile-hero">
+
+      <div class="profile-avatar">
+        {{ initials }}
+      </div>
+
+
+      <div class="profile-main-info">
+
+        <div class="profile-name-row">
+
+          <h2>
+            {{ fullName }}
+          </h2>
+
+          <span class="role-badge">
+            {{ roleLabel }}
+          </span>
+
+        </div>
+
+
+        <p class="profile-email">
+          {{ email }}
+        </p>
+
+
+        <p class="profile-description">
+          {{ roleDescription }}
+        </p>
+
+      </div>
+
+
+      <div class="account-status">
+
+        <span class="status-dot"></span>
+
+        <span>
+          Active Account
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <!-- =================================================
+         GENERAL INFORMATION
+    ================================================== -->
+
+    <div class="profile-grid">
+
+
+      <!-- PERSONAL INFORMATION -->
+
+      <section class="profile-card">
+
+        <div class="card-header">
+
+          <div class="header-icon">
+            👤
+          </div>
+
+          <div>
+            <h3>Personal Information</h3>
+
+            <p>
+              Your basic personal information.
+            </p>
+          </div>
+
+        </div>
+
+
+        <div class="information-list">
+
+          <div class="information-row">
+
+            <span class="information-label">
+              Full Name
+            </span>
+
+            <strong>
+              {{ fullName }}
+            </strong>
+
+          </div>
+
+
+          <div class="information-row">
+
+            <span class="information-label">
+              Email Address
+            </span>
+
+            <strong>
+              {{ email }}
+            </strong>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- ACCOUNT INFORMATION -->
+
+      <section class="profile-card">
+
+        <div class="card-header">
+
+          <div class="header-icon">
+            🔐
+          </div>
+
+          <div>
+            <h3>Account Information</h3>
+
+            <p>
+              Information about your school account.
+            </p>
+          </div>
+
+        </div>
+
+
+        <div class="information-list">
+
+          <div class="information-row">
+
+            <span class="information-label">
+              Role
+            </span>
+
+            <strong>
+              {{ roleLabel }}
+            </strong>
+
+          </div>
+
+
+          <div class="information-row">
+
+            <span class="information-label">
+              Account Status
+            </span>
+
+            <span class="active-badge">
+              Active
+            </span>
+
+          </div>
+
+        </div>
+
+      </section>
+
+    </div>
+
+
+    <!-- =================================================
+         STUDENT
+    ================================================== -->
+
+    @if (role === 'STUDENT') {
+
+      @if (enrollment) {
+
+        <!-- ACADEMIC INFORMATION -->
+
+        <section class="role-card">
+
+          <div class="card-header">
+
+            <div class="header-icon">
+              🎓
+            </div>
+
+            <div>
+              <h3>Academic Information</h3>
+
+              <p>
+                Your current academic information.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="information-list four-columns">
+
+            <div class="information-row">
+
+              <span class="information-label">
+                Student ID
+              </span>
+
+              <strong>
+                {{ enrollment.studentId }}
+              </strong>
+
+            </div>
+
+
+            <div class="information-row">
+
+              <span class="information-label">
+                Classroom
+              </span>
+
+              <strong>
+                {{ enrollment.classroomName }}
+              </strong>
+
+            </div>
+
+
+            <div class="information-row">
+
+              <span class="information-label">
+                Academic Year
+              </span>
+
+              <strong>
+                {{ enrollment.academicYearName }}
+              </strong>
+
+            </div>
+
+
+            <div class="information-row">
+
+              <span class="information-label">
+                Enrollment ID
+              </span>
+
+              <strong>
+                #{{ enrollment.id }}
+              </strong>
+
+            </div>
+
+          </div>
+
+        </section>
+
+
+        <!-- ACADEMIC PROFILE -->
+
+        <section class="role-card profile-overview-card">
+
+          <div class="card-header">
+
+            <div class="header-icon">
+              📚
+            </div>
+
+            <div>
+              <h3>Academic Profile</h3>
+
+              <p>
+                Overview of your current enrollment.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="overview-grid">
+
+            <div class="overview-item">
+
+              <div class="overview-icon">
+                👤
+              </div>
+
+              <div>
+                <span>Student</span>
+
+                <strong>
+                  {{ enrollment.studentFullName }}
+                </strong>
+              </div>
+
+            </div>
+
+
+            <div class="overview-item">
+
+              <div class="overview-icon">
+                🏫
+              </div>
+
+              <div>
+                <span>Current Classroom</span>
+
+                <strong>
+                  {{ enrollment.classroomName }}
+                </strong>
+              </div>
+
+            </div>
+
+
+            <div class="overview-item">
+
+              <div class="overview-icon">
+                📅
+              </div>
+
+              <div>
+                <span>Academic Year</span>
+
+                <strong>
+                  {{ enrollment.academicYearName }}
+                </strong>
+              </div>
+
+            </div>
+
+
+            <div class="overview-item">
+
+              <div class="overview-icon">
+                #
+              </div>
+
+              <div>
+                <span>Enrollment</span>
+
+                <strong>
+                  #{{ enrollment.id }}
+                </strong>
+              </div>
+
+            </div>
+
+          </div>
+
+        </section>
+
+      } @else {
+
+        <section class="role-card">
+
+          <div class="card-header">
+
+            <div class="header-icon">
+              🎓
+            </div>
+
+            <div>
+              <h3>Academic Information</h3>
+
+              <p>
+                Your academic information.
+              </p>
+            </div>
+
+          </div>
+
+
+          <div class="empty-profile-state">
+
+            <div class="empty-profile-icon">
+              🎓
+            </div>
+
+            <div>
+              <strong>
+                No active enrollment
+              </strong>
+
+              <p>
+                No active academic enrollment is currently
+                available for your account.
+              </p>
+            </div>
+
+          </div>
+
+        </section>
+
+      }
+
+    }
+
+
+    <!-- =================================================
+         TEACHER
+    ================================================== -->
+
+    @if (role === 'TEACHER') {
+
+      <!-- TEACHING INFORMATION -->
+
+      <section class="role-card">
+
+        <div class="card-header">
+
+          <div class="header-icon">
+            👨‍🏫
+          </div>
+
+          <div>
+            <h3>Teaching Information</h3>
+
+            <p>
+              Your current teaching information.
+            </p>
+          </div>
+
+        </div>
+
+
+        <div class="information-list four-columns">
+
+          <div class="information-row">
+
+            <span class="information-label">
+              Teacher ID
+            </span>
+
+            <strong>
+              @if (teacherId !== null) {
+                {{ teacherId }}
+              } @else {
+                —
+              }
+            </strong>
+
+          </div>
+
+
+          <div class="information-row">
+
+            <span class="information-label">
+              Subjects
+            </span>
+
+            <strong>
+              @if (teacherSubjects.length > 0) {
+                {{ teacherSubjects.join(', ') }}
+              } @else {
+                No subjects assigned
+              }
+            </strong>
+
+          </div>
+
+
+          <div class="information-row">
+
+            <span class="information-label">
+              Classrooms
+            </span>
+
+            <strong>
+              @if (teacherClassrooms.length > 0) {
+                {{ teacherClassrooms.join(', ') }}
+              } @else {
+                No classrooms assigned
+              }
+            </strong>
+
+          </div>
+
+
+          <div class="information-row">
+
+            <span class="information-label">
+              Academic Year
+            </span>
+
+            <strong>
+              @if (teacherAcademicYears.length > 0) {
+                {{ teacherAcademicYears.join(', ') }}
+              } @else {
+                —
+              }
+            </strong>
+
+          </div>
+
+        </div>
+
+      </section>
+
+
+      <!-- TEACHING PROFILE -->
+
+      <section class="role-card profile-overview-card">
+
+        <div class="card-header">
+
+          <div class="header-icon">
+            📚
+          </div>
+
+          <div>
+            <h3>Teaching Profile</h3>
+
+            <p>
+              Overview of your current teaching assignments.
+            </p>
+          </div>
+
+        </div>
+
+
+        @if (teacherAssignments.length > 0) {
+
+          <div class="overview-grid">
+
+            <!-- SUBJECTS -->
+
+            <div class="overview-item">
+
+              <div class="overview-icon">
+                📖
+              </div>
+
+              <div>
+                <span>Subjects</span>
+
+                <strong>
+                  {{ teacherSubjects.join(', ') }}
+                </strong>
+              </div>
+
+            </div>
+
+
+            <!-- CLASSROOMS -->
+
+            <div class="overview-item">
+
+              <div class="overview-icon">
+                🏫
+              </div>
+
+              <div>
+                <span>Classes</span>
+
+                <strong>
+                  {{ teacherClassrooms.join(', ') }}
+                </strong>
+              </div>
+
+            </div>
+
+
+            <!-- ASSIGNMENTS -->
+
+            <div class="overview-item">
+
+              <div class="overview-icon">
+                #
+              </div>
+
+              <div>
+                <span>Total Assignments</span>
+
+                <strong>
+                  {{ totalTeacherAssignments }}
+                </strong>
+              </div>
+
+            </div>
+
+
+            <!-- ACADEMIC YEAR -->
+
+            <div class="overview-item">
+
+              <div class="overview-icon">
+                📅
+              </div>
+
+              <div>
+                <span>Academic Year</span>
+
+                <strong>
+                  {{ teacherAcademicYears.join(', ') }}
+                </strong>
+              </div>
+
+            </div>
+
+          </div>
+
+
+          <!-- ASSIGNMENT DETAILS -->
+
+          <div class="assignment-section">
+
+            <div class="section-title">
+
+              <div>
+                <h4>Teaching Assignments</h4>
+
+                <p>
+                  Subjects and classrooms currently assigned to you.
+                </p>
+              </div>
+
+              <span class="count-badge">
+                {{ totalTeacherAssignments }}
+              </span>
+
+            </div>
+
+
+            <div class="assignment-list">
+
+              @for (
+                assignment of teacherAssignments;
+                track assignment.id
+              ) {
+
+                <div class="assignment-item">
+
+                  <div class="assignment-subject-icon">
+                    📘
+                  </div>
+
+
+                  <div class="assignment-main">
+
+                    <strong>
+                      {{ assignment.subjectName }}
+                    </strong>
+
+                    <span>
+                      {{ assignment.classroomName }}
+                    </span>
+
+                  </div>
+
+
+                  <div class="assignment-year">
+
+                    <span>
+                      Academic Year
+                    </span>
+
+                    <strong>
+                      {{ assignment.academicYearName }}
+                    </strong>
+
+                  </div>
+
+                </div>
+
+              }
+
+            </div>
+
+          </div>
+
+        } @else {
+
+          <div class="empty-profile-state">
+
+            <div class="empty-profile-icon">
+              📚
+            </div>
+
+            <div>
+              <strong>
+                No teaching assignments
+              </strong>
+
+              <p>
+                No subject or classroom is currently
+                assigned to your account.
+              </p>
+            </div>
+
+          </div>
+
+        }
+
+      </section>
+
+    }
+
+
+  <!-- =================================================
+     ADMIN
+================================================== -->
+
+@if (role === 'ADMIN') {
+
+  <!-- ADMINISTRATION INFORMATION -->
+
+  <section class="role-card">
+
+    <div class="card-header">
+
+      <div class="header-icon">
+        🛡️
+      </div>
+
+      <div>
+        <h3>Administration Information</h3>
+
+        <p>
+          Your administrator account information.
+        </p>
+      </div>
+
+    </div>
+
+
+    <div class="information-list admin-information-grid">
+
+      <div class="information-row">
+
+        <span class="information-label">
+          Administrator
+        </span>
+
+        <strong>
+          {{ fullName }}
+        </strong>
+
+      </div>
+
+
+      <div class="information-row">
+
+        <span class="information-label">
+          Email Address
+        </span>
+
+        <strong>
+          {{ email }}
+        </strong>
+
+      </div>
+
+
+      <div class="information-row">
+
+        <span class="information-label">
+          Account Role
+        </span>
+
+        <strong>
+          {{ roleLabel }}
+        </strong>
+
+      </div>
+
+    </div>
+
+  </section>
+
+
+  <!-- ADMINISTRATION PROFILE -->
+
+  <section class="role-card profile-overview-card">
+
+    <div class="card-header">
+
+      <div class="header-icon">
+        🏫
+      </div>
+
+      <div>
+        <h3>Administration Profile</h3>
+
+        <p>
+          Overview of your school management account.
+        </p>
+      </div>
+
+    </div>
+
+
+    <div class="overview-grid">
+
+      <!-- ADMINISTRATOR -->
+
+      <div class="overview-item">
+
+        <div class="overview-icon">
+          👤
+        </div>
+
+        <div>
+          <span>Administrator</span>
+
+          <strong>
+            {{ fullName }}
+          </strong>
+        </div>
+
+      </div>
+
+
+      <!-- EMAIL -->
+
+      <div class="overview-item">
+
+        <div class="overview-icon">
+          ✉️
+        </div>
+
+        <div>
+          <span>Email Address</span>
+
+          <strong>
+            {{ email }}
+          </strong>
+        </div>
+
+      </div>
+
+
+      <!-- ROLE -->
+
+      <div class="overview-item">
+
+        <div class="overview-icon">
+          🛡️
+        </div>
+
+        <div>
+          <span>Account Role</span>
+
+          <strong>
+            {{ roleLabel }}
+          </strong>
+        </div>
+
+      </div>
+
+
+      <!-- ACCESS -->
+
+      <div class="overview-item">
+
+        <div class="overview-icon">
+          ⚙️
+        </div>
+
+        <div>
+          <span>Access Level</span>
+
+          <strong>
+            School Administration
+          </strong>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- ADMIN ACCESS -->
+
+    <div class="admin-access-section">
+
+      <div class="admin-access-icon">
+        🏫
+      </div>
+
+
+      <div class="admin-access-content">
+
+        <span class="admin-access-label">
+          Administrator Access
+        </span>
+
+        <h4>
+          School Management
+        </h4>
+
+        <p>
+          Your administrator account provides access
+          to school management features including
+          students, teachers, classrooms, subjects,
+          enrollments and academic years.
+        </p>
+
+      </div>
+
+
+      <span class="admin-role-badge">
+        Administrator
+      </span>
+
+    </div>
+
+  </section>
+
+}
+
+  }
+
+</div>

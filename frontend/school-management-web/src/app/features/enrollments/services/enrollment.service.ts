@@ -35,6 +35,13 @@ export class EnrollmentService {
         );
     }
 
+    getMineForStudent(): Observable<Enrollment> {
+
+        return this.http.get<Enrollment>(
+            `${this.apiUrl}/student/me`
+        );
+    }
+
     create(
         request: EnrollmentRequest
     ): Observable<Enrollment> {

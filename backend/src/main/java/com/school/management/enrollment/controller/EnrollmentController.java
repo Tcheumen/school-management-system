@@ -49,5 +49,11 @@ public class EnrollmentController {
         enrollmentService.deleteEnrollment(id);
     }
 
+    @GetMapping("/student/me")
+    public EnrollmentResponse getMyStudentEnrollment() {
+
+        return enrollmentService
+                .getEnrollmentForCurrentStudent();
+    }
     
 }

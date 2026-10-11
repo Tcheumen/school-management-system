@@ -1,4 +1,5 @@
 import {
+  ChangeDetectorRef,
   Component,
   OnInit
 } from '@angular/core';
@@ -6,6 +7,10 @@ import {
 import {
   RouterLink
 } from '@angular/router';
+
+import {
+  forkJoin
+} from 'rxjs';
 
 import {
   TeacherAssignment
@@ -119,7 +124,10 @@ export class TeacherDashboard implements OnInit {
       GradeService,
 
     private authService:
-      AuthService
+      AuthService,
+
+    private cdr:
+      ChangeDetectorRef
   ) { }
 
 
@@ -144,7 +152,12 @@ export class TeacherDashboard implements OnInit {
      Le profil complet est géré par TeacherLayout.
   ======================================== */
 
+
   private loadCurrentUser(): void {
+
+    console.log(
+      '🔥 Loading current teacher...'
+    );
 
     this.authService
       .getCurrentUser()
@@ -152,24 +165,32 @@ export class TeacherDashboard implements OnInit {
 
         next: user => {
 
+          console.log(
+            '✅ CURRENT TEACHER:',
+            user
+          );
+
           this.teacherName =
             user.fullName;
+
+          this.cdr.detectChanges();
         },
 
         error: error => {
 
           console.error(
-            'Error loading current teacher:',
+            '❌ CURRENT TEACHER ERROR:',
             error
           );
 
           this.teacherName =
             'Teacher';
+
+          this.cdr.detectChanges();
         }
 
       });
   }
-
 
   /* ========================================
      LOAD DASHBOARD
@@ -177,143 +198,105 @@ export class TeacherDashboard implements OnInit {
 
   loadDashboard(): void {
 
+    this.loading = true;
     this.errorMessage = '';
 
-    this.pendingRequests = 5;
+    forkJoin({
 
-    this.loading = true;
+      assignments:
+        this.teacherAssignmentService
+          .getMine(),
 
+      schedules:
+        this.classScheduleService
+          .getMineForTeacher(),
 
-    /* ASSIGNMENTS */
+      enrollments:
+        this.enrollmentService
+          .getMineForTeacher(),
 
-    this.teacherAssignmentService
-      .getMine()
+      attendances:
+        this.attendanceService
+          .getMineForTeacher(),
+
+      grades:
+        this.gradeService
+          .getMineForTeacher()
+
+    })
       .subscribe({
 
-        next: assignments => {
+        next: result => {
 
           this.assignments =
-            assignments;
-
-          this.requestFinished();
-        },
-
-        error: error => {
-
-          this.handleError(
-            'assignments',
-            error
-          );
-        }
-
-      });
-
-
-    /* SCHEDULE */
-
-    this.classScheduleService
-      .getMineForTeacher()
-      .subscribe({
-
-        next: schedules => {
+            [...result.assignments];
 
           this.schedules =
-            [...schedules].sort(
+            [...result.schedules].sort(
               (a, b) =>
                 a.startTime.localeCompare(
                   b.startTime
                 )
             );
 
-          this.requestFinished();
-        },
-
-        error: error => {
-
-          this.handleError(
-            'schedule',
-            error
-          );
-        }
-
-      });
-
-
-    /* STUDENTS */
-
-    this.enrollmentService
-      .getMineForTeacher()
-      .subscribe({
-
-        next: enrollments => {
-
           this.enrollments =
-            enrollments;
-
-          this.requestFinished();
-        },
-
-        error: error => {
-
-          this.handleError(
-            'students',
-            error
-          );
-        }
-
-      });
-
-
-    /* ATTENDANCES */
-
-    this.attendanceService
-      .getMineForTeacher()
-      .subscribe({
-
-        next: attendances => {
+            [...result.enrollments];
 
           this.attendances =
-            attendances;
-
-          this.requestFinished();
-        },
-
-        error: error => {
-
-          this.handleError(
-            'attendance',
-            error
-          );
-        }
-
-      });
-
-
-    /* GRADES */
-
-    this.gradeService
-      .getMineForTeacher()
-      .subscribe({
-
-        next: grades => {
+            [...result.attendances];
 
           this.grades =
-            grades;
+            [...result.grades];
 
-          this.requestFinished();
+          this.loading = false;
+
+          console.log(
+            '✅ TEACHER DASHBOARD:',
+            {
+              assignments:
+                this.assignments,
+
+              schedules:
+                this.schedules,
+
+              enrollments:
+                this.enrollments,
+
+              attendances:
+                this.attendances,
+
+              grades:
+                this.grades,
+
+              loading:
+                this.loading
+            }
+          );
+
+          /*
+           * Important dans ton application :
+           * force la mise à jour du template.
+           */
+          this.cdr.detectChanges();
         },
 
         error: error => {
 
-          this.handleError(
-            'grades',
+          console.error(
+            '❌ Error loading teacher dashboard:',
             error
           );
+
+          this.errorMessage =
+            'Some dashboard data could not be loaded.';
+
+          this.loading = false;
+
+          this.cdr.detectChanges();
         }
 
       });
   }
-
 
   /* ========================================
      REQUEST STATE

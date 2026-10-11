@@ -1,292 +1,316 @@
-import { Component, OnInit } from '@angular/core';
-import { RouterLink } from '@angular/router';
-import { finalize } from 'rxjs';
+import {
+  ChangeDetectorRef,
+  Component,
+  OnInit
+} from '@angular/core';
 
-import { StudentService } from '../../students/services/student.service';
-import { TeacherService } from '../../teachers/services/teacher.service';
-import { SubjectService } from '../../subjects/services/subject.service';
-import { ClassroomService } from '../../classrooms/services/classroom.service';
-import { AcademicYearService } from '../../academic-years/services/academic-year.service';
-import { AttendanceService } from '../../attendances/services/attendance.service';
+import {
+  RouterLink
+} from '@angular/router';
+
+import {
+  forkJoin
+} from 'rxjs';
+
+import {
+  StudentService
+} from '../../students/services/student.service';
+
+import {
+  TeacherService
+} from '../../teachers/services/teacher.service';
+
+import {
+  SubjectService
+} from '../../subjects/services/subject.service';
+
+import {
+  ClassroomService
+} from '../../classrooms/services/classroom.service';
+
+import {
+  AcademicYearService
+} from '../../academic-years/services/academic-year.service';
+
+import {
+  AttendanceService
+} from '../../attendances/services/attendance.service';
+
 
 @Component({
   selector: 'app-admin-dashboard',
+
   standalone: true,
-  imports: [RouterLink],
+
+  imports: [
+    RouterLink
+  ],
+
   templateUrl: './admin-dashboard.html',
+
   styleUrl: './admin-dashboard.scss'
 })
 export class AdminDashboard implements OnInit {
 
-  loading = false;
+  /* ========================================
+     STATE
+  ======================================== */
+
+  loading = true;
+
   errorMessage = '';
 
+
+  /* ========================================
+     STATISTICS
+  ======================================== */
+
   studentCount = 0;
+
   teacherCount = 0;
+
   subjectCount = 0;
+
   classroomCount = 0;
 
   activeAcademicYear = '-';
 
+
+  /* ========================================
+     ATTENDANCE
+  ======================================== */
+
   presentPercentage = 0;
+
   latePercentage = 0;
+
   absentPercentage = 0;
 
-  private pendingRequests = 0;
 
   constructor(
-    private studentService: StudentService,
-    private teacherService: TeacherService,
-    private subjectService: SubjectService,
-    private classroomService: ClassroomService,
-    private academicYearService: AcademicYearService,
-    private attendanceService: AttendanceService
+    private studentService:
+      StudentService,
+
+    private teacherService:
+      TeacherService,
+
+    private subjectService:
+      SubjectService,
+
+    private classroomService:
+      ClassroomService,
+
+    private academicYearService:
+      AcademicYearService,
+
+    private attendanceService:
+      AttendanceService,
+
+    private cdr:
+      ChangeDetectorRef
   ) { }
 
+
+  /* ========================================
+     INIT
+  ======================================== */
+
   ngOnInit(): void {
+
     this.loadDashboard();
   }
 
-  refreshDashboard(): void {
-    this.loadDashboard();
-  }
+
+  /* ========================================
+     LOAD DASHBOARD
+  ======================================== */
 
   loadDashboard(): void {
 
-    this.errorMessage = '';
-    this.pendingRequests = 0;
-
-    this.loadStudents();
-    this.loadTeachers();
-    this.loadSubjects();
-    this.loadClassrooms();
-    this.loadAcademicYears();
-    this.loadAttendances();
-  }
-
-  private startRequest(): void {
-    this.pendingRequests++;
     this.loading = true;
-  }
 
-  private finishRequest(): void {
+    this.errorMessage = '';
 
-    this.pendingRequests--;
+    forkJoin({
 
-    if (this.pendingRequests <= 0) {
-      this.pendingRequests = 0;
-      this.loading = false;
-    }
-  }
+      students:
+        this.studentService
+          .getAll(),
 
-  private handleError(
-    label: string,
-    error: unknown
-  ): void {
+      teachers:
+        this.teacherService
+          .getAll(),
 
-    console.error(
-      `${label} dashboard error:`,
-      error
-    );
+      subjects:
+        this.subjectService
+          .getAll(),
 
-    this.errorMessage =
-      'Some dashboard data could not be loaded.';
-  }
+      classrooms:
+        this.classroomService
+          .getAll(),
 
-  private loadStudents(): void {
+      academicYears:
+        this.academicYearService
+          .getAll(),
 
-    this.startRequest();
+      attendances:
+        this.attendanceService
+          .getAll()
 
-    this.studentService
-      .getAll()
-      .pipe(
-        finalize(() =>
-          this.finishRequest()
-        )
-      )
+    })
       .subscribe({
-        next: students => {
+
+        next: result => {
+
+          /* ================================
+             COUNTS
+          ================================ */
+
           this.studentCount =
-            students.length;
-        },
-        error: error =>
-          this.handleError(
-            'Students',
-            error
-          )
-      });
-  }
+            result.students.length;
 
-  private loadTeachers(): void {
-
-    this.startRequest();
-
-    this.teacherService
-      .getAll()
-      .pipe(
-        finalize(() =>
-          this.finishRequest()
-        )
-      )
-      .subscribe({
-        next: teachers => {
           this.teacherCount =
-            teachers.length;
-        },
-        error: error =>
-          this.handleError(
-            'Teachers',
-            error
-          )
-      });
-  }
+            result.teachers.length;
 
-  private loadSubjects(): void {
-
-    this.startRequest();
-
-    this.subjectService
-      .getAll()
-      .pipe(
-        finalize(() =>
-          this.finishRequest()
-        )
-      )
-      .subscribe({
-        next: subjects => {
           this.subjectCount =
-            subjects.length;
-        },
-        error: error =>
-          this.handleError(
-            'Subjects',
-            error
-          )
-      });
-  }
+            result.subjects.length;
 
-  private loadClassrooms(): void {
-
-    this.startRequest();
-
-    this.classroomService
-      .getAll()
-      .pipe(
-        finalize(() =>
-          this.finishRequest()
-        )
-      )
-      .subscribe({
-        next: classrooms => {
           this.classroomCount =
-            classrooms.length;
-        },
-        error: error =>
-          this.handleError(
-            'Classrooms',
-            error
-          )
-      });
-  }
+            result.classrooms.length;
 
-  private loadAcademicYears(): void {
 
-    this.startRequest();
-
-    this.academicYearService
-      .getAll()
-      .pipe(
-        finalize(() =>
-          this.finishRequest()
-        )
-      )
-      .subscribe({
-        next: academicYears => {
+          /* ================================
+             ACTIVE ACADEMIC YEAR
+          ================================ */
 
           const activeYear =
-            academicYears.find(
+            result.academicYears.find(
               year => year.active
             );
 
           this.activeAcademicYear =
             activeYear?.name ?? '-';
-        },
-        error: error =>
-          this.handleError(
-            'Academic years',
-            error
-          )
-      });
-  }
 
-  private loadAttendances(): void {
 
-    this.startRequest();
+          /* ================================
+             ATTENDANCE
+          ================================ */
 
-    this.attendanceService
-      .getAll()
-      .pipe(
-        finalize(() =>
-          this.finishRequest()
-        )
-      )
-      .subscribe({
-        next: attendances => {
           this.calculateAttendance(
-            attendances
+            result.attendances
           );
+
+
+          /* ================================
+             FINISH
+          ================================ */
+
+          this.loading = false;
+
+          this.cdr.detectChanges();
         },
-        error: error =>
-          this.handleError(
-            'Attendances',
+
+
+        error: error => {
+
+          console.error(
+            'Error loading admin dashboard:',
             error
-          )
+          );
+
+          this.errorMessage =
+            'Some dashboard data could not be loaded.';
+
+          this.loading = false;
+
+          this.cdr.detectChanges();
+        }
+
       });
   }
+
+
+  /* ========================================
+     ATTENDANCE CALCULATION
+  ======================================== */
 
   private calculateAttendance(
-    attendances: { status: string }[]
+    attendances: {
+      status: string;
+    }[]
   ): void {
 
-    const total = attendances.length;
+    const total =
+      attendances.length;
+
 
     if (total === 0) {
+
       this.presentPercentage = 0;
+
       this.latePercentage = 0;
+
       this.absentPercentage = 0;
+
       return;
     }
 
+
     const present =
       attendances.filter(
-        a => a.status === 'PRESENT'
+        attendance =>
+          attendance.status ===
+          'PRESENT'
       ).length;
+
 
     const late =
       attendances.filter(
-        a => a.status === 'LATE'
+        attendance =>
+          attendance.status ===
+          'LATE'
       ).length;
+
 
     const absent =
       attendances.filter(
-        a => a.status === 'ABSENT'
+        attendance =>
+          attendance.status ===
+          'ABSENT'
       ).length;
+
 
     this.presentPercentage =
       Math.round(
-        present / total * 100
+        (
+          present /
+          total
+        ) * 100
       );
+
 
     this.latePercentage =
       Math.round(
-        late / total * 100
+        (
+          late /
+          total
+        ) * 100
       );
+
 
     this.absentPercentage =
       Math.round(
-        absent / total * 100
+        (
+          absent /
+          total
+        ) * 100
       );
   }
+
+
+  /* ========================================
+     ATTENDANCE DONUT
+  ======================================== */
 
   getDonutStyle(): string {
 
@@ -297,6 +321,7 @@ export class AdminDashboard implements OnInit {
       presentEnd +
       this.latePercentage;
 
+
     return `
       conic-gradient(
         #39c486 0% ${presentEnd}%,
@@ -305,4 +330,5 @@ export class AdminDashboard implements OnInit {
       )
     `;
   }
+
 }

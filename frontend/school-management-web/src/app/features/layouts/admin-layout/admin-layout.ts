@@ -319,8 +319,9 @@ export class AdminLayout implements OnInit {
 
     this.profileOpen = false;
 
-    // Backend / page profile later
-    console.log('Open admin profile');
+    this.router.navigate([
+      '/admin/profile'
+    ]);
   }
 
 

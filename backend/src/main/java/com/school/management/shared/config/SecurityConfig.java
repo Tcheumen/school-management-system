@@ -83,7 +83,8 @@ public class SecurityConfig {
 
                         .requestMatchers(
                                 "/api/report-cards/me")
-                        .hasRole("STUDENT")
+                                        .hasRole("STUDENT")
+                        .requestMatchers(HttpMethod.GET, "/api/enrollments/student/me").hasRole("STUDENT")
 
                         // =========================
                         // TEACHER SPECIFIC
@@ -142,7 +143,7 @@ public class SecurityConfig {
                                 "/api/class-schedules/**")
                                         .hasRole("ADMIN")
                         
-                       .requestMatchers("/api/enrollments/**").hasRole("ADMIN")
+                      
                         
                        
 
