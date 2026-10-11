@@ -17,6 +17,9 @@ import com.school.management.student.repository.StudentRepository;
 import com.school.management.teacher.entity.Teacher;
 import com.school.management.teacher.repository.TeacherRepository;
 
+import com.school.management.auth.dto.UpdateProfileRequest;
+import com.school.management.auth.dto.ChangePasswordRequest;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -184,22 +187,146 @@ public class AuthService {
 
     private void linkTeacher(
             User user,
-            String email) {
+                    String email) {
 
-        Teacher teacher = teacherRepository
-                .findByEmailIgnoreCase(email)
-                .orElseThrow(
-                        () -> new BusinessException(
-                                "No teacher profile found with this email"));
+            Teacher teacher = teacherRepository
+                            .findByEmailIgnoreCase(email)
+                            .orElseThrow(
+                                            () -> new BusinessException(
+                                                            "No teacher profile found with this email"));
 
-        if (teacher.getUser() != null) {
+            if (teacher.getUser() != null) {
 
-            throw new BusinessException(
-                    "Teacher already has a user account");
-        }
+                    throw new BusinessException(
+                                    "Teacher already has a user account");
+            }
 
-        teacher.setUser(user);
+            teacher.setUser(user);
 
-        teacherRepository.save(teacher);
+            teacherRepository.save(teacher);
+    }
+    
+    @Transactional
+    public UserResponse updateProfile(
+                    String email,
+                    UpdateProfileRequest request) {
+
+            User user = userRepository
+                            .findByEmail(email)
+                            .orElseThrow(
+                                            () -> new BusinessException(
+                                                            "User not found"));
+
+            String newFullName = request.fullName().trim();
+
+            String newEmail = request.email().trim();
+
+            if (!user.getEmail().equalsIgnoreCase(newEmail)
+                            && userRepository.existsByEmail(newEmail)) {
+
+                    throw new BusinessException(
+                                    "Email already exists");
+            }
+
+            user.setFullName(newFullName);
+            user.setEmail(newEmail);
+
+            String[] names = newFullName.split("\\s+", 2);
+
+            String firstName = names[0];
+
+            String lastName = names.length > 1 ? names[1] : "";
+
+            switch (user.getRole()) {
+
+                    case STUDENT -> {
+
+                            Student student = studentRepository
+                                            .findByUserId(user.getId())
+                                            .orElseThrow(
+                                                            () -> new BusinessException(
+                                                                            "Student profile not found"));
+
+                            student.setFirstName(firstName);
+                            student.setLastName(lastName);
+                           
+
+                            studentRepository.save(student);
+                    }
+
+                    case TEACHER -> {
+
+                            Teacher teacher = teacherRepository
+                                            .findByUserId(user.getId())
+                                            .orElseThrow(
+                                                            () -> new BusinessException(
+                                                                            "Teacher profile not found"));
+
+                            teacher.setFirstName(firstName);
+                            teacher.setLastName(lastName);
+                           
+
+                            teacherRepository.save(teacher);
+                    }
+
+                    case ADMIN -> {
+                            // No additional domain profile.
+                    }
+            }
+
+            User savedUser = userRepository.save(user);
+
+            return new UserResponse(
+                            savedUser.getId(),
+                            savedUser.getFullName(),
+                            savedUser.getEmail(),
+                            savedUser.getRole());
+    }
+
+    @Transactional
+    public void changePassword(
+                    String email,
+                    ChangePasswordRequest request) {
+
+            User user = userRepository
+                            .findByEmail(email)
+                            .orElseThrow(
+                                            () -> new BusinessException(
+                                                            "User not found"));
+
+            if (!passwordEncoder.matches(
+                            request.currentPassword(),
+                            user.getPassword())) {
+
+                    throw new BusinessException(
+                                    "Current password is incorrect");
+            }
+
+            if (!request.newPassword().equals(
+                            request.confirmPassword())) {
+
+                    throw new BusinessException(
+                                    "Passwords do not match");
+            }
+
+            if (request.newPassword().length() < 8) {
+
+                    throw new BusinessException(
+                                    "Password must contain at least 8 characters");
+            }
+
+            if (passwordEncoder.matches(
+                            request.newPassword(),
+                            user.getPassword())) {
+
+                    throw new BusinessException(
+                                    "New password must be different from current password");
+            }
+
+            user.setPassword(
+                            passwordEncoder.encode(
+                                            request.newPassword()));
+
+            userRepository.save(user);
     }
 }

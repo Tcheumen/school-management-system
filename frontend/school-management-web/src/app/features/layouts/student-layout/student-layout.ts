@@ -133,8 +133,7 @@ export class StudentLayout implements OnInit {
       '/student/profile'
     ]);
 
-    // Page Profile plus tard
-    console.log('Open student profile');
+    
   }
 
   openSettings(): void {
@@ -142,8 +141,7 @@ export class StudentLayout implements OnInit {
     this.messageOpen = false;
     this.profileOpen = false;
 
-    // Page Settings plus tard
-    console.log('Open student settings');
+    this.router.navigate(['/student/settings']);
   }
 
   private loadCurrentUser(): void {

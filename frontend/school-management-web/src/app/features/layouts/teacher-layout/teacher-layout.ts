@@ -236,8 +236,7 @@ export class TeacherLayout implements OnInit {
     this.messageOpen = false;
     this.profileOpen = false;
 
-    // Page settings à implémenter plus tard
-    console.log('Open teacher settings');
+    this.router.navigate(['/teacher/settings']);
   }
 
   logout(): void {

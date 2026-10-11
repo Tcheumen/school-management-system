@@ -85,6 +85,15 @@ export const routes: Routes = [
                     )
             },
 
+            /* SETTINGS */
+
+            {
+                path: 'admin/settings',
+                loadComponent: () =>
+                import('./features/settings/pages/my-settings/my-settings')
+               .then(m => m.MySettings)
+            },
+
             /* STUDENTS */
 
             {
@@ -583,8 +592,15 @@ export const routes: Routes = [
                     ).then(
                         m => m.MyProfile
                     )
-            }
+            },
 
+            {
+                path: 'teacher/settings',
+                loadComponent: () =>
+                    import('./features/settings/pages/my-settings/my-settings')
+                        .then(m => m.MySettings)
+            }
+         
         ]
     },
 
@@ -650,6 +666,14 @@ export const routes: Routes = [
                     ).then(
                         m => m.MyProfile
                     )
+            },
+
+            {
+                path: 'student/settings',
+                loadComponent: () =>
+                    import(
+                        './features/settings/pages/my-settings/my-settings'
+                    ).then(m => m.MySettings)
             }
 
         ]

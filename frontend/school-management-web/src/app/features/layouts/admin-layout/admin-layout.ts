@@ -335,8 +335,7 @@ export class AdminLayout implements OnInit {
     this.messageOpen = false;
     this.profileOpen = false;
 
-    // Settings page later
-    console.log('Open admin settings');
+    this.router.navigate(['/admin/settings']);
   }
 
 

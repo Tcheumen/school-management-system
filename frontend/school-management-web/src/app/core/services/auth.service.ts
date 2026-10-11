@@ -106,4 +106,18 @@ export class AuthService {
             `${this.apiUrl}/me`
         );
     }
+
+  
+
+    changePassword(request: {
+        currentPassword: string;
+        newPassword: string;
+        confirmPassword: string;
+    }): Observable<void> {
+
+        return this.http.put<void>(
+            `${this.apiUrl}/me/password`,
+            request
+        );
+    }
 }

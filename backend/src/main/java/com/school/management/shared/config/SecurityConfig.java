@@ -61,8 +61,10 @@ public class SecurityConfig {
                         .permitAll()
 
                         .requestMatchers(
-                                "/api/auth/me")
-                        .authenticated()
+                                HttpMethod.PUT,
+                                "/api/auth/me",
+                                "/api/auth/me/password"
+                        ).authenticated()
 
                         // =========================
                         // STUDENT SPECIFIC

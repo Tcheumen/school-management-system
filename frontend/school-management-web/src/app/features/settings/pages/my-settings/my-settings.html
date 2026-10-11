@@ -1,0 +1,221 @@
+<div class="settings-page">
+
+  <!-- PAGE HEADER -->
+  <div class="page-header">
+    <div>
+      <h1>Settings</h1>
+      <p>Manage your account information and security.</p>
+    </div>
+  </div>
+
+  <!-- LOADING -->
+  @if (loading) {
+  <div class="state-card">
+    <div class="loader"></div>
+    <span>Loading your settings...</span>
+  </div>
+  }
+
+  <!-- LOADING ERROR -->
+  @if (!loading && loadError) {
+  <div class="error-state">
+    <span>{{ loadError }}</span>
+
+    <button type="button" (click)="loadSettings()">
+      Try Again
+    </button>
+  </div>
+  }
+
+  <!-- SETTINGS CONTENT -->
+  @if (!loading && !loadError) {
+
+  <!-- ACCOUNT OVERVIEW -->
+  <section class="account-overview">
+
+    <div class="account-avatar">
+      {{ initials }}
+    </div>
+
+    <div class="account-details">
+      <h2>{{ fullName }}</h2>
+      <p>{{ email }}</p>
+
+      <span class="role-badge">
+        {{ roleLabel }}
+      </span>
+    </div>
+
+  </section>
+
+  <div class="settings-content">
+
+    <!-- ACCOUNT INFORMATION -->
+    <section class="settings-card">
+
+      <div class="card-header">
+        <div class="header-icon">
+          👤
+        </div>
+
+        <div>
+          <h3>Account Information</h3>
+          <p>Your personal account information.</p>
+        </div>
+      </div>
+
+      <div class="card-body">
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="fullName">
+              Full Name
+            </label>
+
+            <input id="fullName" type="text" [value]="fullName" readonly />
+          </div>
+
+          <div class="form-group">
+            <label for="email">
+              Email Address
+            </label>
+
+            <input id="email" type="email" [value]="email" readonly />
+          </div>
+
+        </div>
+
+        <div class="readonly-notice">
+          <span class="notice-icon">🔒</span>
+
+          <p>
+            Your personal information is managed by the
+            school administration and cannot be changed here.
+          </p>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- SECURITY -->
+    <section class="settings-card">
+
+      <div class="card-header">
+        <div class="header-icon">
+          🔐
+        </div>
+
+        <div>
+          <h3>Security</h3>
+          <p>Keep your account secure by updating your password.</p>
+        </div>
+      </div>
+
+      <form class="card-body" (ngSubmit)="savePassword()">
+
+        <div class="security-heading">
+          <h4>Change Password</h4>
+          <p>
+            Choose a strong password to protect your account.
+          </p>
+        </div>
+
+        <div class="form-grid password-grid">
+
+          <!-- CURRENT PASSWORD -->
+          <div class="form-group">
+            <label for="currentPassword">
+              Current Password
+            </label>
+
+            <div class="password-field">
+              <input id="currentPassword" name="currentPassword" [type]="showCurrentPassword ? 'text' : 'password'"
+                [(ngModel)]="currentPassword" autocomplete="current-password" placeholder="Enter current password"
+                required />
+
+              <button type="button" class="visibility-btn" (click)="showCurrentPassword = !showCurrentPassword">
+                {{ showCurrentPassword ? 'Hide' : 'Show' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- NEW PASSWORD -->
+          <div class="form-group">
+            <label for="newPassword">
+              New Password
+            </label>
+
+            <div class="password-field">
+              <input id="newPassword" name="newPassword" [type]="showNewPassword ? 'text' : 'password'"
+                [(ngModel)]="newPassword" autocomplete="new-password" placeholder="Enter new password" required />
+
+              <button type="button" class="visibility-btn" (click)="showNewPassword = !showNewPassword">
+                {{ showNewPassword ? 'Hide' : 'Show' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- CONFIRM PASSWORD -->
+          <div class="form-group">
+            <label for="confirmPassword">
+              Confirm New Password
+            </label>
+
+            <div class="password-field">
+              <input id="confirmPassword" name="confirmPassword" [type]="showConfirmPassword ? 'text' : 'password'"
+                [(ngModel)]="confirmPassword" autocomplete="new-password" placeholder="Confirm new password" required />
+
+              <button type="button" class="visibility-btn" (click)="showConfirmPassword = !showConfirmPassword">
+                {{ showConfirmPassword ? 'Hide' : 'Show' }}
+              </button>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- PASSWORD REQUIREMENT -->
+        <div class="password-requirement">
+          <span>ⓘ</span>
+          <p>
+            Your new password must contain at least
+            8 characters and be different from your current password.
+          </p>
+        </div>
+
+        <!-- ERROR -->
+        @if (passwordError) {
+        <div class="message error">
+          <span>!</span>
+          {{ passwordError }}
+        </div>
+        }
+
+        <!-- SUCCESS -->
+        @if (passwordSuccess) {
+        <div class="message success">
+          <span>✓</span>
+          {{ passwordSuccess }}
+        </div>
+        }
+
+        <!-- ACTION -->
+        <div class="form-actions">
+          <button type="submit" class="primary-btn" [disabled]="savingPassword">
+            @if (savingPassword) {
+            Updating...
+            } @else {
+            Change Password
+            }
+          </button>
+        </div>
+
+      </form>
+
+    </section>
+
+  </div>
+  }
+
+</div>
