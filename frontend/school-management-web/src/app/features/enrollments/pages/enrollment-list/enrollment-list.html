@@ -5,13 +5,65 @@
 
     <div class="page-heading">
       <h1>Student Enrollments</h1>
-      <p>Manage student classroom enrollments and academic years.</p>
+      <p>Manage student enrollments by academic year and classroom.</p>
     </div>
 
-    <a routerLink="/enrollments/new" class="btn btn-primary">
-      <span>+</span>
-      Add Enrollment
-    </a>
+    <div class="header-actions">
+      <button type="button" class="btn btn-refresh" (click)="loadEnrollments()" [disabled]="loading() || deleting()">
+        ↻ Refresh
+      </button>
+
+      <a routerLink="/enrollments/new" class="btn btn-primary">
+        + Add Enrollment
+      </a>
+    </div>
+
+  </div>
+
+  <!-- ERROR -->
+  @if (errorMessage()) {
+  <div class="error-message" role="alert">
+    {{ errorMessage() }}
+  </div>
+  }
+
+  <!-- LOADING -->
+  @if (loading()) {
+  <div class="loading">
+    <div class="loader"></div>
+    <span>Loading enrollments...</span>
+  </div>
+  } @else {
+
+  <!-- STATISTICS -->
+  <div class="stats-grid">
+
+    <div class="stat-card">
+      <div class="stat-icon enrollments-icon">📋</div>
+      <div class="stat-info">
+        <span>Total Enrollments</span>
+        <strong>{{ totalEnrollments }}</strong>
+        <small>{{ selectedYearLabel }}</small>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon students-icon">👥</div>
+      <div class="stat-info">
+        <span>Enrolled Students</span>
+        <strong>{{ totalStudents }}</strong>
+        <small>Distinct students</small>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon classrooms-icon">🏫</div>
+      <div class="stat-info">
+        <span>Occupied Classrooms</span>
+        <strong>{{ totalClassrooms }}</strong>
+        <small>With student enrollments</small>
+      </div>
+    </div>
 
   </div>
 
@@ -19,40 +71,100 @@
   <section class="enrollments-card">
 
     <div class="card-header">
-
       <div>
-        <h2>All Enrollments</h2>
-        <p>Overview of student classroom assignments.</p>
+        <h2>Enrollment Directory</h2>
+        <p>Academic Year: {{ selectedYearLabel }}</p>
       </div>
 
       <span class="enrollments-count">
-        {{ enrollments().length }} enrollments
+        {{ filteredEnrollments.length }} enrollments
       </span>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters-bar">
+
+      <div class="filter-group">
+        <label for="academicYear">
+          Academic Year
+        </label>
+
+        <select id="academicYear" name="academicYear" [ngModel]="selectedYearId()"
+          (ngModelChange)="onYearChange($event)">
+
+          @for (year of academicYears(); track year.id) {
+          <option [ngValue]="year.id">
+            {{ year.name }}
+            {{ year.active ? '(Active)' : '' }}
+          </option>
+          }
+
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="classroom">
+          Classroom
+        </label>
+
+        <select id="classroom" name="classroom" [(ngModel)]="selectedClassroomId">
+
+          <option [ngValue]="'ALL'">
+            All Classrooms
+          </option>
+
+          @for (
+          classroom of availableClassrooms();
+          track classroom.id
+          ) {
+          <option [ngValue]="classroom.id">
+            {{ classroom.name }} - {{ classroom.level }}
+          </option>
+          }
+
+        </select>
+      </div>
+
+      <div class="filter-group search-group">
+        <label for="studentSearch">
+          Search Student
+        </label>
+
+        <input id="studentSearch" name="searchTerm" type="search" [(ngModel)]="searchTerm"
+          placeholder="Search by student name..." />
+      </div>
+
+      <button type="button" class="clear-btn" (click)="clearFilters()">
+        Clear
+      </button>
 
     </div>
 
-    <!-- ERROR MESSAGE -->
-    @if (errorMessage()) {
-    <div class="error-message" role="alert">
-      {{ errorMessage() }}
+    <!-- TABLE -->
+    @if (academicYears().length === 0) {
+
+    <div class="empty-state">
+      <div class="empty-icon">📅</div>
+      <h3>No academic years found</h3>
+      <p>Create an academic year before adding enrollments.</p>
     </div>
-    }
 
-    <!-- LOADING -->
-    @if (loading()) {
+    } @else if (filteredEnrollments.length === 0) {
 
-    <div class="loading">
-      <div class="loader"></div>
-      <span>Loading enrollments...</span>
+    <div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <h3>No enrollments found</h3>
+      <p>
+        No enrollments match the selected
+        academic year, classroom or search.
+      </p>
     </div>
 
     } @else {
 
-    <!-- TABLE -->
     <div class="table-wrapper">
 
       <table>
-
         <thead>
           <tr>
             <th>Enrollment ID</th>
@@ -64,20 +176,17 @@
         </thead>
 
         <tbody>
-
           @for (
-          enrollment of enrollments();
+          enrollment of filteredEnrollments;
           track enrollment.id
           ) {
 
           <tr>
 
-            <!-- ENROLLMENT ID -->
             <td class="id-cell">
               #{{ enrollment.id }}
             </td>
 
-            <!-- STUDENT -->
             <td>
               <div class="student-cell">
 
@@ -90,67 +199,161 @@
                     {{ enrollment.studentFullName }}
                   </strong>
 
-                  <span>Enrolled student</span>
+                  <span>
+                    Student #{{ enrollment.studentId }}
+                  </span>
                 </div>
 
               </div>
             </td>
 
-            <!-- CLASSROOM -->
             <td>
               <span class="classroom-badge">
                 {{ enrollment.classroomName }}
               </span>
             </td>
 
-            <!-- ACADEMIC YEAR -->
             <td>
               <span class="year-badge">
                 {{ enrollment.academicYearName }}
               </span>
             </td>
 
-            <!-- ACTIONS -->
             <td>
-
               <div class="actions">
 
+                <button type="button" class="btn btn-view" (click)="viewEnrollment(enrollment)">
+                  View
+                </button>
+
                 <a [routerLink]="[
-                        '/enrollments',
-                        enrollment.id,
-                        'edit'
-                      ]" class="btn btn-edit">
+                          '/enrollments',
+                          enrollment.id,
+                          'edit'
+                        ]" class="btn btn-edit">
                   Edit
                 </a>
 
-                <button type="button" class="btn btn-delete" (click)="deleteEnrollment(enrollment.id)">
-                  Delete
+                <button type="button" class="btn btn-delete" [disabled]="deleting()"
+                  (click)="deleteEnrollment(enrollment.id)">
+                  {{ deletingId() === enrollment.id
+                            ? 'Deleting...'
+                            : 'Delete' }}
                 </button>
 
               </div>
-
             </td>
 
-          </tr>
-
-          } @empty {
-
-          <tr>
-            <td colspan="5" class="empty-message">
-              No enrollments found.
-            </td>
           </tr>
 
           }
-
         </tbody>
-
       </table>
 
     </div>
-
     }
 
   </section>
 
+  }
+
 </div>
+
+<!-- ========================================
+     ENROLLMENT DETAILS MODAL
+======================================== -->
+
+@if (selectedEnrollment(); as enrollment) {
+
+<div class="modal-overlay" (click)="closeDetails()">
+
+  <div class="enrollment-modal" role="dialog" aria-modal="true" aria-labelledby="enrollment-details-title"
+    (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+
+      <div class="modal-heading">
+        <div class="modal-icon">📋</div>
+
+        <div>
+          <h2 id="enrollment-details-title">
+            Enrollment Details
+          </h2>
+          <p>Enrollment #{{ enrollment.id }}</p>
+        </div>
+      </div>
+
+      <button type="button" class="modal-close" aria-label="Close enrollment details" (click)="closeDetails()">
+        ×
+      </button>
+
+    </div>
+
+    <div class="modal-body">
+
+      <div class="student-profile">
+        <div class="profile-avatar">
+          {{ enrollment.studentFullName.charAt(0).toUpperCase() }}
+        </div>
+
+        <div>
+          <h3>{{ enrollment.studentFullName }}</h3>
+          <span>Student #{{ enrollment.studentId }}</span>
+        </div>
+      </div>
+
+      <div class="details-grid">
+
+        <div class="detail-item">
+          <span>Enrollment ID</span>
+          <strong>#{{ enrollment.id }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Student ID</span>
+          <strong>#{{ enrollment.studentId }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Classroom</span>
+          <strong>{{ enrollment.classroomName }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Academic Year</span>
+          <strong>{{ enrollment.academicYearName }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Classroom ID</span>
+          <strong>#{{ enrollment.classroomId }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Academic Year ID</span>
+          <strong>#{{ enrollment.academicYearId }}</strong>
+        </div>
+
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+
+      <button type="button" class="btn btn-refresh" (click)="closeDetails()">
+        Close
+      </button>
+
+      <a class="btn btn-primary" [routerLink]="[
+            '/enrollments',
+            enrollment.id,
+            'edit'
+          ]" (click)="closeDetails()">
+        Edit Enrollment
+      </a>
+
+    </div>
+
+  </div>
+</div>
+}

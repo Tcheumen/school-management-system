@@ -1,4 +1,3 @@
-
 <div class="page-container">
 
   <!-- PAGE HEADER -->
@@ -6,151 +5,416 @@
 
     <div class="page-heading">
       <h1>Subjects</h1>
-      <p>Manage school subjects and course information.</p>
+      <p>Manage subjects and teaching assignments.</p>
     </div>
 
-    <a routerLink="/subjects/new" class="btn btn-primary">
-      <span class="add-icon">+</span>
-      Add Subject
-    </a>
+    <div class="header-actions">
+
+      <button type="button" class="refresh-btn" (click)="loadData()" [disabled]="loading() || deleting()">
+        ↻ Refresh
+      </button>
+
+      <a routerLink="/subjects/new" class="add-btn">
+        + Add Subject
+      </a>
+
+    </div>
 
   </div>
 
-  <!-- SUBJECTS CARD -->
+  <!-- ERROR -->
+  @if (errorMessage()) {
+  <div class="error-message" role="alert">
+    {{ errorMessage() }}
+  </div>
+  }
+
+  <!-- LOADING -->
+  @if (loading()) {
+
+  <div class="loading-state">
+    <div class="loader"></div>
+    <span>Loading subjects...</span>
+  </div>
+
+  } @else {
+
+  <!-- STATISTICS -->
+  <div class="stats-grid">
+
+    <div class="stat-card">
+      <div class="stat-icon subject-icon">📚</div>
+
+      <div class="stat-info">
+        <span>Total Subjects</span>
+        <strong>{{ totalSubjects }}</strong>
+        <small>Available school subjects</small>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon classroom-icon">🏫</div>
+
+      <div class="stat-info">
+        <span>Classrooms</span>
+        <strong>{{ totalClassrooms }}</strong>
+        <small>{{ selectedYearLabel }}</small>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon assignment-icon">👨‍🏫</div>
+
+      <div class="stat-info">
+        <span>Teaching Assignments</span>
+        <strong>{{ totalAssignments }}</strong>
+        <small>{{ selectedYearLabel }}</small>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon active-icon">📖</div>
+
+      <div class="stat-info">
+        <span>Assigned Subjects</span>
+        <strong>{{ assignedSubjectsCount }}</strong>
+        <small>Distinct subjects this year</small>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- MAIN CARD -->
   <section class="subjects-card">
 
+    <!-- CARD HEADER -->
     <div class="card-header">
 
       <div>
-        <h2>All Subjects</h2>
-        <p>Overview of available school subjects.</p>
+        <h2>Subject Management</h2>
+        <p>Browse subjects and classroom teaching assignments.</p>
       </div>
 
-      <span class="subjects-count">
-        {{ subjects().length }} subjects
+      <span class="result-count">
+        {{ activeView() === 'CATALOG'
+            ? filteredSubjects.length
+            : filteredAssignments.length }}
+        results
       </span>
 
     </div>
 
-    <!-- ERROR MESSAGE -->
-    @if (errorMessage()) {
-      <div class="error-message" role="alert">
-        {{ errorMessage() }}
-      </div>
-    }
+    <!-- VIEW TABS -->
+    <div class="view-tabs">
 
-    <!-- LOADING -->
-    @if (loading()) {
+      <button type="button" class="tab-btn" [class.active]="activeView() === 'CATALOG'" (click)="changeView('CATALOG')">
+        Subject Catalog
+      </button>
 
-      <div class="loading">
-        <div class="loader"></div>
-        <span>Loading subjects...</span>
+      <button type="button" class="tab-btn" [class.active]="activeView() === 'CLASSROOM'"
+        (click)="changeView('CLASSROOM')">
+        Subjects by Classroom
+      </button>
+
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters-bar">
+
+      @if (activeView() === 'CLASSROOM') {
+
+      <!-- ACADEMIC YEAR -->
+      <div class="filter-group">
+
+        <label for="academicYear">
+          Academic Year
+        </label>
+
+        <select id="academicYear" name="academicYear" [ngModel]="selectedYearId()"
+          (ngModelChange)="onYearChange($event)">
+
+          @for (year of academicYears(); track year.id) {
+          <option [ngValue]="year.id">
+            {{ year.name }}
+            {{ year.active ? '(Active)' : '' }}
+          </option>
+          }
+
+        </select>
+
       </div>
+
+      <!-- CLASSROOM -->
+      <div class="filter-group">
+
+        <label for="classroom">
+          Classroom
+        </label>
+
+        <select id="classroom" name="classroom" [(ngModel)]="selectedClassroomId">
+
+          <option [ngValue]="'ALL'">
+            All Classrooms
+          </option>
+
+          @for (
+          classroom of availableClassrooms();
+          track classroom.id
+          ) {
+          <option [ngValue]="classroom.id">
+            {{ classroom.name }} - {{ classroom.level }}
+          </option>
+          }
+
+        </select>
+
+      </div>
+
+      }
+
+      <!-- SEARCH -->
+      <div class="filter-group search-group">
+
+        <label for="subjectSearch">
+          Search
+        </label>
+
+        <input id="subjectSearch" type="search" name="subjectSearch" [(ngModel)]="searchTerm" [placeholder]="
+              activeView() === 'CATALOG'
+                ? 'Search subjects...'
+                : 'Search subjects, teachers or classes...'
+            " />
+
+      </div>
+
+      <button type="button" class="clear-btn" (click)="clearFilters()">
+        Clear
+      </button>
+
+    </div>
+
+    <!-- ==========================
+           SUBJECT CATALOG
+      =========================== -->
+
+    @if (activeView() === 'CATALOG') {
+
+    @if (filteredSubjects.length === 0) {
+
+    <div class="empty-state">
+      <div class="empty-icon">📚</div>
+      <h3>No subjects found</h3>
+      <p>Try another search or create a new subject.</p>
+    </div>
 
     } @else {
 
-      <!-- TABLE -->
-      <div class="table-wrapper">
+    <div class="table-wrapper">
 
-        <table>
+      <table>
 
-          <thead>
-            <tr>
-              <th>Subject ID</th>
-              <th>Subject Name</th>
-              <th>Description</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
+        <thead>
+          <tr>
+            <th>Subject ID</th>
+            <th>Subject Name</th>
+            <th>Description</th>
+            <th>Assignments</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
 
-          <tbody>
+        <tbody>
 
-            @for (subject of subjects(); track subject.id) {
+          @for (subject of filteredSubjects; track subject.id) {
 
-              <tr>
+          <tr>
 
-                <!-- SUBJECT ID -->
-                <td>
-                  <span class="id-badge">
-                    #{{ subject.id }}
+            <td>
+              <span class="subject-id">
+                #{{ subject.id }}
+              </span>
+            </td>
+
+            <td>
+              <div class="subject-cell">
+
+                <div class="subject-avatar">
+                  📚
+                </div>
+
+                <div class="subject-info">
+                  <strong>{{ subject.name }}</strong>
+                  <span>School Subject</span>
+                </div>
+
+              </div>
+            </td>
+
+            <td class="description-cell">
+              {{ subject.description || 'No description' }}
+            </td>
+
+            <td>
+              @if (isSubjectAssigned(subject.id)) {
+              <span class="status-badge assigned">
+                Assigned
+              </span>
+              } @else {
+              <span class="status-badge unassigned">
+                Not Assigned
+              </span>
+              }
+            </td>
+
+            <td>
+              <div class="action-buttons">
+
+                <a [routerLink]="[
+                            '/subjects',
+                            subject.id,
+                            'edit'
+                          ]" class="edit-btn">
+                  Edit
+                </a>
+
+                <button type="button" class="delete-btn" [disabled]="
+                            deleting() ||
+                            isSubjectAssigned(subject.id)
+                          " [title]="
+                            isSubjectAssigned(subject.id)
+                              ? 'This subject has teaching assignments'
+                              : 'Delete subject'
+                          " (click)="deleteSubject(subject.id)">
+
+                  {{ deletingId() === subject.id
+                              ? 'Deleting...'
+                              : 'Delete' }}
+
+                </button>
+
+              </div>
+            </td>
+
+          </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    }
+
+    }
+
+    <!-- ==========================
+           SUBJECTS BY CLASSROOM
+      =========================== -->
+
+    @if (activeView() === 'CLASSROOM') {
+
+    @if (academicYears().length === 0) {
+
+    <div class="empty-state">
+      <div class="empty-icon">📅</div>
+      <h3>No academic year available</h3>
+      <p>Create an academic year first.</p>
+    </div>
+
+    } @else if (filteredAssignments.length === 0) {
+
+    <div class="empty-state">
+      <div class="empty-icon">🏫</div>
+      <h3>No teaching assignments found</h3>
+      <p>
+        No subjects are assigned for the selected
+        academic year and classroom.
+        Check Teacher Assignments to add an assignment.
+      </p>
+    </div>
+
+    } @else {
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Subject</th>
+            <th>Classroom</th>
+            <th>Teacher</th>
+            <th>Academic Year</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          @for (
+          assignment of filteredAssignments;
+          track assignment.id
+          ) {
+
+          <tr>
+
+            <td>
+              <div class="subject-cell">
+                <div class="subject-avatar">
+                  📖
+                </div>
+
+                <div class="subject-info">
+                  <strong>
+                    {{ assignment.subjectName }}
+                  </strong>
+
+                  <span>
+                    Subject #{{ assignment.subjectId }}
                   </span>
-                </td>
+                </div>
+              </div>
+            </td>
 
-                <!-- SUBJECT NAME -->
-                <td>
-                  <div class="subject-cell">
+            <td>
+              <span class="classroom-badge">
+                {{ assignment.classroomName }}
+              </span>
+            </td>
 
-                    <div class="subject-icon">
-                      📚
-                    </div>
+            <td>
+              <div class="teacher-cell">
+                <div class="teacher-avatar">
+                  👤
+                </div>
 
-                    <div class="subject-info">
-                      <strong>{{ subject.name }}</strong>
-                      <span>School Subject</span>
-                    </div>
+                <strong>
+                  {{ assignment.teacherFullName }}
+                </strong>
+              </div>
+            </td>
 
-                  </div>
-                </td>
+            <td class="year-cell">
+              {{ assignment.academicYearName }}
+            </td>
 
-                <!-- DESCRIPTION -->
-                <td class="description-cell">
-                  {{ subject.description || 'No description available.' }}
-                </td>
+          </tr>
 
-                <!-- ACTIONS -->
-                <td>
+          }
 
-                  <div class="actions">
+        </tbody>
 
-                    <a
-                      [routerLink]="[
-                        '/subjects',
-                        subject.id,
-                        'edit'
-                      ]"
-                      class="btn btn-edit">
-                      Edit
-                    </a>
+      </table>
 
-                    <button
-                      type="button"
-                      class="btn btn-delete"
-                      (click)="deleteSubject(subject.id)">
-                      Delete
-                    </button>
+    </div>
 
-                  </div>
-
-                </td>
-
-              </tr>
-
-            } @empty {
-
-              <tr>
-                <td colspan="4" class="empty-message">
-
-                  <div class="empty-content">
-                    <span class="empty-icon">📚</span>
-                    <strong>No subjects found</strong>
-                    <p>
-                      Start by adding your first school subject.
-                    </p>
-                  </div>
-
-                </td>
-              </tr>
-
-            }
-
-          </tbody>
-
-        </table>
-
-      </div>
+    }
 
     }
 
   </section>
+
+  }
 
 </div>
