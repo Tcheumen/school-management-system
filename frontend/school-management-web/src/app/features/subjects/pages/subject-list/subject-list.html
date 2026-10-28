@@ -1,98 +1,156 @@
+
 <div class="page-container">
 
+  <!-- PAGE HEADER -->
   <div class="page-header">
-    <div>
-      <h2>Subjects</h2>
-      <p>Manage school subjects</p>
+
+    <div class="page-heading">
+      <h1>Subjects</h1>
+      <p>Manage school subjects and course information.</p>
     </div>
 
     <a routerLink="/subjects/new" class="btn btn-primary">
+      <span class="add-icon">+</span>
       Add Subject
     </a>
-  </div>
-
-  @if (errorMessage()) {
-  <div class="error-message">
-    {{ errorMessage() }}
-  </div>
-  }
-
-  @if (loading()) {
-
-  <div class="loading">
-    Loading subjects...
-  </div>
-
-  } @else {
-
-  <div class="table-wrapper">
-
-    <table>
-
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Description</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
-
-      <tbody>
-
-        @for (
-        subject of subjects();
-        track subject.id
-        ) {
-
-        <tr>
-
-          <td>
-            {{ subject.id }}
-          </td>
-
-          <td class="subject-name">
-            {{ subject.name }}
-          </td>
-
-          <td>
-            {{ subject.description }}
-          </td>
-
-          <td class="actions">
-
-            <a [routerLink]="[
-                    '/subjects',
-                    subject.id,
-                    'edit'
-                  ]" class="btn btn-edit">
-              Edit
-            </a>
-
-            <button type="button" class="btn btn-delete" (click)="deleteSubject(subject.id)">
-              Delete
-            </button>
-
-          </td>
-
-        </tr>
-
-        } @empty {
-
-        <tr>
-          <td colspan="4" class="empty-message">
-            No subjects found.
-          </td>
-        </tr>
-
-        }
-
-      </tbody>
-
-    </table>
 
   </div>
 
-  }
+  <!-- SUBJECTS CARD -->
+  <section class="subjects-card">
+
+    <div class="card-header">
+
+      <div>
+        <h2>All Subjects</h2>
+        <p>Overview of available school subjects.</p>
+      </div>
+
+      <span class="subjects-count">
+        {{ subjects().length }} subjects
+      </span>
+
+    </div>
+
+    <!-- ERROR MESSAGE -->
+    @if (errorMessage()) {
+      <div class="error-message" role="alert">
+        {{ errorMessage() }}
+      </div>
+    }
+
+    <!-- LOADING -->
+    @if (loading()) {
+
+      <div class="loading">
+        <div class="loader"></div>
+        <span>Loading subjects...</span>
+      </div>
+
+    } @else {
+
+      <!-- TABLE -->
+      <div class="table-wrapper">
+
+        <table>
+
+          <thead>
+            <tr>
+              <th>Subject ID</th>
+              <th>Subject Name</th>
+              <th>Description</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+
+            @for (subject of subjects(); track subject.id) {
+
+              <tr>
+
+                <!-- SUBJECT ID -->
+                <td>
+                  <span class="id-badge">
+                    #{{ subject.id }}
+                  </span>
+                </td>
+
+                <!-- SUBJECT NAME -->
+                <td>
+                  <div class="subject-cell">
+
+                    <div class="subject-icon">
+                      📚
+                    </div>
+
+                    <div class="subject-info">
+                      <strong>{{ subject.name }}</strong>
+                      <span>School Subject</span>
+                    </div>
+
+                  </div>
+                </td>
+
+                <!-- DESCRIPTION -->
+                <td class="description-cell">
+                  {{ subject.description || 'No description available.' }}
+                </td>
+
+                <!-- ACTIONS -->
+                <td>
+
+                  <div class="actions">
+
+                    <a
+                      [routerLink]="[
+                        '/subjects',
+                        subject.id,
+                        'edit'
+                      ]"
+                      class="btn btn-edit">
+                      Edit
+                    </a>
+
+                    <button
+                      type="button"
+                      class="btn btn-delete"
+                      (click)="deleteSubject(subject.id)">
+                      Delete
+                    </button>
+
+                  </div>
+
+                </td>
+
+              </tr>
+
+            } @empty {
+
+              <tr>
+                <td colspan="4" class="empty-message">
+
+                  <div class="empty-content">
+                    <span class="empty-icon">📚</span>
+                    <strong>No subjects found</strong>
+                    <p>
+                      Start by adding your first school subject.
+                    </p>
+                  </div>
+
+                </td>
+              </tr>
+
+            }
+
+          </tbody>
+
+        </table>
+
+      </div>
+
+    }
+
+  </section>
 
 </div>

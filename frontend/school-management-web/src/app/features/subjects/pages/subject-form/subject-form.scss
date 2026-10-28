@@ -1,139 +1,420 @@
+
 :host {
   display: block;
-  min-height: 100vh;
-  padding: 2rem;
-  background: #f5f7fb;
-  font-family: Arial, sans-serif;
+  min-width: 0;
+  padding: 28px;
+  box-sizing: border-box;
 }
+
+* {
+  box-sizing: border-box;
+}
+
+/* ========================================
+   FORM CONTAINER
+======================================== */
 
 .form-container {
-  max-width: 650px;
+  width: 100%;
+  max-width: 820px;
   margin: 0 auto;
-  padding: 2rem;
-  background: white;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  padding: 32px;
+
+  background: #ffffff;
+  border: 1px solid #e8ebf2;
+  border-radius: 16px;
+
+  box-shadow: 0 4px 24px rgba(20, 35, 70, 0.04);
+}
+
+/* ========================================
+   HEADER
+======================================== */
+
+.form-header {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+
+  border-bottom: 1px solid #edf0f5;
 
   h2 {
-    margin: 0 0 1.8rem;
-    color: #1f2937;
-    font-size: 1.7rem;
+    margin: 0 0 6px;
+    color: #17213b;
+    font-size: 22px;
+    font-weight: 750;
+    letter-spacing: -0.4px;
+  }
+
+  p {
+    margin: 0;
+    color: #8791a4;
+    font-size: 12px;
+    line-height: 1.6;
   }
 }
+
+.form-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  width: 58px;
+  height: 58px;
+  flex-shrink: 0;
+
+  border-radius: 14px;
+  background: #eef0ff;
+
+  font-size: 26px;
+}
+
+/* ========================================
+   FORM
+======================================== */
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+/* ========================================
+   SECTION TITLE
+======================================== */
+
+.form-section-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  margin-top: 3px;
+
+  color: #17213b;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.form-section-title::before {
+  content: '';
+  width: 4px;
+  height: 18px;
+
+  border-radius: 4px;
+  background: #565ee5;
+}
+
+/* ========================================
+   FORM GROUP
+======================================== */
 
 .form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 1.3rem;
+  gap: 9px;
+  min-width: 0;
+}
 
-  label {
-    margin-bottom: 0.45rem;
-    color: #374151;
-    font-size: 0.9rem;
-    font-weight: 600;
+label {
+  color: #34405a;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.required {
+  color: #e11d48;
+}
+
+/* ========================================
+   INPUTS / TEXTAREA
+======================================== */
+
+input,
+textarea {
+  display: block;
+  width: 100%;
+
+  padding: 12px 14px;
+
+  border: 1px solid #dfe4ee;
+  border-radius: 9px;
+
+  background: #ffffff;
+  color: #17213b;
+
+  font-family: inherit;
+  font-size: 13px;
+  line-height: 1.6;
+
+  outline: none;
+
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background 0.2s ease;
+
+  &::placeholder {
+    color: #a0a8b8;
   }
 
-  input,
-  textarea {
-    padding: 0.8rem 0.9rem;
-    border: 1px solid #d1d5db;
-    border-radius: 7px;
-    outline: none;
-    font-family: inherit;
-    font-size: 1rem;
-    transition:
-      border-color 0.2s ease,
-      box-shadow 0.2s ease;
-
-    &:focus {
-      border-color: #2563eb;
-      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
-    }
-
-    &.ng-invalid.ng-touched {
-      border-color: #ef4444;
-    }
+  &:hover:not(:disabled) {
+    border-color: #c4c9e9;
   }
 
-  textarea {
-    resize: vertical;
-    min-height: 120px;
+  &:focus {
+    border-color: #565ee5;
+    box-shadow: 0 0 0 3px rgba(86, 94, 229, 0.1);
   }
+
+  &:disabled,
+  &:read-only {
+    background: #f8f9fc;
+    color: #8791a4;
+  }
+}
+
+input {
+  min-height: 46px;
+}
+
+textarea {
+  min-height: 140px;
+  resize: vertical;
+}
+
+/* ========================================
+   VALIDATION
+======================================== */
+
+input.ng-invalid.ng-touched,
+textarea.ng-invalid.ng-touched {
+  border-color: #e11d48;
+  background: #fffafb;
+}
+
+input.ng-invalid.ng-touched:focus,
+textarea.ng-invalid.ng-touched:focus {
+  box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.08);
 }
 
 .validation-error {
-  margin-top: 0.35rem;
-  color: #dc2626;
-  font-size: 0.8rem;
+  color: #e11d48;
+  font-size: 11px;
+  line-height: 1.5;
 }
 
-.error-message {
-  margin-bottom: 1.2rem;
-  padding: 0.8rem 1rem;
-  border: 1px solid #fecaca;
-  border-radius: 7px;
-  background: #fee2e2;
-  color: #b91c1c;
+.field-hint {
+  color: #8791a4;
+  font-size: 11px;
+  line-height: 1.6;
 }
+
+/* ========================================
+   INFORMATION BOX
+======================================== */
+
+.info-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 13px;
+
+  padding: 16px 18px;
+
+  border: 1px solid #dfe3ff;
+  border-radius: 10px;
+
+  background: #f5f6ff;
+}
+
+.info-icon {
+  flex-shrink: 0;
+  color: #565ee5;
+  font-size: 20px;
+  font-weight: 700;
+}
+
+.info-box p {
+  margin: 0;
+  color: #525c77;
+  font-size: 12px;
+  line-height: 1.7;
+
+  strong {
+    color: #454dc9;
+  }
+}
+
+/* ========================================
+   ERROR MESSAGE
+======================================== */
+
+.error-message {
+  margin-bottom: 22px;
+  padding: 14px 16px;
+
+  border: 1px solid #fecdd3;
+  border-radius: 9px;
+
+  background: #fff1f2;
+  color: #be123c;
+
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* ========================================
+   FORM ACTIONS
+======================================== */
 
 .form-actions {
   display: flex;
-  gap: 0.8rem;
-  margin-top: 1.8rem;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+
+  margin-top: 8px;
+  padding-top: 24px;
+
+  border-top: 1px solid #edf0f5;
 }
 
-.btn {
-  padding: 0.75rem 1.3rem;
-  border: none;
-  border-radius: 7px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  font-weight: 600;
-  transition: 0.2s ease;
+/* ========================================
+   BUTTONS
+======================================== */
 
-  &:hover:not(:disabled) {
-    transform: translateY(-1px);
-  }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 125px;
+  min-height: 44px;
+  padding: 11px 22px;
+
+  border: 1px solid transparent;
+  border-radius: 9px;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
 
   &:disabled {
     opacity: 0.55;
     cursor: not-allowed;
   }
+
+  &:focus-visible {
+    outline: 3px solid rgba(86, 94, 229, 0.25);
+    outline-offset: 3px;
+  }
 }
+
+/* PRIMARY */
 
 .btn-primary {
-  background: #2563eb;
-  color: white;
+  background: #565ee5;
+  border-color: #565ee5;
+  color: #ffffff;
 
   &:hover:not(:disabled) {
-    background: #1d4ed8;
+    background: #454dc9;
+    border-color: #454dc9;
+
+    box-shadow: 0 4px 12px rgba(86, 94, 229, 0.16);
+    transform: translateY(-1px);
   }
 }
+
+/* SECONDARY */
 
 .btn-secondary {
-  background: #e5e7eb;
-  color: #374151;
+  background: #ffffff;
+  border-color: #dfe4ee;
+  color: #667085;
 
-  &:hover {
-    background: #d1d5db;
+  &:hover:not(:disabled) {
+    background: #f8f9fc;
+    border-color: #cbd5e1;
+    color: #34405a;
   }
 }
 
-@media (max-width: 600px) {
+/* ========================================
+   RESPONSIVE TABLET
+======================================== */
 
+@media (max-width: 900px) {
   :host {
-    padding: 1rem;
+    padding: 24px;
   }
 
   .form-container {
-    padding: 1.3rem;
+    padding: 28px;
+  }
+}
+
+/* ========================================
+   RESPONSIVE MOBILE
+======================================== */
+
+@media (max-width: 700px) {
+  :host {
+    padding: 16px;
+  }
+
+  .form-container {
+    padding: 22px 18px;
+    border-radius: 12px;
+  }
+
+  .form-header {
+    align-items: flex-start;
+    gap: 12px;
+
+    h2 {
+      font-size: 19px;
+    }
+  }
+
+  .form-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 23px;
   }
 
   .form-actions {
-    flex-direction: column;
+    flex-direction: column-reverse;
+    align-items: stretch;
 
     .btn {
       width: 100%;
     }
+  }
+}
+
+@media (max-width: 480px) {
+  :host {
+    padding: 12px;
+  }
+
+  .form-container {
+    padding: 20px 16px;
+  }
+
+  input,
+  textarea {
+    font-size: 16px;
   }
 }

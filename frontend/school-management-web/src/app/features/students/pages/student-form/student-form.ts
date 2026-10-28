@@ -24,6 +24,8 @@ export class StudentForm implements OnInit {
   loading = signal(false);
   errorMessage = signal('');
 
+  saving = signal(false);
+
   constructor(
     private studentService: StudentService,
     private route: ActivatedRoute,
@@ -61,17 +63,34 @@ export class StudentForm implements OnInit {
   }
 
   save(): void {
+    if (this.saving() || this.loading()) {
+      return;
+    }
+
     this.errorMessage.set('');
 
     const request: StudentRequest = {
-      firstName: this.firstName,
-      lastName: this.lastName,
+      firstName: this.firstName.trim(),
+      lastName: this.lastName.trim(),
       dateOfBirth: this.dateOfBirth,
-      email: this.email,
-      phoneNumber: this.phoneNumber
+      email: this.email.trim().toLowerCase(),
+      phoneNumber: this.phoneNumber.trim()
     };
 
-    if (this.studentId) {
+    if (
+      !request.firstName ||
+      !request.lastName ||
+      !request.dateOfBirth ||
+      !request.email ||
+      !request.phoneNumber
+    ) {
+      this.errorMessage.set('Please fill in all required fields.');
+      return;
+    }
+
+    this.saving.set(true);
+
+    if (this.studentId !== null) {
       this.updateStudent(request);
     } else {
       this.createStudent(request);
@@ -81,17 +100,30 @@ export class StudentForm implements OnInit {
   createStudent(request: StudentRequest): void {
     this.studentService.create(request).subscribe({
       next: () => {
+        this.saving.set(false);
         this.router.navigate(['/students']);
       },
 
-      error: () => {
-        this.errorMessage.set('Unable to create student');
+      error: error => {
+        console.error('CREATE STUDENT ERROR:', error);
+        console.error('BACKEND RESPONSE:', error.error);
+
+        this.saving.set(false);
+
+        this.errorMessage.set(
+          typeof error.error === 'string'
+            ? error.error
+            : error.error?.message ||
+            error.error?.detail ||
+            'Unable to create student.'
+        );
       }
     });
   }
 
   updateStudent(request: StudentRequest): void {
-    if (!this.studentId) {
+    if (this.studentId === null) {
+      this.saving.set(false);
       return;
     }
 
@@ -100,11 +132,23 @@ export class StudentForm implements OnInit {
       request
     ).subscribe({
       next: () => {
+        this.saving.set(false);
         this.router.navigate(['/students']);
       },
 
-      error: () => {
-        this.errorMessage.set('Unable to update student');
+      error: error => {
+        console.error('UPDATE STUDENT ERROR:', error);
+        console.error('BACKEND RESPONSE:', error.error);
+
+        this.saving.set(false);
+
+        this.errorMessage.set(
+          typeof error.error === 'string'
+            ? error.error
+            : error.error?.message ||
+            error.error?.detail ||
+            'Unable to update student.'
+        );
       }
     });
   }

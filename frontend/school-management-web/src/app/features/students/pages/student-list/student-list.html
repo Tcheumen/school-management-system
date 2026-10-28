@@ -1,101 +1,303 @@
 <div class="page-container">
 
+  <!-- HEADER -->
   <div class="page-header">
 
-    <div>
+    <div class="page-heading">
       <h1>Students</h1>
-      <p>Manage school students</p>
+      <p>
+        Manage students by academic year and classroom.
+      </p>
     </div>
 
-    <a routerLink="/students/new">
-      Add Student
-    </a>
+    <div class="header-actions">
+
+      <button type="button" class="refresh-btn" (click)="loadData()" [disabled]="loading() || deleting()">
+        ↻ Refresh
+      </button>
+
+      <a routerLink="/students/new" class="add-btn">
+        + Add Student
+      </a>
+
+    </div>
 
   </div>
 
-  @if (loading()) {
-  <p>Loading students...</p>
-  }
-
+  <!-- ERROR -->
   @if (errorMessage()) {
-  <p class="error">
+  <div class="error-message" role="alert">
     {{ errorMessage() }}
-  </p>
+  </div>
   }
 
-  @if (!loading() && students().length === 0) {
-  <p>No students found.</p>
-  }
+  <!-- LOADING -->
+  @if (loading()) {
 
-  @if (!loading() && students().length > 0) {
+  <div class="loading-state">
+    <div class="loader"></div>
+    <span>Loading school data...</span>
+  </div>
 
-  <table>
+  } @else {
 
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>First name</th>
-        <th>Last name</th>
-        <th>Date of birth</th>
-        <th>Email</th>
-        <th>Phone</th>
-        <th>Actions</th>
-      </tr>
-    </thead>
+  <!-- STATISTICS -->
+  <div class="stats-grid">
 
-    <tbody>
+    <div class="stat-card">
+      <div class="stat-icon students-icon">👥</div>
 
-      @for (student of students(); track student.id) {
+      <div class="stat-content">
+        <span>Enrolled Students</span>
+        <strong>{{ enrolledCount }}</strong>
+        <small>{{ selectedYearLabel }}</small>
+      </div>
+    </div>
 
-      <tr>
+    <div class="stat-card">
+      <div class="stat-icon classrooms-icon">🏫</div>
 
-        <td>
-          {{ student.id }}
-        </td>
+      <div class="stat-content">
+        <span>Classrooms</span>
+        <strong>{{ classroomCount }}</strong>
+        <small>With enrolled students</small>
+      </div>
+    </div>
 
-        <td>
-          {{ student.firstName }}
-        </td>
+    <div class="stat-card">
+      <div class="stat-icon unassigned-icon">📋</div>
 
-        <td>
-          {{ student.lastName }}
-        </td>
+      <div class="stat-content">
+        <span>Unassigned Students</span>
+        <strong>{{ unassignedCount }}</strong>
+        <small>No enrollment for this year</small>
+      </div>
+    </div>
 
-        <td>
-          {{ student.dateOfBirth }}
-        </td>
+  </div>
 
-        <td>
-          {{ student.email }}
-        </td>
+  <!-- STUDENTS CARD -->
+  <section class="students-card">
 
-        <td>
-          {{ student.phoneNumber }}
-        </td>
+    <div class="card-header">
 
-        <td>
+      <div>
+        <h2>Student Directory</h2>
+        <p>
+          Academic Year: {{ selectedYearLabel }}
+        </p>
+      </div>
 
-          <a [routerLink]="[
-                  '/students',
-                  student.id,
-                  'edit'
-                ]">
-            Edit
-          </a>
+      <span class="student-count">
+        {{ filteredRows.length }} students
+      </span>
 
-          <button type="button" (click)="deleteStudent(student.id)">
-            Delete
-          </button>
+    </div>
 
-        </td>
+    <!-- FILTER BAR -->
+    <div class="filters-bar">
 
-      </tr>
+      <!-- YEAR FILTER -->
+      <div class="filter-group">
 
-      }
+        <label for="academicYear">
+          Academic Year
+        </label>
 
-    </tbody>
+        <select id="academicYear" name="academicYear" [ngModel]="selectedYearId()"
+          (ngModelChange)="onYearChange($event)">
 
-  </table>
+          @for (year of academicYears(); track year.id) {
+          <option [ngValue]="year.id">
+            {{ year.name }}
+            {{ year.active ? '(Active)' : '' }}
+          </option>
+          }
+
+        </select>
+
+      </div>
+
+      <!-- CLASSROOM FILTER -->
+      <div class="filter-group">
+
+        <label for="classroom">
+          Classroom
+        </label>
+
+        <select id="classroom" name="classroom" [(ngModel)]="selectedClassroomId">
+
+          <option [ngValue]="'ALL'">
+            All Classrooms
+          </option>
+
+          @for (classroom of availableClassrooms(); track classroom.id) {
+          <option [ngValue]="classroom.id">
+            {{ classroom.name }} - {{ classroom.level }}
+          </option>
+          }
+
+          <option [ngValue]="'UNASSIGNED'">
+            Unassigned Students
+          </option>
+
+        </select>
+
+      </div>
+
+      <!-- SEARCH -->
+      <div class="filter-group search-group">
+
+        <label for="studentSearch">
+          Search Student
+        </label>
+
+        <input id="studentSearch" type="search" name="searchTerm" [(ngModel)]="searchTerm"
+          placeholder="Search by name or email..." />
+
+      </div>
+
+      <!-- CLEAR -->
+      <button type="button" class="clear-btn" (click)="clearFilters()">
+        Clear
+      </button>
+
+    </div>
+
+    <!-- TABLE -->
+    @if (academicYears().length === 0) {
+
+    <div class="empty-state">
+      <div class="empty-icon">📅</div>
+      <h3>No academic years available</h3>
+      <p>
+        Create an academic year before organizing
+        students into classrooms.
+      </p>
+    </div>
+
+    } @else if (filteredRows.length === 0) {
+
+    <div class="empty-state">
+      <div class="empty-icon">👥</div>
+      <h3>No students found</h3>
+      <p>
+        No students match the selected academic year,
+        classroom and search.
+      </p>
+    </div>
+
+    } @else {
+
+    <div class="table-wrapper">
+
+      <table>
+
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Date of Birth</th>
+            <th>Email Address</th>
+            <th>Phone</th>
+            <th>Classroom</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+
+          @for (row of filteredRows; track $index) {
+
+          <tr>
+
+            <!-- STUDENT NAME -->
+            <td>
+
+              <div class="student-cell">
+
+                <div class="student-avatar">
+                  {{ row.student.firstName.charAt(0).toUpperCase() }}
+                  {{ row.student.lastName.charAt(0).toUpperCase() }}
+                </div>
+
+                <div class="student-info">
+                  <strong>
+                    {{ row.student.firstName }}
+                    {{ row.student.lastName }}
+                  </strong>
+
+                  <span>
+                    Student #{{ row.student.id }}
+                  </span>
+                </div>
+
+              </div>
+
+            </td>
+
+            <!-- DATE OF BIRTH -->
+            <td>
+              {{ row.student.dateOfBirth }}
+            </td>
+
+            <!-- EMAIL -->
+            <td class="email-cell">
+              {{ row.student.email }}
+            </td>
+
+            <!-- PHONE -->
+            <td>
+              {{ row.student.phoneNumber || '—' }}
+            </td>
+
+            <!-- CLASSROOM -->
+            <td>
+              <span class="classroom-badge" [class.unassigned]="!row.enrolled">
+
+                {{ row.classroomName }}
+
+              </span>
+            </td>
+
+            <!-- ACTIONS -->
+            <td>
+
+              <div class="action-buttons">
+
+                <a [routerLink]="[
+                          '/students',
+                          row.student.id,
+                          'edit'
+                        ]" class="edit-btn">
+                  Edit
+                </a>
+
+                <button type="button" class="delete-btn" [disabled]="deleting()"
+                  (click)="deleteStudent(row.student.id)">
+
+                  {{ deletingId() === row.student.id
+                            ? 'Deleting...'
+                            : 'Delete' }}
+
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    }
+
+  </section>
 
   }
 

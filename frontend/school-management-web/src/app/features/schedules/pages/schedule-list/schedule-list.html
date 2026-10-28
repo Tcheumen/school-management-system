@@ -1,123 +1,168 @@
 <div class="page-container">
 
+  <!-- PAGE HEADER -->
   <div class="page-header">
 
-    <div>
-      <h2>Class Schedules</h2>
-
-      <p>
-        Manage classroom teaching schedules
-      </p>
+    <div class="page-heading">
+      <h1>Class Schedules</h1>
+      <p>Manage classroom teaching schedules.</p>
     </div>
 
     <a routerLink="/schedules/new" class="btn btn-primary">
+      <span class="plus-icon">+</span>
       Add Schedule
     </a>
 
   </div>
 
-  @if (errorMessage()) {
+  <!-- SCHEDULES CARD -->
+  <section class="schedules-card">
 
-  <div class="error-message">
-    {{ errorMessage() }}
-  </div>
+    <div class="card-header">
+      <div>
+        <h2>All Schedules</h2>
+        <p>Overview of classroom timetables and teaching assignments.</p>
+      </div>
 
-  }
+      <span class="schedules-count">
+        {{ schedules().length }} schedules
+      </span>
+    </div>
 
-  @if (loading()) {
+    <!-- ERROR -->
+    @if (errorMessage()) {
+    <div class="error-message" role="alert">
+      {{ errorMessage() }}
+    </div>
+    }
 
-  <div class="loading">
-    Loading schedules...
-  </div>
+    <!-- LOADING -->
+    @if (loading()) {
 
-  } @else {
+    <div class="loading">
+      <div class="loader"></div>
+      <span>Loading schedules...</span>
+    </div>
 
-  <div class="table-wrapper">
+    } @else {
 
-    <table>
+    <!-- TABLE -->
+    <div class="table-wrapper">
 
-      <thead>
+      <table>
 
-        <tr>
-          <th>ID</th>
-          <th>Day</th>
-          <th>Time</th>
-          <th>Classroom</th>
-          <th>Subject</th>
-          <th>Teacher</th>
-          <th>Academic Year</th>
-          <th>Actions</th>
-        </tr>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Day</th>
+            <th>Time</th>
+            <th>Classroom</th>
+            <th>Subject</th>
+            <th>Teacher</th>
+            <th>Academic Year</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
 
-      </thead>
+        <tbody>
 
-      <tbody>
+          @for (schedule of schedules(); track schedule.id) {
 
-        @for (
-        schedule of schedules();
-        track schedule.id
-        ) {
+          <tr>
 
-        <tr>
+            <!-- ID -->
+            <td class="id-cell">
+              #{{ schedule.id }}
+            </td>
 
-          <td>
-            {{ schedule.id }}
-          </td>
+            <!-- DAY -->
+            <td>
+              <span class="day-badge">
+                {{ formatDay(schedule.dayOfWeek) }}
+              </span>
+            </td>
 
-          <td class="day">
-            {{ formatDay(schedule.dayOfWeek) }}
-          </td>
+            <!-- TIME -->
+            <td>
+              <div class="time-cell">
+                <span class="time-icon">◷</span>
 
-          <td class="time">
-            {{ formatTime(schedule.startTime) }}
-            -
-            {{ formatTime(schedule.endTime) }}
-          </td>
+                <span>
+                  {{ formatTime(schedule.startTime) }}
+                  -
+                  {{ formatTime(schedule.endTime) }}
+                </span>
+              </div>
+            </td>
 
-          <td>
-            {{ schedule.classroomName }}
-          </td>
+            <!-- CLASSROOM -->
+            <td>
+              <div class="classroom-cell">
+                <span class="classroom-icon">🏫</span>
+                <span>{{ schedule.classroomName }}</span>
+              </div>
+            </td>
 
-          <td>
-            {{ schedule.subjectName }}
-          </td>
+            <!-- SUBJECT -->
+            <td>
+              <span class="subject-badge">
+                {{ schedule.subjectName }}
+              </span>
+            </td>
 
-          <td>
-            {{ schedule.teacherFullName }}
-          </td>
+            <!-- TEACHER -->
+            <td>
+              <div class="teacher-cell">
+                <div class="teacher-avatar">
+                  {{ schedule.teacherFullName.charAt(0).toUpperCase() }}
+                </div>
 
-          <td>
-            {{ schedule.academicYearName }}
-          </td>
+                <span>{{ schedule.teacherFullName }}</span>
+              </div>
+            </td>
 
-          <td class="actions">
+            <!-- ACADEMIC YEAR -->
+            <td class="year-cell">
+              {{ schedule.academicYearName }}
+            </td>
 
-            <button type="button" class="btn btn-delete" (click)="
-                    deleteSchedule(schedule.id)
-                  ">
-              Delete
-            </button>
+            <!-- ACTIONS -->
+            <td>
+              <div class="actions">
 
-          </td>
+                <button type="button" class="btn btn-delete" (click)="deleteSchedule(schedule.id)">
+                  Delete
+                </button>
 
-        </tr>
+              </div>
+            </td>
 
-        } @empty {
+          </tr>
 
-        <tr>
-          <td colspan="8" class="empty-message">
-            No schedules found.
-          </td>
-        </tr>
+          } @empty {
 
-        }
+          <tr>
+            <td colspan="8" class="empty-message">
+              <div class="empty-content">
+                <span class="empty-icon">📅</span>
+                <strong>No schedules found</strong>
+                <p>
+                  Create a schedule to organize classroom teaching.
+                </p>
+              </div>
+            </td>
+          </tr>
 
-      </tbody>
+          }
 
-    </table>
+        </tbody>
 
-  </div>
+      </table>
 
-  }
+    </div>
+
+    }
+
+  </section>
 
 </div>

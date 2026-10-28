@@ -1,128 +1,164 @@
+
 <div class="page-container">
 
+  <!-- PAGE HEADER -->
   <div class="page-header">
 
-    <div>
-      <h2>Academic Years</h2>
-      <p>Manage school academic years</p>
+    <div class="page-heading">
+      <h1>Academic Years</h1>
+      <p>Manage school academic years and their status.</p>
     </div>
 
-    <a routerLink="/academic-years/new" class="btn btn-primary">
+    <a
+      routerLink="/academic-years/new"
+      class="btn btn-primary">
+      <span>+</span>
       Add Academic Year
     </a>
 
   </div>
 
-  @if (errorMessage()) {
-  <div class="error-message">
-    {{ errorMessage() }}
-  </div>
-  }
+  <!-- ACADEMIC YEARS CARD -->
+  <section class="years-card">
 
-  @if (loading()) {
+    <div class="card-header">
 
-  <div class="loading">
-    Loading academic years...
-  </div>
+      <div>
+        <h2>All Academic Years</h2>
+        <p>Overview of school academic periods.</p>
+      </div>
 
-  } @else {
+      <span class="years-count">
+        {{ academicYears().length }} years
+      </span>
 
-  <div class="table-wrapper">
+    </div>
 
-    <table>
+    <!-- ERROR -->
+    @if (errorMessage()) {
+      <div class="error-message" role="alert">
+        {{ errorMessage() }}
+      </div>
+    }
 
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Start date</th>
-          <th>End date</th>
-          <th>Status</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
+    <!-- LOADING -->
+    @if (loading()) {
 
-      <tbody>
+      <div class="loading">
+        <div class="loader"></div>
+        <span>Loading academic years...</span>
+      </div>
 
-        @for (
-        academicYear of academicYears();
-        track academicYear.id
-        ) {
+    } @else {
 
-        <tr>
+      <!-- TABLE -->
+      <div class="table-wrapper">
 
-          <td>
-            {{ academicYear.id }}
-          </td>
+        <table>
 
-          <td class="year-name">
-            {{ academicYear.name }}
-          </td>
+          <thead>
+            <tr>
+              <th>Academic Year</th>
+              <th>Start Date</th>
+              <th>End Date</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
 
-          <td>
-            {{ academicYear.startDate }}
-          </td>
+          <tbody>
 
-          <td>
-            {{ academicYear.endDate }}
-          </td>
+            @for (academicYear of academicYears(); track academicYear.id) {
 
-          <td>
+              <tr>
 
-            @if (academicYear.active) {
+                <!-- ACADEMIC YEAR -->
+                <td>
+                  <div class="year-cell">
 
-            <span class="status status-active">
-              Active
-            </span>
+                    <div class="year-icon">
+                      📅
+                    </div>
 
-            } @else {
+                    <div class="year-info">
+                      <strong>{{ academicYear.name }}</strong>
+                      <span>Year #{{ academicYear.id }}</span>
+                    </div>
 
-            <span class="status status-inactive">
-              Inactive
-            </span>
+                  </div>
+                </td>
+
+                <!-- START DATE -->
+                <td class="date-cell">
+                  {{ academicYear.startDate | date:'dd MMM yyyy' }}
+                </td>
+
+                <!-- END DATE -->
+                <td class="date-cell">
+                  {{ academicYear.endDate | date:'dd MMM yyyy' }}
+                </td>
+
+                <!-- STATUS -->
+                <td>
+
+                  @if (academicYear.active) {
+                    <span class="status status-active">
+                      <span class="status-dot"></span>
+                      Active
+                    </span>
+                  } @else {
+                    <span class="status status-inactive">
+                      <span class="status-dot"></span>
+                      Inactive
+                    </span>
+                  }
+
+                </td>
+
+                <!-- ACTIONS -->
+                <td>
+                  <div class="actions">
+
+                    <a
+                      [routerLink]="[
+                        '/academic-years',
+                        academicYear.id,
+                        'edit'
+                      ]"
+                      class="btn btn-edit">
+                      Edit
+                    </a>
+
+                    <button
+                      type="button"
+                      class="btn btn-delete"
+                      (click)="deleteAcademicYear(academicYear.id)">
+                      Delete
+                    </button>
+
+                  </div>
+                </td>
+
+              </tr>
+
+            } @empty {
+
+              <tr>
+                <td colspan="5" class="empty-message">
+                  No academic years found.
+                </td>
+              </tr>
 
             }
 
-          </td>
+          </tbody>
 
-          <td class="actions">
+        </table>
 
-            <a [routerLink]="[
-                    '/academic-years',
-                    academicYear.id,
-                    'edit'
-                  ]" class="btn btn-edit">
-              Edit
-            </a>
+      </div>
 
-            <button type="button" class="btn btn-delete" (click)="deleteAcademicYear(
-                    academicYear.id
-                  )">
-              Delete
-            </button>
+    }
 
-          </td>
-
-        </tr>
-
-        } @empty {
-
-        <tr>
-
-          <td colspan="6" class="empty-message">
-            No academic years found.
-          </td>
-
-        </tr>
-
-        }
-
-      </tbody>
-
-    </table>
-
-  </div>
-
-  }
+  </section>
 
 </div>

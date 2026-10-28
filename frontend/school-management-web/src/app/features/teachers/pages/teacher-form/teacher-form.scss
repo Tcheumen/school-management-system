@@ -1,132 +1,401 @@
+
 :host {
   display: block;
-  min-height: 100vh;
-  background: #f5f7fb;
-  padding: 2rem;
-  font-family: Arial, sans-serif;
+  min-width: 0;
+  padding: 28px;
+  box-sizing: border-box;
 }
+
+* {
+  box-sizing: border-box;
+}
+
+/* ========================================
+   CONTAINER
+======================================== */
 
 .form-container {
-  max-width: 650px;
+  width: 100%;
+  max-width: 760px;
   margin: 0 auto;
-  background: white;
-  padding: 2rem;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  padding: 32px;
+
+  background: #ffffff;
+  border: 1px solid #e8ebf2;
+  border-radius: 16px;
+
+  box-shadow: 0 4px 24px rgba(20, 35, 70, 0.04);
 }
 
-.form-container h2 {
-  margin-top: 0;
-  margin-bottom: 1.8rem;
-  color: #1f2937;
-  font-size: 1.7rem;
+/* ========================================
+   HEADER
+======================================== */
+
+.form-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+
+  margin-bottom: 28px;
+  padding-bottom: 24px;
+
+  border-bottom: 1px solid #edf0f5;
+
+  h2 {
+    margin: 0 0 6px;
+    color: #17213b;
+    font-size: 24px;
+    font-weight: 750;
+    letter-spacing: -0.5px;
+  }
+
+  p {
+    margin: 0;
+    color: #8791a4;
+    font-size: 12px;
+    line-height: 1.6;
+  }
 }
+
+.form-icon {
+  width: 58px;
+  height: 58px;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  border-radius: 14px;
+  background: #eef0ff;
+  font-size: 25px;
+}
+
+/* ========================================
+   FORM
+======================================== */
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+
+.form-section-title {
+  margin-top: 2px;
+  padding-bottom: 11px;
+
+  border-bottom: 1px solid #edf0f5;
+
+  color: #34405a;
+  font-size: 12px;
+  font-weight: 750;
+  letter-spacing: 0.2px;
+}
+
+/* ========================================
+   GRID
+======================================== */
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  column-gap: 18px;
+  row-gap: 22px;
+}
+
+.full-width {
+  grid-column: 1 / -1;
+}
+
+/* ========================================
+   FIELDS
+======================================== */
 
 .form-group {
   display: flex;
   flex-direction: column;
-  margin-bottom: 1.2rem;
+  gap: 9px;
+  min-width: 0;
+
+  label {
+    color: #34405a;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.5;
+  }
+
+  input {
+    display: block;
+    width: 100%;
+    min-height: 46px;
+    padding: 12px 14px;
+
+    border: 1px solid #dfe4ee;
+    border-radius: 9px;
+
+    background: #ffffff;
+    color: #17213b;
+
+    font-family: inherit;
+    font-size: 13px;
+
+    outline: none;
+
+    transition:
+      border-color 0.2s ease,
+      box-shadow 0.2s ease,
+      background 0.2s ease;
+
+    &::placeholder {
+      color: #a0a8b8;
+    }
+
+    &:hover:not(:disabled) {
+      border-color: #c4c9e9;
+    }
+
+    &:focus {
+      border-color: #565ee5;
+      box-shadow: 0 0 0 3px rgba(86, 94, 229, 0.1);
+    }
+
+    &.ng-invalid.ng-touched {
+      border-color: #e11d48;
+      background: #fffafb;
+    }
+
+    &:disabled {
+      background: #f8f9fc;
+      cursor: not-allowed;
+      opacity: 0.7;
+    }
+  }
 }
 
-.form-group label {
-  margin-bottom: 0.45rem;
-  color: #374151;
-  font-weight: 600;
-  font-size: 0.9rem;
-}
-
-.form-group input {
-  padding: 0.8rem 0.9rem;
-  border: 1px solid #d1d5db;
-  border-radius: 7px;
-  font-size: 1rem;
-  outline: none;
-  transition:
-    border-color 0.2s ease,
-    box-shadow 0.2s ease;
-}
-
-.form-group input:focus {
-  border-color: #2563eb;
-  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
-}
-
-.form-group input.ng-invalid.ng-touched {
-  border-color: #ef4444;
+.required {
+  color: #e11d48;
 }
 
 .validation-error {
-  color: #dc2626;
-  font-size: 0.8rem;
-  margin-top: 0.35rem;
+  color: #e11d48;
+  font-size: 11px;
+  line-height: 1.5;
 }
 
-.error-message {
-  padding: 0.8rem 1rem;
-  margin-bottom: 1.2rem;
-  border-radius: 7px;
-  background: #fee2e2;
-  border: 1px solid #fecaca;
-  color: #b91c1c;
+.field-hint {
+  color: #8791a4;
+  font-size: 11px;
+  line-height: 1.6;
 }
+
+/* ========================================
+   INFORMATION BOX
+======================================== */
+
+.info-box {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+
+  padding: 15px 16px;
+
+  border: 1px solid #dfe3ff;
+  border-radius: 10px;
+
+  background: #f5f6ff;
+
+  .info-icon {
+    flex-shrink: 0;
+    color: #565ee5;
+    font-size: 19px;
+    line-height: 1;
+  }
+
+  p {
+    margin: 0;
+    color: #59617d;
+    font-size: 12px;
+    line-height: 1.7;
+
+    strong {
+      color: #454dc9;
+    }
+  }
+}
+
+/* ========================================
+   ERROR MESSAGE
+======================================== */
+
+.error-message {
+  margin-bottom: 24px;
+  padding: 14px 16px;
+
+  border: 1px solid #fecdd3;
+  border-radius: 9px;
+
+  background: #fff1f2;
+  color: #be123c;
+
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+/* ========================================
+   FORM ACTIONS
+======================================== */
 
 .form-actions {
   display: flex;
-  gap: 0.8rem;
-  margin-top: 1.8rem;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+
+  margin-top: 6px;
+  padding-top: 24px;
+
+  border-top: 1px solid #edf0f5;
 }
 
 .btn {
-  border: none;
-  border-radius: 7px;
-  padding: 0.75rem 1.3rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  min-width: 125px;
+  min-height: 44px;
+
+  padding: 11px 22px;
+
+  border: 1px solid transparent;
+  border-radius: 9px;
+
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+
   cursor: pointer;
-  font-weight: 600;
-  font-size: 0.95rem;
-  transition: 0.2s ease;
+
+  transition:
+    background 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+
+  &:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
+  }
+
+  &:focus-visible {
+    outline: 3px solid rgba(86, 94, 229, 0.25);
+    outline-offset: 3px;
+  }
 }
 
-.btn:hover:not(:disabled) {
-  transform: translateY(-1px);
-}
+/* PRIMARY BUTTON */
 
 .btn-primary {
-  background: #2563eb;
-  color: white;
+  background: #565ee5;
+  border-color: #565ee5;
+  color: #ffffff;
+
+  &:hover:not(:disabled) {
+    background: #454dc9;
+    border-color: #454dc9;
+    box-shadow: 0 4px 12px rgba(86, 94, 229, 0.16);
+    transform: translateY(-1px);
+  }
 }
 
-.btn-primary:hover:not(:disabled) {
-  background: #1d4ed8;
-}
+/* SECONDARY BUTTON */
 
 .btn-secondary {
-  background: #e5e7eb;
-  color: #374151;
+  background: #ffffff;
+  border-color: #dfe4ee;
+  color: #667085;
+
+  &:hover:not(:disabled) {
+    background: #f8f9fc;
+    border-color: #cbd5e1;
+    color: #34405a;
+  }
 }
 
-.btn-secondary:hover {
-  background: #d1d5db;
-}
+/* ========================================
+   RESPONSIVE TABLET
+======================================== */
 
-.btn:disabled {
-  opacity: 0.55;
-  cursor: not-allowed;
-}
-
-@media (max-width: 600px) {
+@media (max-width: 900px) {
   :host {
-    padding: 1rem;
+    padding: 24px;
   }
 
   .form-container {
-    padding: 1.3rem;
+    padding: 28px;
+  }
+}
+
+/* ========================================
+   RESPONSIVE MOBILE
+======================================== */
+
+@media (max-width: 700px) {
+  :host {
+    padding: 16px;
+  }
+
+  .form-container {
+    padding: 22px 18px;
+    border-radius: 12px;
+  }
+
+  .form-header {
+    align-items: flex-start;
+
+    h2 {
+      font-size: 21px;
+    }
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+    gap: 18px;
+  }
+
+  .full-width {
+    grid-column: auto;
   }
 
   .form-actions {
-    flex-direction: column;
+    flex-direction: column-reverse;
+    align-items: stretch;
+    gap: 10px;
+
+    .btn {
+      width: 100%;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  :host {
+    padding: 12px;
   }
 
-  .form-actions .btn {
-    width: 100%;
+  .form-container {
+    padding: 20px 16px;
+  }
+
+  .form-icon {
+    width: 46px;
+    height: 46px;
+    font-size: 21px;
+  }
+
+  .form-group input {
+    font-size: 16px;
   }
 }

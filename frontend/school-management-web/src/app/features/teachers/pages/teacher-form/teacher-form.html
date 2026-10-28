@@ -1,68 +1,198 @@
+
 <div class="form-container">
 
-  <h2>
-    {{ isEditMode ? 'Edit Teacher' : 'Add Teacher' }}
-  </h2>
+  <div class="form-header">
+    <div class="form-icon">👨‍🏫</div>
+
+    <div>
+      <h2>
+        {{ isEditMode ? 'Edit Teacher' : 'Add Teacher' }}
+      </h2>
+
+      <p>
+        {{ isEditMode
+          ? 'Update teacher information.'
+          : 'Create a new teacher profile.' }}
+      </p>
+    </div>
+  </div>
 
   @if (errorMessage()) {
-  <div class="error-message">
-    {{ errorMessage() }}
-  </div>
+    <div class="error-message" role="alert">
+      {{ errorMessage() }}
+    </div>
   }
 
-  <form #teacherForm="ngForm" (ngSubmit)="save()">
+  <form
+    #teacherForm="ngForm"
+    (ngSubmit)="save()">
 
+    <div class="form-section-title">
+      Personal Information
+    </div>
+
+    <div class="form-grid">
+
+      <!-- FIRST NAME -->
+      <div class="form-group">
+        <label for="firstName">
+          First Name <span class="required">*</span>
+        </label>
+
+        <input
+          id="firstName"
+          type="text"
+          name="firstName"
+          [(ngModel)]="firstName"
+          placeholder="Enter first name"
+          required
+          #firstNameInput="ngModel" />
+
+        @if (firstNameInput.invalid && firstNameInput.touched) {
+          <span class="validation-error">
+            First name is required.
+          </span>
+        }
+      </div>
+
+      <!-- LAST NAME -->
+      <div class="form-group">
+        <label for="lastName">
+          Last Name <span class="required">*</span>
+        </label>
+
+        <input
+          id="lastName"
+          type="text"
+          name="lastName"
+          [(ngModel)]="lastName"
+          placeholder="Enter last name"
+          required
+          #lastNameInput="ngModel" />
+
+        @if (lastNameInput.invalid && lastNameInput.touched) {
+          <span class="validation-error">
+            Last name is required.
+          </span>
+        }
+      </div>
+
+      <!-- EMAIL -->
+      <div class="form-group full-width">
+        <label for="email">
+          Email Address <span class="required">*</span>
+        </label>
+
+        <input
+          id="email"
+          type="email"
+          name="email"
+          [(ngModel)]="email"
+          placeholder="teacher@school.com"
+          required
+          email
+          #emailInput="ngModel" />
+
+        @if (emailInput.invalid && emailInput.touched) {
+          <span class="validation-error">
+            Please enter a valid email address.
+          </span>
+        }
+
+        <small class="field-hint">
+          Use this same email address when creating the teacher's user account.
+        </small>
+      </div>
+
+      <!-- PHONE -->
+      <div class="form-group full-width">
+        <label for="phoneNumber">
+          Phone Number <span class="required">*</span>
+        </label>
+
+        <input
+          id="phoneNumber"
+          type="tel"
+          name="phoneNumber"
+          [(ngModel)]="phoneNumber"
+          placeholder="Enter phone number"
+          required
+          #phoneInput="ngModel" />
+
+        @if (phoneInput.invalid && phoneInput.touched) {
+          <span class="validation-error">
+            Phone number is required.
+          </span>
+        }
+      </div>
+
+    </div>
+
+    <div class="form-section-title">
+      Professional Information
+    </div>
+
+    <!-- SPECIALTY -->
     <div class="form-group">
-      <label for="firstName">First name</label>
+      <label for="specialty">
+        Specialty <span class="required">*</span>
+      </label>
 
-      <input id="firstName" type="text" name="firstName" [(ngModel)]="firstName" required #firstNameInput="ngModel" />
+      <input
+        id="specialty"
+        type="text"
+        name="specialty"
+        [(ngModel)]="specialty"
+        placeholder="e.g. Mathematics, Physics, English"
+        required
+        #specialtyInput="ngModel" />
 
-      @if (firstNameInput.invalid && firstNameInput.touched) {
-      <span class="validation-error">
-        First name is required.
-      </span>
+      @if (specialtyInput.invalid && specialtyInput.touched) {
+        <span class="validation-error">
+          Specialty is required.
+        </span>
       }
     </div>
 
-    <div class="form-group">
-      <label for="lastName">Last name</label>
+    <!-- INFORMATION -->
+    @if (!isEditMode) {
+      <div class="info-box">
+        <span class="info-icon">ⓘ</span>
 
-      <input id="lastName" type="text" name="lastName" [(ngModel)]="lastName" required />
-    </div>
+        <p>
+          After creating the teacher profile, go to
+          <strong>User Management</strong> to create the login account
+          with the same email address.
+        </p>
+      </div>
+    }
 
-    <div class="form-group">
-      <label for="email">Email</label>
-
-      <input id="email" type="email" name="email" [(ngModel)]="email" required email />
-    </div>
-
-    <div class="form-group">
-      <label for="phoneNumber">Phone</label>
-
-      <input id="phoneNumber" type="text" name="phoneNumber" [(ngModel)]="phoneNumber" required />
-    </div>
-
-    <div class="form-group">
-      <label for="specialty">Specialty</label>
-
-      <input id="specialty" type="text" name="specialty" [(ngModel)]="specialty" required />
-    </div>
-
+    <!-- BUTTONS -->
     <div class="form-actions">
 
-      <button type="submit" class="btn btn-primary" [disabled]="teacherForm.invalid || loading()">
-        @if (loading()) {
-        Saving...
-        } @else {
-        {{ isEditMode ? 'Update' : 'Create' }}
-        }
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="cancel()"
+        [disabled]="loading()">
+        Cancel
       </button>
 
-      <button type="button" class="btn btn-secondary" (click)="cancel()">
-        Cancel
+      <button
+        type="submit"
+        class="btn btn-primary"
+        [disabled]="teacherForm.invalid || loading()">
+
+        @if (loading()) {
+          Saving...
+        } @else {
+          {{ isEditMode ? 'Save Changes' : 'Create Teacher' }}
+        }
+
       </button>
 
     </div>
 
   </form>
+
 </div>

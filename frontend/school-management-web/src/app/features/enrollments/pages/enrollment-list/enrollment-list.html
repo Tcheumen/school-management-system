@@ -1,107 +1,156 @@
 <div class="page-container">
 
+  <!-- PAGE HEADER -->
   <div class="page-header">
 
-    <div>
-      <h2>Student Enrollments</h2>
-      <p>Manage student classroom enrollments</p>
+    <div class="page-heading">
+      <h1>Student Enrollments</h1>
+      <p>Manage student classroom enrollments and academic years.</p>
     </div>
 
     <a routerLink="/enrollments/new" class="btn btn-primary">
+      <span>+</span>
       Add Enrollment
     </a>
 
   </div>
 
-  @if (errorMessage()) {
-  <div class="error-message">
-    {{ errorMessage() }}
-  </div>
-  }
+  <!-- ENROLLMENTS CARD -->
+  <section class="enrollments-card">
 
-  @if (loading()) {
+    <div class="card-header">
 
-  <div class="loading">
-    Loading enrollments...
-  </div>
+      <div>
+        <h2>All Enrollments</h2>
+        <p>Overview of student classroom assignments.</p>
+      </div>
 
-  } @else {
+      <span class="enrollments-count">
+        {{ enrollments().length }} enrollments
+      </span>
 
-  <div class="table-wrapper">
+    </div>
 
-    <table>
+    <!-- ERROR MESSAGE -->
+    @if (errorMessage()) {
+    <div class="error-message" role="alert">
+      {{ errorMessage() }}
+    </div>
+    }
 
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Student</th>
-          <th>Classroom</th>
-          <th>Academic Year</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
+    <!-- LOADING -->
+    @if (loading()) {
 
-      <tbody>
+    <div class="loading">
+      <div class="loader"></div>
+      <span>Loading enrollments...</span>
+    </div>
 
-        @for (
-        enrollment of enrollments();
-        track enrollment.id
-        ) {
+    } @else {
 
-        <tr>
+    <!-- TABLE -->
+    <div class="table-wrapper">
 
-          <td>
-            {{ enrollment.id }}
-          </td>
+      <table>
 
-          <td class="student-name">
-            {{ enrollment.studentFullName }}
-          </td>
+        <thead>
+          <tr>
+            <th>Enrollment ID</th>
+            <th>Student</th>
+            <th>Classroom</th>
+            <th>Academic Year</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
 
-          <td>
-            {{ enrollment.classroomName }}
-          </td>
+        <tbody>
 
-          <td>
-            {{ enrollment.academicYearName }}
-          </td>
+          @for (
+          enrollment of enrollments();
+          track enrollment.id
+          ) {
 
-          <td class="actions">
+          <tr>
 
-            <a [routerLink]="[
-                    '/enrollments',
-                    enrollment.id,
-                    'edit'
-                  ]" class="btn btn-edit">
-              Edit
-            </a>
+            <!-- ENROLLMENT ID -->
+            <td class="id-cell">
+              #{{ enrollment.id }}
+            </td>
 
-            <button type="button" class="btn btn-delete" (click)="deleteEnrollment(
-                    enrollment.id
-                  )">
-              Delete
-            </button>
+            <!-- STUDENT -->
+            <td>
+              <div class="student-cell">
 
-          </td>
+                <div class="student-avatar">
+                  {{ enrollment.studentFullName.charAt(0).toUpperCase() }}
+                </div>
 
-        </tr>
+                <div class="student-info">
+                  <strong>
+                    {{ enrollment.studentFullName }}
+                  </strong>
 
-        } @empty {
+                  <span>Enrolled student</span>
+                </div>
 
-        <tr>
-          <td colspan="5" class="empty-message">
-            No enrollments found.
-          </td>
-        </tr>
+              </div>
+            </td>
 
-        }
+            <!-- CLASSROOM -->
+            <td>
+              <span class="classroom-badge">
+                {{ enrollment.classroomName }}
+              </span>
+            </td>
 
-      </tbody>
+            <!-- ACADEMIC YEAR -->
+            <td>
+              <span class="year-badge">
+                {{ enrollment.academicYearName }}
+              </span>
+            </td>
 
-    </table>
+            <!-- ACTIONS -->
+            <td>
 
-  </div>
+              <div class="actions">
 
-  }
+                <a [routerLink]="[
+                        '/enrollments',
+                        enrollment.id,
+                        'edit'
+                      ]" class="btn btn-edit">
+                  Edit
+                </a>
+
+                <button type="button" class="btn btn-delete" (click)="deleteEnrollment(enrollment.id)">
+                  Delete
+                </button>
+
+              </div>
+
+            </td>
+
+          </tr>
+
+          } @empty {
+
+          <tr>
+            <td colspan="5" class="empty-message">
+              No enrollments found.
+            </td>
+          </tr>
+
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    }
+
+  </section>
 
 </div>

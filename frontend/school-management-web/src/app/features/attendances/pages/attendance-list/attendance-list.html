@@ -1,143 +1,165 @@
 <div class="page-container">
 
+  <!-- PAGE HEADER -->
   <div class="page-header">
 
-    <div>
-      <h2>Attendance</h2>
-
-      <p>
-        Manage student attendance records
-      </p>
+    <div class="page-heading">
+      <h1>Attendance</h1>
+      <p>Manage student attendance records.</p>
     </div>
 
     <a routerLink="/attendances/new" class="btn btn-primary">
+      <span>+</span>
       Add Attendance
     </a>
 
   </div>
 
-  @if (errorMessage()) {
+  <!-- ATTENDANCE CARD -->
+  <section class="attendance-card">
 
-  <div class="error-message">
-    {{ errorMessage() }}
-  </div>
+    <div class="card-header">
+      <div>
+        <h2>Attendance Records</h2>
+        <p>Overview of student attendance across classes.</p>
+      </div>
 
-  }
+      <span class="records-count">
+        {{ attendances().length }} records
+      </span>
+    </div>
 
-  @if (loading()) {
+    <!-- ERROR -->
+    @if (errorMessage()) {
+    <div class="error-message" role="alert">
+      {{ errorMessage() }}
+    </div>
+    }
 
-  <div class="loading">
-    Loading attendance records...
-  </div>
+    <!-- LOADING -->
+    @if (loading()) {
+    <div class="loading">
+      <div class="loader"></div>
+      <span>Loading attendance records...</span>
+    </div>
+    } @else {
 
-  } @else {
+    <!-- TABLE -->
+    <div class="table-wrapper">
 
-  <div class="table-wrapper">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Student</th>
+            <th>Classroom</th>
+            <th>Subject</th>
+            <th>Time</th>
+            <th>Status</th>
+            <th>Remarks</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
 
-    <table>
+        <tbody>
 
-      <thead>
+          @for (attendance of attendances(); track attendance.id) {
 
-        <tr>
-          <th>Date</th>
-          <th>Student</th>
-          <th>Classroom</th>
-          <th>Subject</th>
-          <th>Time</th>
-          <th>Status</th>
-          <th>Remarks</th>
-          <th>Actions</th>
-        </tr>
+          <tr>
 
-      </thead>
+            <!-- DATE -->
+            <td class="date-cell">
+              {{ attendance.attendanceDate }}
+            </td>
 
-      <tbody>
+            <!-- STUDENT -->
+            <td>
+              <div class="student-cell">
 
-        @for (
-        attendance of attendances();
-        track attendance.id
-        ) {
+                <div class="student-avatar">
+                  {{ attendance.studentFullName.charAt(0).toUpperCase() }}
+                </div>
 
-        <tr>
+                <strong class="student-name">
+                  {{ attendance.studentFullName }}
+                </strong>
 
-          <td>
-            {{ attendance.attendanceDate }}
-          </td>
+              </div>
+            </td>
 
-          <td class="student-name">
-            {{ attendance.studentFullName }}
-          </td>
+            <!-- CLASSROOM -->
+            <td>
+              {{ attendance.classroomName }}
+            </td>
 
-          <td>
-            {{ attendance.classroomName }}
-          </td>
+            <!-- SUBJECT -->
+            <td>
+              <span class="subject-badge">
+                {{ attendance.subjectName }}
+              </span>
+            </td>
 
-          <td>
-            {{ attendance.subjectName }}
-          </td>
+            <!-- TIME -->
+            <td class="time-cell">
+              {{ formatTime(attendance.startTime) }}
+              -
+              {{ formatTime(attendance.endTime) }}
+            </td>
 
-          <td class="time">
-            {{ formatTime(attendance.startTime) }}
-            -
-            {{ formatTime(attendance.endTime) }}
-          </td>
+            <!-- STATUS -->
+            <td>
+              <span class="status" [class.status-present]="attendance.status === 'PRESENT'"
+                [class.status-absent]="attendance.status === 'ABSENT'"
+                [class.status-late]="attendance.status === 'LATE'">
 
-          <td>
+                <span class="status-dot"></span>
 
-            <span class="status" [class.status-present]="
-                    attendance.status === 'PRESENT'
-                  " [class.status-absent]="
-                    attendance.status === 'ABSENT'
-                  " [class.status-late]="
-                    attendance.status === 'LATE'
-                  ">
-              {{ getStatusLabel(attendance.status) }}
-            </span>
+                {{ getStatusLabel(attendance.status) }}
 
-          </td>
+              </span>
+            </td>
 
-          <td>
-            {{ attendance.remarks || '-' }}
-          </td>
+            <!-- REMARKS -->
+            <td class="remarks-cell">
+              {{ attendance.remarks || '—' }}
+            </td>
 
-          <td class="actions">
+            <!-- ACTIONS -->
+            <td>
 
-            <a [routerLink]="[
-                    '/attendances',
-                    attendance.id,
-                    'edit'
-                  ]" class="btn btn-edit">
-              Edit
-            </a>
+              <div class="actions">
 
-            <button type="button" class="btn btn-delete" (click)="
-                    deleteAttendance(attendance.id)
-                  ">
-              Delete
-            </button>
+                <a [routerLink]="['/attendances', attendance.id, 'edit']" class="btn btn-edit">
+                  Edit
+                </a>
 
-          </td>
+                <button type="button" class="btn btn-delete" (click)="deleteAttendance(attendance.id)">
+                  Delete
+                </button>
 
-        </tr>
+              </div>
 
-        } @empty {
+            </td>
 
-        <tr>
+          </tr>
 
-          <td colspan="8" class="empty-message">
-            No attendance records found.
-          </td>
+          } @empty {
 
-        </tr>
+          <tr>
+            <td colspan="8" class="empty-message">
+              No attendance records found.
+            </td>
+          </tr>
 
-        }
+          }
 
-      </tbody>
+        </tbody>
+      </table>
 
-    </table>
+    </div>
 
-  </div>
+    }
 
-  }
+  </section>
 
 </div>

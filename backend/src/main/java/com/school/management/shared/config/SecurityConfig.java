@@ -143,9 +143,10 @@ public class SecurityConfig {
 
                         .requestMatchers(
                                 "/api/class-schedules/**")
-                                        .hasRole("ADMIN")
+                        .hasRole("ADMIN")
                         
-                      
+                        .requestMatchers("/api/users", "/api/users/**").hasRole("ADMIN")
+                     
                         
                        
 

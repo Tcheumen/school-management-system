@@ -1,49 +1,57 @@
 <div class="form-container">
 
+  <!-- HEADER -->
   <div class="form-header">
-    <h2>
-      {{
-        isEditMode
-          ? 'Edit Enrollment'
-          : 'Add Enrollment'
-      }}
-    </h2>
 
-    <p>
-      {{
-        isEditMode
-          ? 'Update student enrollment'
-          : 'Enroll a student in a classroom'
-      }}
-    </p>
+    <div class="form-icon">
+      📚
+    </div>
+
+    <div>
+      <h2>
+        {{ isEditMode ? 'Edit Enrollment' : 'Add Enrollment' }}
+      </h2>
+
+      <p>
+        {{ isEditMode
+          ? 'Update student enrollment information.'
+          : 'Enroll a student in a classroom for an academic year.' }}
+      </p>
+    </div>
+
   </div>
 
+  <!-- ERROR -->
   @if (errorMessage()) {
-  <div class="error-message">
+  <div class="error-message" role="alert">
     {{ errorMessage() }}
   </div>
   }
 
+  <!-- LOADING -->
   @if (loadingData()) {
-
-  <div class="loading">
-    Loading form data...
+  <div class="loading-state">
+    <div class="loader"></div>
+    <span>Loading form data...</span>
   </div>
-
   } @else if (loading() && isEditMode) {
-
-  <div class="loading">
-    Loading enrollment...
+  <div class="loading-state">
+    <div class="loader"></div>
+    <span>Loading enrollment...</span>
   </div>
-
   } @else {
 
   <form #enrollmentForm="ngForm" (ngSubmit)="save()">
 
+    <!-- STUDENT INFORMATION -->
+    <div class="form-section-title">
+      Student Information
+    </div>
+
     <div class="form-group">
 
       <label for="student">
-        Student
+        Student <span class="required">*</span>
       </label>
 
       <select id="student" name="student" [(ngModel)]="studentId" required #studentInput="ngModel">
@@ -52,10 +60,7 @@
           Select a student
         </option>
 
-        @for (
-        student of students();
-        track student.id
-        ) {
+        @for (student of students(); track student.id) {
         <option [ngValue]="student.id">
           {{ student.firstName }}
           {{ student.lastName }}
@@ -65,124 +70,134 @@
 
       </select>
 
-      @if (
-      studentInput.invalid &&
-      studentInput.touched
-      ) {
+      @if (studentInput.invalid && studentInput.touched) {
       <span class="validation-error">
         Student is required.
       </span>
       }
 
+      <small class="field-hint">
+        Select the student you want to enroll.
+      </small>
+
     </div>
 
-    <div class="form-group">
+    <!-- ACADEMIC INFORMATION -->
+    <div class="form-section-title">
+      Academic Information
+    </div>
 
-      <label for="academicYear">
-        Academic Year
-      </label>
+    <div class="form-grid">
 
-      <select id="academicYear" name="academicYear" [(ngModel)]="academicYearId"
-        (ngModelChange)="onAcademicYearChange()" required #academicYearInput="ngModel">
+      <!-- ACADEMIC YEAR -->
+      <div class="form-group">
 
-        <option [ngValue]="null" disabled>
-          Select an academic year
-        </option>
+        <label for="academicYear">
+          Academic Year <span class="required">*</span>
+        </label>
 
-        @for (
-        academicYear of academicYears();
-        track academicYear.id
-        ) {
-        <option [ngValue]="academicYear.id">
-          {{ academicYear.name }}
+        <select id="academicYear" name="academicYear" [(ngModel)]="academicYearId"
+          (ngModelChange)="onAcademicYearChange()" required #academicYearInput="ngModel">
 
-          @if (academicYear.active) {
-          (Active)
+          <option [ngValue]="null" disabled>
+            Select an academic year
+          </option>
+
+          @for (academicYear of academicYears(); track academicYear.id) {
+          <option [ngValue]="academicYear.id">
+            {{ academicYear.name }}
+            @if (academicYear.active) {
+            (Active)
+            }
+          </option>
           }
-        </option>
+
+        </select>
+
+        @if (academicYearInput.invalid && academicYearInput.touched) {
+        <span class="validation-error">
+          Academic year is required.
+        </span>
         }
 
-      </select>
+      </div>
 
-      @if (
-      academicYearInput.invalid &&
-      academicYearInput.touched
-      ) {
-      <span class="validation-error">
-        Academic year is required.
-      </span>
-      }
+      <!-- CLASSROOM -->
+      <div class="form-group">
 
-    </div>
+        <label for="classroom">
+          Classroom <span class="required">*</span>
+        </label>
 
-    <div class="form-group">
+        <select id="classroom" name="classroom" [(ngModel)]="classroomId" required [disabled]="academicYearId === null"
+          #classroomInput="ngModel">
 
-      <label for="classroom">
-        Classroom
-      </label>
-
-      <select id="classroom" name="classroom" [(ngModel)]="classroomId" required [disabled]="academicYearId === null"
-        #classroomInput="ngModel">
-
-        <option [ngValue]="null" disabled>
-          {{
-              academicYearId === null
+          <option [ngValue]="null" disabled>
+            {{ academicYearId === null
                 ? 'Select an academic year first'
-                : 'Select a classroom'
-            }}
-        </option>
+                : 'Select a classroom' }}
+          </option>
 
-        @for (
-        classroom of filteredClassrooms;
-        track classroom.id
+          @for (classroom of filteredClassrooms; track classroom.id) {
+          <option [ngValue]="classroom.id">
+            {{ classroom.name }} — {{ classroom.level }}
+          </option>
+          }
+
+        </select>
+
+        @if (
+        academicYearId !== null &&
+        filteredClassrooms.length === 0
         ) {
-        <option [ngValue]="classroom.id">
-          {{ classroom.name }}
-          — {{ classroom.level }}
-        </option>
+        <span class="warning-text">
+          No classrooms are available for this academic year.
+        </span>
         }
 
-      </select>
+        @if (classroomInput.invalid && classroomInput.touched) {
+        <span class="validation-error">
+          Classroom is required.
+        </span>
+        }
 
-      @if (
-      academicYearId !== null &&
-      filteredClassrooms.length === 0
-      ) {
-      <span class="warning-text">
-        No classrooms are available for this academic year.
-      </span>
-      }
-
-      @if (
-      classroomInput.invalid &&
-      classroomInput.touched
-      ) {
-      <span class="validation-error">
-        Classroom is required.
-      </span>
-      }
+      </div>
 
     </div>
 
-    <div class="form-actions">
+    <!-- INFORMATION -->
+    @if (!isEditMode) {
+    <div class="info-box">
+      <span class="info-icon">ⓘ</span>
 
-      <button type="submit" class="btn btn-primary" [disabled]="
-            enrollmentForm.invalid ||
-            loading()
-          ">
-        @if (loading()) {
-        Saving...
-        } @else {
-        {{
-              isEditMode
-                ? 'Update'
-                : 'Create Enrollment'
-            }}
-        }
-      </button>
+      <p>
+        Select a student, an academic year and a classroom.
+        The student will be enrolled in the selected classroom
+        for that academic year.
+      </p>
+    </div>
+    }
+
+    <!-- ACTIONS -->
+    <div class="form-actions">
 
       <button type="button" class="btn btn-secondary" [disabled]="loading()" (click)="cancel()">
         Cancel
+      </button>
+
+      <button type="submit" class="btn btn-primary" [disabled]="
+            enrollmentForm.invalid ||
+            loading() ||
+            academicYearId === null ||
+            classroomId === null
+          ">
+
+        @if (loading()) {
+        Saving...
+        } @else {
+        {{ isEditMode ? 'Save Changes' : 'Create Enrollment' }}
+        }
+
       </button>
 
     </div>

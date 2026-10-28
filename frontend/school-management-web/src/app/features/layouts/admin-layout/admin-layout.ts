@@ -265,6 +265,18 @@ export class AdminLayout implements OnInit {
 
       return;
     }
+
+    if (
+      value.includes('user') ||
+      value.includes('account')
+    ) {
+
+      this.router.navigate([
+        '/admin/users'
+      ]);
+
+      return;
+    }
   }
 
 
@@ -351,7 +363,7 @@ export class AdminLayout implements OnInit {
 
         next: user => {
 
-          console.log('CURRENT ADMIN =', user);
+          
 
           this.adminName =
             user.fullName;

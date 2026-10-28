@@ -1,108 +1,143 @@
 <div class="page-container">
 
+  <!-- PAGE HEADER -->
   <div class="page-header">
 
-    <div>
-      <h2>Classrooms</h2>
-      <p>Manage school classrooms</p>
+    <div class="page-heading">
+      <h1>Classrooms</h1>
+      <p>Manage school classrooms and academic levels.</p>
     </div>
 
     <a routerLink="/classrooms/new" class="btn btn-primary">
+      <span>+</span>
       Add Classroom
     </a>
 
   </div>
 
-  @if (errorMessage()) {
-  <div class="error-message">
-    {{ errorMessage() }}
-  </div>
-  }
+  <!-- CLASSROOMS CARD -->
+  <section class="classrooms-card">
 
-  @if (loading()) {
+    <div class="card-header">
+      <div>
+        <h2>All Classrooms</h2>
+        <p>Overview of registered school classrooms.</p>
+      </div>
 
-  <div class="loading">
-    Loading classrooms...
-  </div>
+      <span class="classrooms-count">
+        {{ classrooms().length }} classrooms
+      </span>
+    </div>
 
-  } @else {
+    <!-- ERROR -->
+    @if (errorMessage()) {
+    <div class="error-message" role="alert">
+      {{ errorMessage() }}
+    </div>
+    }
 
-  <div class="table-wrapper">
+    <!-- LOADING -->
+    @if (loading()) {
+    <div class="loading">
+      <div class="loader"></div>
+      <span>Loading classrooms...</span>
+    </div>
+    } @else {
 
-    <table>
+    <div class="table-wrapper">
 
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Name</th>
-          <th>Level</th>
-          <th>Academic year</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
+      <table>
+        <thead>
+          <tr>
+            <th>Classroom</th>
+            <th>Level</th>
+            <th>Academic Year</th>
+            <th>Classroom ID</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
 
-      <tbody>
+        <tbody>
 
-        @for (
-        classroom of classrooms();
-        track classroom.id
-        ) {
+          @for (classroom of classrooms(); track classroom.id) {
 
-        <tr>
+          <tr>
 
-          <td>
-            {{ classroom.id }}
-          </td>
+            <!-- CLASSROOM -->
+            <td>
+              <div class="classroom-cell">
 
-          <td class="classroom-name">
-            {{ classroom.name }}
-          </td>
+                <div class="classroom-avatar">
+                  🏫
+                </div>
 
-          <td>
-            {{ classroom.level }}
-          </td>
+                <div class="classroom-info">
+                  <strong>{{ classroom.name }}</strong>
+                  <span>School classroom</span>
+                </div>
 
-          <td>
-            @if (classroom.academicYearName) {
-            {{ classroom.academicYearName }}
-            } @else {
-            ID {{ classroom.academicYearId }}
-            }
-          </td>
+              </div>
+            </td>
 
-          <td class="actions">
+            <!-- LEVEL -->
+            <td>
+              <span class="level-badge">
+                {{ classroom.level }}
+              </span>
+            </td>
 
-            <a [routerLink]="[
-                    '/classrooms',
-                    classroom.id,
-                    'edit'
-                  ]" class="btn btn-edit">
-              Edit
-            </a>
+            <!-- ACADEMIC YEAR -->
+            <td class="academic-year-cell">
+              @if (classroom.academicYearName) {
+              {{ classroom.academicYearName }}
+              } @else {
+              ID {{ classroom.academicYearId }}
+              }
+            </td>
 
-            <button type="button" class="btn btn-delete" (click)="deleteClassroom(classroom.id)">
-              Delete
-            </button>
+            <!-- ID -->
+            <td class="id-cell">
+              #{{ classroom.id }}
+            </td>
 
-          </td>
+            <!-- ACTIONS -->
+            <td>
+              <div class="actions">
 
-        </tr>
+                <a [routerLink]="[
+                        '/classrooms',
+                        classroom.id,
+                        'edit'
+                      ]" class="btn btn-edit">
+                  Edit
+                </a>
 
-        } @empty {
+                <button type="button" class="btn btn-delete" (click)="deleteClassroom(classroom.id)">
+                  Delete
+                </button>
 
-        <tr>
-          <td colspan="5" class="empty-message">
-            No classrooms found.
-          </td>
-        </tr>
+              </div>
+            </td>
 
-        }
+          </tr>
 
-      </tbody>
+          } @empty {
 
-    </table>
+          <tr>
+            <td colspan="5" class="empty-message">
+              No classrooms found.
+            </td>
+          </tr>
 
-  </div>
-  }
+          }
+
+        </tbody>
+      </table>
+
+    </div>
+
+    }
+
+  </section>
 
 </div>

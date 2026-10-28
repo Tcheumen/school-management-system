@@ -1,33 +1,46 @@
 <div class="form-container">
 
+  <!-- HEADER -->
   <div class="form-header">
-    <h2>Add Class Schedule</h2>
 
-    <p>
-      Create a teaching time slot
-    </p>
+    <div class="form-icon">📅</div>
+
+    <div>
+      <h2>Add Class Schedule</h2>
+      <p>Create a new teaching time slot.</p>
+    </div>
+
   </div>
 
+  <!-- ERROR MESSAGE -->
   @if (errorMessage()) {
-  <div class="error-message">
+  <div class="error-message" role="alert">
     {{ errorMessage() }}
   </div>
   }
 
+  <!-- LOADING -->
   @if (loadingData()) {
 
-  <div class="loading">
-    Loading teacher assignments...
+  <div class="loading-state">
+    <div class="loader"></div>
+    <span>Loading teacher assignments...</span>
   </div>
 
   } @else {
 
   <form #scheduleForm="ngForm" (ngSubmit)="save()">
 
+    <!-- ASSIGNMENT SECTION -->
+    <div class="form-section-title">
+      Teaching Assignment
+    </div>
+
     <div class="form-group">
 
       <label for="teacherAssignment">
         Teacher Assignment
+        <span class="required">*</span>
       </label>
 
       <select id="teacherAssignment" name="teacherAssignment" [(ngModel)]="teacherAssignmentId" required
@@ -37,10 +50,7 @@
           Select a teacher assignment
         </option>
 
-        @for (
-        assignment of assignments();
-        track assignment.id
-        ) {
+        @for (assignment of assignments(); track assignment.id) {
 
         <option [ngValue]="assignment.id">
           {{ assignment.teacherFullName }}
@@ -56,10 +66,7 @@
 
       </select>
 
-      @if (
-      assignmentInput.invalid &&
-      assignmentInput.touched
-      ) {
+      @if (assignmentInput.invalid && assignmentInput.touched) {
       <span class="validation-error">
         Teacher assignment is required.
       </span>
@@ -68,15 +75,28 @@
       @if (assignments().length === 0) {
       <span class="warning-text">
         No teacher assignments available.
+        Create a teacher assignment first.
       </span>
       }
 
+      <small class="field-hint">
+        Choose the teacher, subject, classroom and
+        academic year associated with this schedule.
+      </small>
+
     </div>
 
+    <!-- SCHEDULE INFORMATION -->
+    <div class="form-section-title">
+      Schedule Information
+    </div>
+
+    <!-- DAY -->
     <div class="form-group">
 
       <label for="dayOfWeek">
-        Day
+        Day of Week
+        <span class="required">*</span>
       </label>
 
       <select id="dayOfWeek" name="dayOfWeek" [(ngModel)]="dayOfWeek" required #dayInput="ngModel">
@@ -85,10 +105,7 @@
           Select a day
         </option>
 
-        @for (
-        day of days;
-        track day
-        ) {
+        @for (day of days; track day) {
         <option [value]="day">
           {{ formatDay(day) }}
         </option>
@@ -96,10 +113,7 @@
 
       </select>
 
-      @if (
-      dayInput.invalid &&
-      dayInput.touched
-      ) {
+      @if (dayInput.invalid && dayInput.touched) {
       <span class="validation-error">
         Day is required.
       </span>
@@ -107,20 +121,20 @@
 
     </div>
 
+    <!-- TIME GRID -->
     <div class="time-grid">
 
+      <!-- START TIME -->
       <div class="form-group">
 
         <label for="startTime">
           Start Time
+          <span class="required">*</span>
         </label>
 
         <input id="startTime" name="startTime" type="time" [(ngModel)]="startTime" required #startTimeInput="ngModel" />
 
-        @if (
-        startTimeInput.invalid &&
-        startTimeInput.touched
-        ) {
+        @if (startTimeInput.invalid && startTimeInput.touched) {
         <span class="validation-error">
           Start time is required.
         </span>
@@ -128,18 +142,17 @@
 
       </div>
 
+      <!-- END TIME -->
       <div class="form-group">
 
         <label for="endTime">
           End Time
+          <span class="required">*</span>
         </label>
 
         <input id="endTime" name="endTime" type="time" [(ngModel)]="endTime" required #endTimeInput="ngModel" />
 
-        @if (
-        endTimeInput.invalid &&
-        endTimeInput.touched
-        ) {
+        @if (endTimeInput.invalid && endTimeInput.touched) {
         <span class="validation-error">
           End time is required.
         </span>
@@ -149,34 +162,52 @@
 
     </div>
 
-    @if (
-    startTime &&
-    endTime &&
-    endTime <= startTime ) { <div class="validation-summary">
+    <!-- TIME VALIDATION -->
+    @if (startTime && endTime && endTime <= startTime) { <div class="validation-summary">
+      <span>⚠</span>
       End time must be after start time.
 </div>
+
 }
 
+<!-- INFORMATION BOX -->
+<div class="info-box">
+
+  <span class="info-icon">ⓘ</span>
+
+  <p>
+    Make sure the selected teacher and classroom
+    are available during this time slot.
+    The schedule must be associated with an existing
+    <strong>Teacher Assignment</strong>.
+  </p>
+
+</div>
+
+<!-- ACTION BUTTONS -->
 <div class="form-actions">
+
+  <button type="button" class="btn btn-secondary" (click)="cancel()" [disabled]="loading()">
+    Cancel
+  </button>
 
   <button type="submit" class="btn btn-primary" [disabled]="
             scheduleForm.invalid ||
             loading() ||
+            assignments().length === 0 ||
             (
               startTime !== '' &&
               endTime !== '' &&
               endTime <= startTime
             )
           ">
+
     @if (loading()) {
     Saving...
     } @else {
     Create Schedule
     }
-  </button>
 
-  <button type="button" class="btn btn-secondary" [disabled]="loading()" (click)="cancel()">
-    Cancel
   </button>
 
 </div>

@@ -4,10 +4,12 @@ import { RouterLink } from '@angular/router';
 import { AcademicYear } from '../../models/academic-year.model';
 import { AcademicYearService } from '../../services/academic-year.service';
 
+import { DatePipe } from '@angular/common';
+
 @Component({
   selector: 'app-academic-year-list',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, DatePipe],
   templateUrl: './academic-year-list.html',
   styleUrl: './academic-year-list.scss'
 })

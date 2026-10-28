@@ -1,106 +1,139 @@
 <div class="page-container">
 
+  <!-- PAGE HEADER -->
   <div class="page-header">
 
-    <div>
-      <h2>Teacher Assignments</h2>
-      <p>
-        Assign teachers to subjects and classrooms
-      </p>
+    <div class="page-heading">
+      <h1>Teacher Assignments</h1>
+      <p>Assign teachers to subjects and classrooms.</p>
     </div>
 
     <a routerLink="/teacher-assignments/new" class="btn btn-primary">
+      <span>+</span>
       Add Assignment
     </a>
 
   </div>
 
-  @if (errorMessage()) {
-  <div class="error-message">
-    {{ errorMessage() }}
-  </div>
-  }
+  <!-- ASSIGNMENTS CARD -->
+  <section class="assignments-card">
 
-  @if (loading()) {
+    <div class="card-header">
+      <div>
+        <h2>All Assignments</h2>
+        <p>Overview of teacher teaching assignments.</p>
+      </div>
 
-  <div class="loading">
-    Loading teacher assignments...
-  </div>
+      <span class="assignments-count">
+        {{ assignments().length }} assignments
+      </span>
+    </div>
 
-  } @else {
+    <!-- ERROR -->
+    @if (errorMessage()) {
+    <div class="error-message" role="alert">
+      {{ errorMessage() }}
+    </div>
+    }
 
-  <div class="table-wrapper">
+    <!-- LOADING -->
+    @if (loading()) {
+    <div class="loading">
+      <div class="loader"></div>
+      <span>Loading teacher assignments...</span>
+    </div>
+    } @else {
 
-    <table>
+    <div class="table-wrapper">
 
-      <thead>
-        <tr>
-          <th>ID</th>
-          <th>Teacher</th>
-          <th>Subject</th>
-          <th>Classroom</th>
-          <th>Academic Year</th>
-          <th>Actions</th>
-        </tr>
-      </thead>
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Teacher</th>
+            <th>Subject</th>
+            <th>Classroom</th>
+            <th>Academic Year</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
 
-      <tbody>
+        <tbody>
 
-        @for (
-        assignment of assignments();
-        track assignment.id
-        ) {
+          @for (assignment of assignments(); track assignment.id) {
 
-        <tr>
+          <tr>
 
-          <td>
-            {{ assignment.id }}
-          </td>
+            <!-- ID -->
+            <td class="id-cell">
+              #{{ assignment.id }}
+            </td>
 
-          <td class="teacher-name">
-            {{ assignment.teacherFullName }}
-          </td>
+            <!-- TEACHER -->
+            <td>
+              <div class="teacher-cell">
 
-          <td>
-            {{ assignment.subjectName }}
-          </td>
+                <div class="teacher-avatar">
+                  {{ assignment.teacherFullName.charAt(0).toUpperCase() }}
+                </div>
 
-          <td>
-            {{ assignment.classroomName }}
-          </td>
+                <div class="teacher-info">
+                  <strong>{{ assignment.teacherFullName }}</strong>
+                  <span>Assigned Teacher</span>
+                </div>
 
-          <td>
-            {{ assignment.academicYearName }}
-          </td>
+              </div>
+            </td>
 
-          <td class="actions">
+            <!-- SUBJECT -->
+            <td>
+              <span class="subject-badge">
+                {{ assignment.subjectName }}
+              </span>
+            </td>
 
-            <button type="button" class="btn btn-delete" (click)="deleteAssignment(
-                    assignment.id
-                  )">
-              Delete
-            </button>
+            <!-- CLASSROOM -->
+            <td>
+              <span class="classroom-name">
+                {{ assignment.classroomName }}
+              </span>
+            </td>
 
-          </td>
+            <!-- ACADEMIC YEAR -->
+            <td>
+              <span class="year-badge">
+                {{ assignment.academicYearName }}
+              </span>
+            </td>
 
-        </tr>
+            <!-- ACTIONS -->
+            <td>
+              <div class="actions">
+                <button type="button" class="btn btn-delete" (click)="deleteAssignment(assignment.id)">
+                  Delete
+                </button>
+              </div>
+            </td>
 
-        } @empty {
+          </tr>
 
-        <tr>
-          <td colspan="6" class="empty-message">
-            No teacher assignments found.
-          </td>
-        </tr>
+          } @empty {
 
-        }
+          <tr>
+            <td colspan="6" class="empty-message">
+              No teacher assignments found.
+            </td>
+          </tr>
 
-      </tbody>
+          }
 
-    </table>
+        </tbody>
+      </table>
 
-  </div>
+    </div>
 
-  }
+    }
+
+  </section>
 
 </div>

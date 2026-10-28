@@ -73,6 +73,13 @@ export const routes: Routes = [
                     )
             },
 
+            {
+                path: 'admin/users',
+                loadComponent: () =>
+                    import('./features/users/pages/user-list/user-list')
+                        .then(m => m.UserList)
+            },
+
             /* PROFILE */
             {
                 path: 'admin/profile',
@@ -106,6 +113,8 @@ export const routes: Routes = [
                         m => m.StudentList
                     )
             },
+
+         
 
             {
                 path: 'students/new',

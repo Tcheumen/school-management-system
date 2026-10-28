@@ -1,77 +1,123 @@
+
 <div class="page-container">
 
+  <!-- PAGE HEADER -->
   <div class="page-header">
-
     <div>
-      <h2>My Assignments</h2>
-
-      <p>
-        Subjects and classrooms assigned to you
-      </p>
+      <h1>My Assignments</h1>
+      <p>Subjects and classrooms assigned to you.</p>
     </div>
 
+    <div class="header-icon">
+      📚
+    </div>
   </div>
 
+  <!-- ERROR MESSAGE -->
   @if (errorMessage()) {
-
-  <div class="error-message">
-    {{ errorMessage() }}
-  </div>
-
+    <div class="error-message" role="alert">
+      {{ errorMessage() }}
+    </div>
   }
 
+  <!-- LOADING -->
   @if (loading()) {
-
-  <div class="loading">
-    Loading assignments...
-  </div>
-
+    <div class="loading">
+      <div class="loader"></div>
+      <span>Loading assignments...</span>
+    </div>
   } @else {
 
-  <div class="cards-grid">
-
-    @for (
-    assignment of assignments();
-    track assignment.id
-    ) {
-
-    <div class="assignment-card">
-
-      <div class="subject">
-        {{ assignment.subjectName }}
+    <!-- ASSIGNMENT COUNT -->
+    <div class="section-header">
+      <div>
+        <h2>Assigned Subjects</h2>
+        <p>Your current teaching assignments</p>
       </div>
 
-      <div class="assignment-info">
-
-        <div>
-          <span>Classroom</span>
-
-          <strong>
-            {{ assignment.classroomName }}
-          </strong>
-        </div>
-
-        <div>
-          <span>Academic Year</span>
-
-          <strong>
-            {{ assignment.academicYearName }}
-          </strong>
-        </div>
-
-      </div>
-
+      <span class="assignment-count">
+        {{ assignments().length }} assignments
+      </span>
     </div>
 
-    } @empty {
+    <!-- ASSIGNMENTS GRID -->
+    <div class="cards-grid">
 
-    <div class="empty">
-      No assignments found.
+      @for (assignment of assignments(); track assignment.id) {
+
+        <div class="assignment-card">
+
+          <!-- CARD HEADER -->
+          <div class="card-top">
+
+            <div class="subject-icon">
+              📖
+            </div>
+
+            <span class="assignment-id">
+              #{{ assignment.id }}
+            </span>
+
+          </div>
+
+          <!-- SUBJECT -->
+          <div class="subject">
+            {{ assignment.subjectName }}
+          </div>
+
+          <p class="card-description">
+            Teaching assignment
+          </p>
+
+          <div class="card-divider"></div>
+
+          <!-- ASSIGNMENT DETAILS -->
+          <div class="assignment-info">
+
+            <div class="info-row">
+
+              <div class="info-icon">
+                🏫
+              </div>
+
+              <div class="info-content">
+                <span>Classroom</span>
+                <strong>{{ assignment.classroomName }}</strong>
+              </div>
+
+            </div>
+
+            <div class="info-row">
+
+              <div class="info-icon">
+                📅
+              </div>
+
+              <div class="info-content">
+                <span>Academic Year</span>
+                <strong>{{ assignment.academicYearName }}</strong>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      } @empty {
+
+        <div class="empty-state">
+          <div class="empty-icon">📚</div>
+          <h3>No assignments found</h3>
+          <p>
+            You have not been assigned to any subjects or
+            classrooms yet.
+          </p>
+        </div>
+
+      }
+
     </div>
-
-    }
-
-  </div>
 
   }
 

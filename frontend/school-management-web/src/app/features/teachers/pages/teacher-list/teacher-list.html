@@ -1,64 +1,271 @@
-<div class="page-container">
-  <div class="page-header">
-    <h2>Teachers</h2>
 
-    <a routerLink="/teachers/new" class="btn btn-primary">
-      Add Teacher
-    </a>
+<div class="page-container">
+
+  <div class="page-header">
+    <div class="page-heading">
+      <h1>Teachers</h1>
+      <p>Manage teachers by academic year and classroom.</p>
+    </div>
+
+    <div class="header-actions">
+      <button
+        type="button"
+        class="btn btn-refresh"
+        (click)="loadData()"
+        [disabled]="loading() || deleting()">
+        ↻ Refresh
+      </button>
+
+      <a routerLink="/teachers/new" class="btn btn-primary">
+        + Add Teacher
+      </a>
+    </div>
   </div>
 
   @if (errorMessage()) {
-  <div class="error-message">
-    {{ errorMessage() }}
-  </div>
+    <div class="error-message" role="alert">
+      {{ errorMessage() }}
+    </div>
   }
 
   @if (loading()) {
-  <div class="loading">
-    Loading teachers...
-  </div>
+    <div class="loading">
+      <div class="loader"></div>
+      <span>Loading teachers...</span>
+    </div>
   } @else {
-  <div class="table-wrapper">
-    <table>
-      <thead>
-        <tr>
-          <th>First name</th>
-          <th>Last name</th>
-          <th>Email</th>
-          <th>Phone</th>
-          <th>Actions</th>
-          <th>Specialty</th>
-        </tr>
-      </thead>
 
-      <tbody>
-        @for (teacher of teachers(); track teacher.id) {
-        <tr>
-          <td>{{ teacher.firstName }}</td>
-          <td>{{ teacher.lastName }}</td>
-          <td>{{ teacher.email }}</td>
-          <td>{{ teacher.phoneNumber }}</td>
-          <td>{{ teacher.specialty }}</td>
+    <!-- STATISTICS -->
+    <div class="stats-grid">
 
-          <td class="actions">
-            <a [routerLink]="['/teachers', teacher.id, 'edit']" class="btn btn-edit">
-              Edit
-            </a>
+      <div class="stat-card">
+        <span class="stat-icon teacher-icon">👨‍🏫</span>
+        <div>
+          <span>Assigned Teachers</span>
+          <strong>{{ assignedCount }}</strong>
+          <small>{{ selectedYearLabel }}</small>
+        </div>
+      </div>
 
-            <button type="button" class="btn btn-delete" (click)="deleteTeacher(teacher.id)">
-              Delete
-            </button>
-          </td>
-        </tr>
-        } @empty {
-        <tr>
-          <td colspan="5" class="empty-message">
-            No teachers found.
-          </td>
-        </tr>
-        }
-      </tbody>
-    </table>
-  </div>
+      <div class="stat-card">
+        <span class="stat-icon classroom-icon">🏫</span>
+        <div>
+          <span>Classrooms</span>
+          <strong>{{ classroomCount }}</strong>
+          <small>In selected academic year</small>
+        </div>
+      </div>
+
+      <div class="stat-card">
+        <span class="stat-icon unassigned-icon">📋</span>
+        <div>
+          <span>Unassigned Teachers</span>
+          <strong>{{ unassignedCount }}</strong>
+          <small>No classroom assignment</small>
+        </div>
+      </div>
+
+    </div>
+
+    <section class="teachers-card">
+
+      <div class="card-header">
+        <div>
+          <h2>Teacher Directory</h2>
+          <p>Academic Year: {{ selectedYearLabel }}</p>
+        </div>
+
+        <span class="teachers-count">
+          {{ filteredRows.length }} teachers
+        </span>
+      </div>
+
+      <!-- FILTERS -->
+      <div class="filters-bar">
+
+        <div class="filter-group">
+          <label for="yearFilter">Academic Year</label>
+
+          <select
+            id="yearFilter"
+            name="academicYear"
+            [ngModel]="selectedYearId()"
+            (ngModelChange)="onYearChange($event)">
+
+            @for (year of academicYears(); track year.id) {
+              <option [ngValue]="year.id">
+                {{ year.name }}
+                {{ year.active ? '(Active)' : '' }}
+              </option>
+            }
+
+          </select>
+        </div>
+
+        <div class="filter-group">
+          <label for="classroomFilter">Classroom</label>
+
+          <select
+            id="classroomFilter"
+            name="classroom"
+            [(ngModel)]="selectedClassroomId">
+
+            <option [ngValue]="'ALL'">
+              All Classrooms
+            </option>
+
+            @for (
+              classroom of availableClassrooms();
+              track classroom.id
+            ) {
+              <option [ngValue]="classroom.id">
+                {{ classroom.name }} - {{ classroom.level }}
+              </option>
+            }
+
+            <option [ngValue]="'UNASSIGNED'">
+              Unassigned Teachers
+            </option>
+
+          </select>
+        </div>
+
+        <div class="filter-group search-group">
+          <label for="teacherSearch">Search Teacher</label>
+
+          <input
+            id="teacherSearch"
+            name="searchTerm"
+            type="search"
+            [(ngModel)]="searchTerm"
+            placeholder="Name, email or specialty..." />
+        </div>
+
+        <button
+          type="button"
+          class="clear-btn"
+          (click)="clearFilters()">
+          Clear
+        </button>
+
+      </div>
+
+      @if (academicYears().length === 0) {
+        <div class="empty-message">
+          No academic years available.
+        </div>
+      } @else if (filteredRows.length === 0) {
+        <div class="empty-message">
+          No teachers found for this selection.
+          You can check Teacher Assignments or select
+          Unassigned Teachers.
+        </div>
+      } @else {
+
+        <div class="table-wrapper">
+          <table>
+
+            <thead>
+              <tr>
+                <th>Teacher</th>
+                <th>Email Address</th>
+                <th>Phone Number</th>
+                <th>Specialty</th>
+                <th>Classroom</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              @for (row of filteredRows; track row.teacher.id) {
+
+                <tr>
+
+                  <td>
+                    <div class="teacher-cell">
+                      <div class="teacher-avatar">
+                        {{ row.teacher.firstName.charAt(0).toUpperCase() }}
+                      </div>
+
+                      <div class="teacher-info">
+                        <strong>
+                          {{ row.teacher.firstName }}
+                          {{ row.teacher.lastName }}
+                        </strong>
+                        <span>Teacher #{{ row.teacher.id }}</span>
+                      </div>
+                    </div>
+                  </td>
+
+                  <td class="email-cell">
+                    {{ row.teacher.email }}
+                  </td>
+
+                  <td>
+                    {{ row.teacher.phoneNumber || '—' }}
+                  </td>
+
+                  <td>
+                    <span class="specialty-badge">
+                      {{ row.teacher.specialty || 'Not specified' }}
+                    </span>
+                  </td>
+
+                  <td>
+                    <div class="classroom-list">
+                      @if (row.assigned) {
+                        @for (name of row.classroomNames; track name) {
+                          <span class="classroom-badge">
+                            {{ name }}
+                          </span>
+                        }
+                      } @else {
+                        <span class="unassigned-badge">
+                          Unassigned
+                        </span>
+                      }
+                    </div>
+                  </td>
+
+                  <td>
+                    <div class="actions">
+
+                      <a
+                        [routerLink]="[
+                          '/teachers',
+                          row.teacher.id,
+                          'edit'
+                        ]"
+                        class="btn btn-edit">
+                        Edit
+                      </a>
+
+                      <button
+                        type="button"
+                        class="btn btn-delete"
+                        [disabled]="deleting()"
+                        (click)="deleteTeacher(row.teacher.id)">
+
+                        {{ deletingId() === row.teacher.id
+                          ? 'Deleting...'
+                          : 'Delete' }}
+
+                      </button>
+
+                    </div>
+                  </td>
+
+                </tr>
+
+              }
+            </tbody>
+
+          </table>
+        </div>
+
+      }
+
+    </section>
   }
+
 </div>

@@ -1,203 +1,197 @@
 <div class="form-container">
 
+  <!-- HEADER -->
   <div class="form-header">
-    <h2>Add Teacher Assignment</h2>
-    <p>
-      Assign a teacher to a subject and classroom
-    </p>
+    <div class="form-icon">📚</div>
+
+    <div>
+      <h2>Add Teacher Assignment</h2>
+      <p>Assign a teacher to a subject and classroom.</p>
+    </div>
   </div>
 
+  <!-- ERROR -->
   @if (errorMessage()) {
-  <div class="error-message">
+  <div class="error-message" role="alert">
     {{ errorMessage() }}
   </div>
   }
 
   @if (loadingData()) {
 
-  <div class="loading">
-    Loading form data...
+  <div class="loading-state">
+    <div class="loader"></div>
+    <span>Loading form data...</span>
   </div>
 
   } @else {
 
   <form #assignmentForm="ngForm" (ngSubmit)="save()">
 
-    <div class="form-group">
-
-      <label for="academicYear">
-        Academic Year
-      </label>
-
-      <select id="academicYear" name="academicYear" [(ngModel)]="academicYearId"
-        (ngModelChange)="onAcademicYearChange()" required #academicYearInput="ngModel">
-
-        <option [ngValue]="null" disabled>
-          Select an academic year
-        </option>
-
-        @for (
-        academicYear of academicYears();
-        track academicYear.id
-        ) {
-        <option [ngValue]="academicYear.id">
-
-          {{ academicYear.name }}
-
-          @if (academicYear.active) {
-          (Active)
-          }
-
-        </option>
-        }
-
-      </select>
-
-      @if (
-      academicYearInput.invalid &&
-      academicYearInput.touched
-      ) {
-      <span class="validation-error">
-        Academic year is required.
-      </span>
-      }
-
+    <!-- ACADEMIC INFORMATION -->
+    <div class="form-section-title">
+      Academic Information
     </div>
 
-    <div class="form-group">
+    <div class="form-grid">
 
-      <label for="classroom">
-        Classroom
-      </label>
+      <!-- ACADEMIC YEAR -->
+      <div class="form-group">
+        <label for="academicYear">
+          Academic Year <span class="required">*</span>
+        </label>
 
-      <select id="classroom" name="classroom" [(ngModel)]="classroomId" [disabled]="academicYearId === null" required
-        #classroomInput="ngModel">
+        <select id="academicYear" name="academicYear" [(ngModel)]="academicYearId"
+          (ngModelChange)="onAcademicYearChange()" required #academicYearInput="ngModel">
 
-        <option [ngValue]="null" disabled>
-          {{
-              academicYearId === null
+          <option [ngValue]="null" disabled>
+            Select an academic year
+          </option>
+
+          @for (academicYear of academicYears(); track academicYear.id) {
+          <option [ngValue]="academicYear.id">
+            {{ academicYear.name }}
+            {{ academicYear.active ? '(Active)' : '' }}
+          </option>
+          }
+
+        </select>
+
+        @if (academicYearInput.invalid && academicYearInput.touched) {
+        <span class="validation-error">
+          Academic year is required.
+        </span>
+        }
+      </div>
+
+      <!-- CLASSROOM -->
+      <div class="form-group">
+        <label for="classroom">
+          Classroom <span class="required">*</span>
+        </label>
+
+        <select id="classroom" name="classroom" [(ngModel)]="classroomId" [disabled]="academicYearId === null" required
+          #classroomInput="ngModel">
+
+          <option [ngValue]="null" disabled>
+            {{ academicYearId === null
                 ? 'Select an academic year first'
-                : 'Select a classroom'
-            }}
-        </option>
+                : 'Select a classroom' }}
+          </option>
 
-        @for (
-        classroom of filteredClassrooms;
-        track classroom.id
-        ) {
-        <option [ngValue]="classroom.id">
-          {{ classroom.name }}
-          — {{ classroom.level }}
-        </option>
-        }
-
-      </select>
-
-      @if (
-      academicYearId !== null &&
-      filteredClassrooms.length === 0
-      ) {
-      <span class="warning-text">
-        No classrooms available for this academic year.
-      </span>
-      }
-
-      @if (
-      classroomInput.invalid &&
-      classroomInput.touched
-      ) {
-      <span class="validation-error">
-        Classroom is required.
-      </span>
-      }
-
-    </div>
-
-    <div class="form-group">
-
-      <label for="teacher">
-        Teacher
-      </label>
-
-      <select id="teacher" name="teacher" [(ngModel)]="teacherId" required #teacherInput="ngModel">
-
-        <option [ngValue]="null" disabled>
-          Select a teacher
-        </option>
-
-        @for (
-        teacher of teachers();
-        track teacher.id
-        ) {
-        <option [ngValue]="teacher.id">
-          {{ teacher.firstName }}
-          {{ teacher.lastName }}
-
-          @if (teacher.specialty) {
-          — {{ teacher.specialty }}
+          @for (classroom of filteredClassrooms; track classroom.id) {
+          <option [ngValue]="classroom.id">
+            {{ classroom.name }} — {{ classroom.level }}
+          </option>
           }
-        </option>
+
+        </select>
+
+        @if (academicYearId !== null && filteredClassrooms.length === 0) {
+        <span class="warning-text">
+          No classrooms available for this academic year.
+        </span>
         }
 
-      </select>
-
-      @if (
-      teacherInput.invalid &&
-      teacherInput.touched
-      ) {
-      <span class="validation-error">
-        Teacher is required.
-      </span>
-      }
+        @if (classroomInput.invalid && classroomInput.touched) {
+        <span class="validation-error">
+          Classroom is required.
+        </span>
+        }
+      </div>
 
     </div>
 
-    <div class="form-group">
+    <!-- TEACHING INFORMATION -->
+    <div class="form-section-title">
+      Teaching Information
+    </div>
 
-      <label for="subject">
-        Subject
-      </label>
+    <div class="form-grid">
 
-      <select id="subject" name="subject" [(ngModel)]="subjectId" required #subjectInput="ngModel">
+      <!-- TEACHER -->
+      <div class="form-group">
+        <label for="teacher">
+          Teacher <span class="required">*</span>
+        </label>
 
-        <option [ngValue]="null" disabled>
-          Select a subject
-        </option>
+        <select id="teacher" name="teacher" [(ngModel)]="teacherId" required #teacherInput="ngModel">
 
-        @for (
-        subject of subjects();
-        track subject.id
-        ) {
-        <option [ngValue]="subject.id">
-          {{ subject.name }}
-        </option>
+          <option [ngValue]="null" disabled>
+            Select a teacher
+          </option>
+
+          @for (teacher of teachers(); track teacher.id) {
+          <option [ngValue]="teacher.id">
+            {{ teacher.firstName }} {{ teacher.lastName }}
+            {{ teacher.specialty ? '— ' + teacher.specialty : '' }}
+          </option>
+          }
+
+        </select>
+
+        @if (teacherInput.invalid && teacherInput.touched) {
+        <span class="validation-error">
+          Teacher is required.
+        </span>
         }
+      </div>
 
-      </select>
+      <!-- SUBJECT -->
+      <div class="form-group">
+        <label for="subject">
+          Subject <span class="required">*</span>
+        </label>
 
-      @if (
-      subjectInput.invalid &&
-      subjectInput.touched
-      ) {
-      <span class="validation-error">
-        Subject is required.
-      </span>
-      }
+        <select id="subject" name="subject" [(ngModel)]="subjectId" required #subjectInput="ngModel">
+
+          <option [ngValue]="null" disabled>
+            Select a subject
+          </option>
+
+          @for (subject of subjects(); track subject.id) {
+          <option [ngValue]="subject.id">
+            {{ subject.name }}
+          </option>
+          }
+
+        </select>
+
+        @if (subjectInput.invalid && subjectInput.touched) {
+        <span class="validation-error">
+          Subject is required.
+        </span>
+        }
+      </div>
 
     </div>
 
+    <!-- INFORMATION -->
+    <div class="info-box">
+      <span class="info-icon">ⓘ</span>
+
+      <p>
+        Select the academic year, classroom, teacher, and subject.
+        This assignment will connect the selected teacher
+        to the subject in the chosen classroom.
+      </p>
+    </div>
+
+    <!-- ACTIONS -->
     <div class="form-actions">
 
+      <button type="button" class="btn btn-secondary" [disabled]="loading()" (click)="cancel()">
+        Cancel
+      </button>
+
       <button type="submit" class="btn btn-primary" [disabled]="assignmentForm.invalid || loading()">
+
         @if (loading()) {
         Saving...
         } @else {
         Create Assignment
         }
-      </button>
 
-      <button type="button" class="btn btn-secondary" [disabled]="loading()" (click)="cancel()">
-        Cancel
       </button>
 
     </div>

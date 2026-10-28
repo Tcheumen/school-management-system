@@ -1,134 +1,166 @@
 <div class="page-container">
 
+  <!-- PAGE HEADER -->
   <div class="page-header">
 
-    <div>
-      <h2>Grades</h2>
-
-      <p>
-        Manage student grades
-      </p>
+    <div class="page-heading">
+      <h1>Grades</h1>
+      <p>Manage student grades and academic performance.</p>
     </div>
 
     <a routerLink="/grades/new" class="btn btn-primary">
+      <span>+</span>
       Add Grade
     </a>
 
   </div>
 
-  @if (errorMessage()) {
-  <div class="error-message">
-    {{ errorMessage() }}
-  </div>
-  }
+  <!-- GRADES CARD -->
+  <section class="grades-card">
 
-  @if (loading()) {
+    <div class="card-header">
 
-  <div class="loading">
-    Loading grades...
-  </div>
+      <div>
+        <h2>All Grades</h2>
+        <p>Overview of student academic results.</p>
+      </div>
 
-  } @else {
+      <span class="grades-count">
+        {{ grades().length }} grades
+      </span>
 
-  <div class="table-wrapper">
+    </div>
 
-    <table>
+    <!-- ERROR -->
+    @if (errorMessage()) {
+    <div class="error-message" role="alert">
+      {{ errorMessage() }}
+    </div>
+    }
 
-      <thead>
+    <!-- LOADING -->
+    @if (loading()) {
 
-        <tr>
-          <th>Student</th>
-          <th>Subject</th>
-          <th>Classroom</th>
-          <th>Teacher</th>
-          <th>Term</th>
-          <th>Grade</th>
-          <th>Remarks</th>
-          <th>Actions</th>
-        </tr>
+    <div class="loading">
+      <div class="loader"></div>
+      <span>Loading grades...</span>
+    </div>
 
-      </thead>
+    } @else {
 
-      <tbody>
+    <div class="table-wrapper">
 
-        @for (
-        grade of grades();
-        track grade.id
-        ) {
+      <table>
 
-        <tr>
+        <thead>
+          <tr>
+            <th>Student</th>
+            <th>Subject</th>
+            <th>Classroom</th>
+            <th>Teacher</th>
+            <th>Term</th>
+            <th>Grade</th>
+            <th>Remarks</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
 
-          <td class="student-name">
-            {{ grade.studentFullName }}
-          </td>
+        <tbody>
 
-          <td>
-            {{ grade.subjectName }}
-          </td>
+          @for (grade of grades(); track grade.id) {
 
-          <td>
-            {{ grade.classroomName }}
-          </td>
+          <tr>
 
-          <td>
-            {{ grade.teacherFullName }}
-          </td>
+            <!-- STUDENT -->
+            <td>
+              <div class="student-cell">
 
-          <td>
-            {{ formatTerm(grade.term) }}
-          </td>
+                <div class="student-avatar">
+                  {{ grade.studentFullName.charAt(0).toUpperCase() }}
+                </div>
 
-          <td>
+                <div class="student-info">
+                  <strong>{{ grade.studentFullName }}</strong>
+                  <span>Student</span>
+                </div>
 
-            <span class="grade-value" [class.grade-good]="grade.value >= 14" [class.grade-average]="
-                    grade.value >= 10 &&
-                    grade.value < 14
-                  " [class.grade-low]="grade.value < 10">
-              {{ grade.value }} / 20
-            </span>
+              </div>
+            </td>
 
-          </td>
+            <!-- SUBJECT -->
+            <td>
+              <span class="subject-name">
+                {{ grade.subjectName }}
+              </span>
+            </td>
 
-          <td>
-            {{ grade.remarks || '-' }}
-          </td>
+            <!-- CLASSROOM -->
+            <td>
+              {{ grade.classroomName }}
+            </td>
 
-          <td class="actions">
+            <!-- TEACHER -->
+            <td>
+              {{ grade.teacherFullName }}
+            </td>
 
-            <a [routerLink]="[
-                    '/grades',
-                    grade.id,
-                    'edit'
-                  ]" class="btn btn-edit">
-              Edit
-            </a>
+            <!-- TERM -->
+            <td>
+              <span class="term-badge">
+                {{ formatTerm(grade.term) }}
+              </span>
+            </td>
 
-            <button type="button" class="btn btn-delete" (click)="deleteGrade(grade.id)">
-              Delete
-            </button>
+            <!-- GRADE -->
+            <td>
+              <span class="grade-value" [class.grade-good]="grade.value >= 14"
+                [class.grade-average]="grade.value >= 10 && grade.value < 14" [class.grade-low]="grade.value < 10">
 
-          </td>
+                {{ grade.value }} / 20
 
-        </tr>
+              </span>
+            </td>
 
-        } @empty {
+            <!-- REMARKS -->
+            <td class="remarks-cell">
+              {{ grade.remarks || '—' }}
+            </td>
 
-        <tr>
+            <!-- ACTIONS -->
+            <td>
+              <div class="actions">
 
-          <td colspan="8" class="empty-message">
-            No grades found.
-          </td>
+                <a [routerLink]="['/grades', grade.id, 'edit']" class="btn btn-edit">
+                  Edit
+                </a>
 
-        </tr>
+                <button type="button" class="btn btn-delete" (click)="deleteGrade(grade.id)">
+                  Delete
+                </button>
 
-        }
+              </div>
+            </td>
 
-      </tbody>
+          </tr>
 
-    </table>
+          } @empty {
 
-  </div>
+          <tr>
+            <td colspan="8" class="empty-message">
+              No grades found.
+            </td>
+          </tr>
 
-  }
+          }
+
+        </tbody>
+
+      </table>
+
+    </div>
+
+    }
+
+  </section>
 
 </div>

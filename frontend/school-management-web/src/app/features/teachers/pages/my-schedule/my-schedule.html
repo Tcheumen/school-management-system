@@ -1,100 +1,133 @@
 <div class="page-container">
 
+  <!-- PAGE HEADER -->
   <div class="page-header">
 
-    <div>
-      <h2>My Schedule</h2>
+    <div class="page-heading">
+      <h1>My Schedule</h1>
+      <p>Your weekly teaching schedule.</p>
+    </div>
 
-      <p>
-        Your weekly teaching schedule
-      </p>
+    <div class="header-icon">
+      <span>📅</span>
     </div>
 
   </div>
 
-  @if (errorMessage()) {
+  <!-- SCHEDULE CARD -->
+  <section class="schedule-card">
 
-  <div class="error-message">
-    {{ errorMessage() }}
-  </div>
+    <div class="card-header">
 
-  }
+      <div>
+        <h2>Teaching Timetable</h2>
+        <p>Overview of your scheduled classes.</p>
+      </div>
 
-  @if (loading()) {
+      <span class="schedule-count">
+        {{ schedules().length }} classes
+      </span>
 
-  <div class="loading">
-    Loading schedule...
-  </div>
+    </div>
 
-  } @else {
+    <!-- ERROR -->
+    @if (errorMessage()) {
+    <div class="error-message" role="alert">
+      {{ errorMessage() }}
+    </div>
+    }
 
-  <div class="table-wrapper">
+    <!-- LOADING -->
+    @if (loading()) {
 
-    <table>
+    <div class="loading">
+      <div class="loader"></div>
+      <span>Loading schedule...</span>
+    </div>
 
-      <thead>
+    } @else {
 
-        <tr>
-          <th>Day</th>
-          <th>Time</th>
-          <th>Subject</th>
-          <th>Classroom</th>
-          <th>Academic Year</th>
-        </tr>
+    <div class="table-wrapper">
 
-      </thead>
+      <table>
 
-      <tbody>
+        <thead>
+          <tr>
+            <th>Day</th>
+            <th>Time</th>
+            <th>Subject</th>
+            <th>Classroom</th>
+            <th>Academic Year</th>
+          </tr>
+        </thead>
 
-        @for (
-        schedule of schedules();
-        track schedule.id
-        ) {
+        <tbody>
 
-        <tr>
+          @for (schedule of schedules(); track schedule.id) {
 
-          <td class="day">
-            {{ formatDay(schedule.dayOfWeek) }}
-          </td>
+          <tr>
 
-          <td class="time">
-            {{ formatTime(schedule.startTime) }}
-            -
-            {{ formatTime(schedule.endTime) }}
-          </td>
+            <td>
+              <span class="day-badge">
+                {{ formatDay(schedule.dayOfWeek) }}
+              </span>
+            </td>
 
-          <td>
-            {{ schedule.subjectName }}
-          </td>
+            <td>
+              <div class="time-cell">
+                <span class="time-icon">◷</span>
+                <span>
+                  {{ formatTime(schedule.startTime) }}
+                  -
+                  {{ formatTime(schedule.endTime) }}
+                </span>
+              </div>
+            </td>
 
-          <td>
-            {{ schedule.classroomName }}
-          </td>
+            <td>
+              <div class="subject-cell">
+                <span class="subject-icon">📖</span>
 
-          <td>
-            {{ schedule.academicYearName }}
-          </td>
+                <strong>
+                  {{ schedule.subjectName }}
+                </strong>
+              </div>
+            </td>
 
-        </tr>
+            <td>
+              <span class="classroom-badge">
+                {{ schedule.classroomName }}
+              </span>
+            </td>
 
-        } @empty {
+            <td class="academic-year">
+              {{ schedule.academicYearName }}
+            </td>
 
-        <tr>
+          </tr>
 
-          <td colspan="5" class="empty">
-            No scheduled classes found.
-          </td>
+          } @empty {
 
-        </tr>
+          <tr>
+            <td colspan="5" class="empty">
+              <div class="empty-content">
+                <span class="empty-icon">📅</span>
+                <h3>No scheduled classes</h3>
+                <p>Your teaching schedule is currently empty.</p>
+              </div>
+            </td>
+          </tr>
 
-        }
+          }
 
-      </tbody>
+        </tbody>
 
-    </table>
+      </table>
 
-  </div>
+    </div>
 
-  }
+    }
+
+  </section>
 
 </div>

@@ -1,5 +1,7 @@
 import { Component, signal } from '@angular/core';
 
+import { NgClass } from '@angular/common';
+
 import { RouterLink } from '@angular/router';
 
 import { Grade } from '../../../grades/models/grade.model';
@@ -9,7 +11,7 @@ import { GradeService } from '../../../grades/services/grade.service';
 @Component({
   selector: 'app-student-grades',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, NgClass],
   templateUrl: './student-grades.html',
   styleUrl: './student-grades.scss'
 })

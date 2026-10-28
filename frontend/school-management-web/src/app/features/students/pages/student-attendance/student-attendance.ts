@@ -7,6 +7,8 @@ import {
   RouterLink
 } from '@angular/router';
 
+import { NgClass } from '@angular/common';
+
 import {
   Attendance
 } from '../../../attendances/models/attendance.model';
@@ -18,7 +20,7 @@ import {
 @Component({
   selector: 'app-student-attendance',
   standalone: true,
-  imports: [RouterLink],
+  imports: [RouterLink, NgClass],
   templateUrl: './student-attendance.html',
   styleUrl: './student-attendance.scss'
 })

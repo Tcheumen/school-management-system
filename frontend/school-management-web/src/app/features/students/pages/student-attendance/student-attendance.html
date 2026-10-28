@@ -1,126 +1,121 @@
-<p>student-attendance works!</p>
+
 <div class="page-container">
 
+  <!-- PAGE HEADER -->
   <div class="page-header">
 
     <div>
-
       <a routerLink="/student/dashboard" class="back-link">
         ← Back to Dashboard
       </a>
 
-      <h2>My Attendance</h2>
-
-      <p>
-        View your attendance history
-      </p>
-
+      <h1>My Attendance</h1>
+      <p>View your attendance history and class participation.</p>
     </div>
 
   </div>
 
-  @if (errorMessage()) {
+  <!-- ATTENDANCE CARD -->
+  <section class="attendance-card">
 
-  <div class="error-message">
-    {{ errorMessage() }}
-  </div>
+    <div class="card-header">
+      <div>
+        <h2>Attendance History</h2>
+        <p>Overview of your recorded attendance.</p>
+      </div>
 
-  }
+      <span class="record-count">
+        {{ attendances().length }} records
+      </span>
+    </div>
 
-  @if (loading()) {
+    <!-- ERROR -->
+    @if (errorMessage()) {
+      <div class="error-message" role="alert">
+        {{ errorMessage() }}
+      </div>
+    }
 
-  <div class="loading-message">
-    Loading attendance...
-  </div>
+    <!-- LOADING -->
+    @if (loading()) {
+      <div class="loading-message">
+        <div class="loader"></div>
+        <span>Loading attendance...</span>
+      </div>
+    } @else {
 
-  } @else {
+      <div class="table-wrapper">
 
-  <div class="table-wrapper">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Subject</th>
+              <th>Teacher</th>
+              <th>Time</th>
+              <th>Status</th>
+              <th>Remarks</th>
+            </tr>
+          </thead>
 
-    <table>
+          <tbody>
+            @for (attendance of attendances(); track attendance.id) {
 
-      <thead>
+              <tr>
 
-        <tr>
-          <th>Date</th>
-          <th>Subject</th>
-          <th>Teacher</th>
-          <th>Time</th>
-          <th>Status</th>
-          <th>Remarks</th>
-        </tr>
+                <td class="date-cell">
+                  {{ attendance.attendanceDate }}
+                </td>
 
-      </thead>
+                <td>
+                  <div class="subject-cell">
+                    <div class="subject-icon">📚</div>
+                    <strong>{{ attendance.subjectName }}</strong>
+                  </div>
+                </td>
 
-      <tbody>
+                <td>
+                  {{ attendance.teacherFullName }}
+                </td>
 
-        @for (
-        attendance of attendances();
-        track attendance.id
-        ) {
+                <td class="time-cell">
+                  {{ attendance.startTime }} – {{ attendance.endTime }}
+                </td>
 
-        <tr>
+                <td>
+                  <span
+                    class="status-badge"
+                    [ngClass]="getStatusClass(attendance.status)">
+                    {{ formatStatus(attendance.status) }}
+                  </span>
+                </td>
 
-          <td>
-            {{ attendance.attendanceDate }}
-          </td>
+                <td class="remarks-cell">
+                  {{ attendance.remarks || '—' }}
+                </td>
 
-          <td class="subject-name">
-            {{ attendance.subjectName }}
-          </td>
+              </tr>
 
-          <td>
-            {{ attendance.teacherFullName }}
-          </td>
+            } @empty {
 
-          <td>
-            {{ attendance.startTime }}
-            -
-            {{ attendance.endTime }}
-          </td>
+              <tr>
+                <td colspan="6" class="empty-message">
+                  <div class="empty-content">
+                    <span class="empty-icon">📋</span>
+                    <h3>No attendance records</h3>
+                    <p>Your attendance history will appear here.</p>
+                  </div>
+                </td>
+              </tr>
 
-          <td>
+            }
+          </tbody>
+        </table>
 
-            <span class="status-badge" [class]="
-                    getStatusClass(
-                      attendance.status
-                    )
-                  ">
+      </div>
 
-              {{
-                    formatStatus(
-                      attendance.status
-                    )
-                  }}
+    }
 
-            </span>
-
-          </td>
-
-          <td>
-            {{ attendance.remarks || '-' }}
-          </td>
-
-        </tr>
-
-        } @empty {
-
-        <tr>
-
-          <td colspan="6" class="empty-message">
-            No attendance records available.
-          </td>
-
-        </tr>
-
-        }
-
-      </tbody>
-
-    </table>
-
-  </div>
-
-  }
+  </section>
 
 </div>

@@ -1,276 +1,206 @@
 <div class="form-container">
 
+  <!-- FORM HEADER -->
   <div class="form-header">
+    <div class="form-icon">📋</div>
 
-    <h2>
-      {{
-        isEditMode
-          ? 'Edit Attendance'
-          : 'Add Attendance'
-      }}
-    </h2>
-
-    <p>
-      {{
-        isEditMode
-          ? 'Update student attendance'
-          : 'Record student attendance'
-      }}
-    </p>
-
+    <div>
+      <h2>{{ isEditMode ? 'Edit Attendance' : 'Add Attendance' }}</h2>
+      <p>
+        {{ isEditMode
+          ? 'Update student attendance information.'
+          : 'Record attendance for an enrolled student.' }}
+      </p>
+    </div>
   </div>
 
+  <!-- ERROR -->
   @if (errorMessage()) {
-
-  <div class="error-message">
+  <div class="error-message" role="alert">
     {{ errorMessage() }}
   </div>
-
   }
 
+  <!-- LOADING -->
   @if (loadingData()) {
-
-  <div class="loading">
-    Loading attendance data...
+  <div class="loading-state">
+    <div class="loader"></div>
+    <span>Loading attendance data...</span>
   </div>
-
   } @else {
 
   <form #attendanceForm="ngForm" (ngSubmit)="save()">
 
-    <div class="form-group">
+    <!-- CLASS INFORMATION -->
+    <div class="form-section-title">
+      Class Information
+    </div>
 
+    <!-- CLASS SCHEDULE -->
+    <div class="form-group">
       <label for="schedule">
-        Class Schedule
+        Class Schedule <span class="required">*</span>
       </label>
 
-      <select id="schedule" name="schedule" [(ngModel)]="classScheduleId" (ngModelChange)="onScheduleChange()" required
-        #scheduleInput="ngModel">
+      <select id="schedule" name="schedule" [(ngModel)]="classScheduleId" (ngModelChange)="onScheduleChange()"
+        [disabled]="loading()" required #scheduleInput="ngModel">
 
         <option [ngValue]="null" disabled>
           Select a class schedule
         </option>
 
-        @for (
-        schedule of schedules();
-        track schedule.id
-        ) {
-
+        @for (schedule of schedules(); track schedule.id) {
         <option [ngValue]="schedule.id">
           {{ formatSchedule(schedule) }}
         </option>
-
         }
-
       </select>
 
-      @if (
-      scheduleInput.invalid &&
-      scheduleInput.touched
-      ) {
-
+      @if (scheduleInput.invalid && scheduleInput.touched) {
       <span class="validation-error">
         Class schedule is required.
       </span>
-
       }
-
     </div>
 
+    <!-- SCHEDULE SUMMARY -->
     @if (selectedSchedule) {
-
     <div class="schedule-summary">
 
-      <div>
+      <div class="summary-item">
         <span>Classroom</span>
-        <strong>
-          {{
-                selectedSchedule.classroomName
-              }}
-        </strong>
+        <strong>{{ selectedSchedule.classroomName }}</strong>
       </div>
 
-      <div>
+      <div class="summary-item">
         <span>Subject</span>
-        <strong>
-          {{
-                selectedSchedule.subjectName
-              }}
-        </strong>
+        <strong>{{ selectedSchedule.subjectName }}</strong>
       </div>
 
-      <div>
+      <div class="summary-item">
         <span>Teacher</span>
-        <strong>
-          {{
-                selectedSchedule.teacherFullName
-              }}
-        </strong>
+        <strong>{{ selectedSchedule.teacherFullName }}</strong>
       </div>
 
-      <div>
+      <div class="summary-item">
         <span>Academic Year</span>
-        <strong>
-          {{
-                selectedSchedule.academicYearName
-              }}
-        </strong>
+        <strong>{{ selectedSchedule.academicYearName }}</strong>
       </div>
 
     </div>
-
     }
 
-    <div class="form-group">
+    <!-- STUDENT INFORMATION -->
+    <div class="form-section-title">
+      Student Information
+    </div>
 
+    <div class="form-group">
       <label for="student">
-        Student
+        Student <span class="required">*</span>
       </label>
 
-      <select id="student" name="student" [(ngModel)]="enrollmentId" [disabled]="
-            classScheduleId === null
-          " required #studentInput="ngModel">
+      <select id="student" name="student" [(ngModel)]="enrollmentId" [disabled]="classScheduleId === null || loading()"
+        required #studentInput="ngModel">
 
         <option [ngValue]="null" disabled>
-
-          {{
-              classScheduleId === null
-                ? 'Select a schedule first'
-                : 'Select a student'
-            }}
-
+          {{ classScheduleId === null
+              ? 'Select a schedule first'
+              : 'Select a student' }}
         </option>
 
-        @for (
-        enrollment of
-        filteredEnrollments;
-        track enrollment.id
-        ) {
-
+        @for (enrollment of filteredEnrollments; track enrollment.id) {
         <option [ngValue]="enrollment.id">
-          {{
-                enrollment.studentFullName
-              }}
+          {{ enrollment.studentFullName }}
         </option>
-
         }
-
       </select>
 
-      @if (
-      classScheduleId !== null &&
-      filteredEnrollments.length === 0
-      ) {
-
+      @if (classScheduleId !== null && filteredEnrollments.length === 0) {
       <span class="warning-text">
         No enrolled students found for this classroom.
       </span>
-
       }
 
-      @if (
-      studentInput.invalid &&
-      studentInput.touched
-      ) {
-
+      @if (studentInput.invalid && studentInput.touched) {
       <span class="validation-error">
         Student is required.
       </span>
-
       }
+    </div>
 
+    <!-- ATTENDANCE DETAILS -->
+    <div class="form-section-title">
+      Attendance Details
     </div>
 
     <div class="form-grid">
 
+      <!-- DATE -->
       <div class="form-group">
-
         <label for="attendanceDate">
-          Attendance Date
+          Attendance Date <span class="required">*</span>
         </label>
 
-        <input id="attendanceDate" name="attendanceDate" type="date" [(ngModel)]="attendanceDate" required
-          #dateInput="ngModel" />
+        <input id="attendanceDate" name="attendanceDate" type="date" [(ngModel)]="attendanceDate" [disabled]="loading()"
+          required #dateInput="ngModel" />
 
-        @if (
-        dateInput.invalid &&
-        dateInput.touched
-        ) {
-
+        @if (dateInput.invalid && dateInput.touched) {
         <span class="validation-error">
           Attendance date is required.
         </span>
-
         }
-
       </div>
 
+      <!-- STATUS -->
       <div class="form-group">
-
         <label for="status">
-          Status
+          Status <span class="required">*</span>
         </label>
 
-        <select id="status" name="status" [(ngModel)]="status" required>
+        <select id="status" name="status" [(ngModel)]="status" [disabled]="loading()" required>
 
-          @for (
-          attendanceStatus of statuses;
-          track attendanceStatus
-          ) {
-
+          @for (attendanceStatus of statuses; track attendanceStatus) {
           <option [value]="attendanceStatus">
-            {{
-                  formatStatus(
-                    attendanceStatus
-                  )
-                }}
+            {{ formatStatus(attendanceStatus) }}
           </option>
-
           }
-
         </select>
-
       </div>
 
     </div>
 
+    <!-- REMARKS -->
     <div class="form-group">
-
       <label for="remarks">
         Remarks
+        <span class="optional">(Optional)</span>
       </label>
 
-      <textarea id="remarks" name="remarks" [(ngModel)]="remarks" rows="4" placeholder="Optional remarks..."></textarea>
-
+      <textarea id="remarks" name="remarks" [(ngModel)]="remarks" [disabled]="loading()" rows="4"
+        placeholder="Add any additional attendance notes...">
+        </textarea>
     </div>
 
+    <!-- FORM ACTIONS -->
     <div class="form-actions">
-
-      <button type="submit" class="btn btn-primary" [disabled]="
-            attendanceForm.invalid ||
-            loading()
-          ">
-
-        @if (loading()) {
-        Saving...
-        } @else {
-        {{
-              isEditMode
-                ? 'Update Attendance'
-                : 'Save Attendance'
-            }}
-        }
-
-      </button>
 
       <button type="button" class="btn btn-secondary" [disabled]="loading()" (click)="cancel()">
         Cancel
       </button>
 
+      <button type="submit" class="btn btn-primary" [disabled]="attendanceForm.invalid || loading()">
+
+        @if (loading()) {
+        Saving...
+        } @else {
+        {{ isEditMode ? 'Update Attendance' : 'Save Attendance' }}
+        }
+      </button>
+
     </div>
 
   </form>
-
   }
 
 </div>
