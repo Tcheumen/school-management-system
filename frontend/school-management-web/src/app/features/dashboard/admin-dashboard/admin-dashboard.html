@@ -1,169 +1,161 @@
 <div class="dashboard-content">
 
-  <!-- HEADER -->
+  <!-- =====================================
+       HEADER
+  ====================================== -->
+
   <section class="dashboard-heading">
 
-    <div>
+    <div class="welcome-text">
+      <h1>Welcome back, Admin! 👋</h1>
+      <p>Here's what's happening in your school today.</p>
+    </div>
 
-      <h1>
-        Welcome back, Admin! 👋
-      </h1>
+    <div class="dashboard-controls">
 
-      <p>
-        Here's what's happening in your school today.
-      </p>
+      <div class="year-selector">
+        <label for="dashboardYear">Academic Year</label>
+
+        <select id="dashboardYear" name="dashboardYear" [ngModel]="selectedYearId"
+          (ngModelChange)="onYearChange($event)" [disabled]="loading">
+
+          @for (year of sortedAcademicYears; track year.id) {
+          <option [ngValue]="year.id">
+            {{ year.name }}
+            {{ year.active ? '(Active)' : '' }}
+          </option>
+          }
+
+        </select>
+      </div>
+
+      <button type="button" class="dashboard-refresh" (click)="loadDashboard()" [disabled]="loading">
+
+        @if (loading) {
+        Loading...
+        } @else {
+        ↻ Refresh
+        }
+
+      </button>
 
     </div>
 
-    
-
   </section>
 
+  <!-- =====================================
+       ERROR MESSAGE
+  ====================================== -->
 
   @if (errorMessage) {
-
-  <div class="dashboard-error">
+  <div class="dashboard-error" role="alert">
+    <span>⚠</span>
     {{ errorMessage }}
   </div>
-
   }
 
+  <!-- =====================================
+       SCHOOL STATISTICS
+  ====================================== -->
 
-  <!-- STATISTICS -->
   <section class="stats-grid">
 
-    <div class="stat-card">
+    <!-- STUDENTS -->
+    <a routerLink="/students" class="stat-card">
 
       <div class="stat-icon purple">
         👥
       </div>
 
       <div class="stat-info">
-
-        <strong>
-          {{ studentCount }}
-        </strong>
-
+        <strong>{{ studentCount }}</strong>
         <span>Students</span>
-
-        <small>
-          Registered students
-        </small>
-
+        <small>Registered students</small>
       </div>
 
-    </div>
+    </a>
 
-
-    <div class="stat-card">
+    <!-- TEACHERS -->
+    <a routerLink="/teachers" class="stat-card">
 
       <div class="stat-icon blue">
         👤
       </div>
 
       <div class="stat-info">
-
-        <strong>
-          {{ teacherCount }}
-        </strong>
-
+        <strong>{{ teacherCount }}</strong>
         <span>Teachers</span>
-
-        <small>
-          Registered teachers
-        </small>
-
+        <small>Registered teachers</small>
       </div>
 
-    </div>
+    </a>
 
-
-    <div class="stat-card">
+    <!-- SUBJECTS -->
+    <a routerLink="/subjects" class="stat-card">
 
       <div class="stat-icon green">
         📖
       </div>
 
       <div class="stat-info">
-
-        <strong>
-          {{ subjectCount }}
-        </strong>
-
+        <strong>{{ subjectCount }}</strong>
         <span>Subjects</span>
-
-        <small>
-          Available subjects
-        </small>
-
+        <small>Available school subjects</small>
       </div>
 
-    </div>
+    </a>
 
-
-    <div class="stat-card">
+    <!-- CLASSROOMS -->
+    <a routerLink="/classrooms" class="stat-card">
 
       <div class="stat-icon orange">
         🏫
       </div>
 
       <div class="stat-info">
-
-        <strong>
-          {{ classroomCount }}
-        </strong>
-
+        <strong>{{ classroomCount }}</strong>
         <span>Classrooms</span>
-
-        <small>
-          Available classrooms
-        </small>
-
+        <small>{{ selectedAcademicYearName }}</small>
       </div>
 
-    </div>
+    </a>
 
-
-    <div class="stat-card">
+    <!-- ACADEMIC YEAR -->
+    <a routerLink="/academic-years" class="stat-card">
 
       <div class="stat-icon pink">
         📅
       </div>
 
       <div class="stat-info">
-
         <strong class="academic-year-value">
           {{ activeAcademicYear }}
         </strong>
 
-        <span>
-          Academic Year
-        </span>
-
-        <small class="positive">
-          Current
-        </small>
-
+        <span>Academic Year</span>
+        <small class="positive">Current active year</small>
       </div>
 
-    </div>
+    </a>
 
   </section>
 
+  <!-- =====================================
+       QUICK ACTIONS
+  ====================================== -->
 
-  <!-- QUICK ACTIONS -->
-  <section class="section">
+  <section class="section quick-actions-section">
 
-    <h2 class="section-title">
-      Quick Actions
-    </h2>
+    <div class="section-heading">
+      <h2 class="section-title">Quick Actions</h2>
+      <p>Access school management modules</p>
+    </div>
 
     <div class="quick-actions">
 
+      <!-- STUDENTS -->
       <a routerLink="/students" class="quick-card">
-        <div class="quick-icon purple">
-          👥
-        </div>
+        <div class="quick-icon purple">👥</div>
 
         <div class="quick-content">
           <strong>Students</strong>
@@ -173,11 +165,9 @@
         <span class="arrow">›</span>
       </a>
 
-
+      <!-- TEACHERS -->
       <a routerLink="/teachers" class="quick-card">
-        <div class="quick-icon blue">
-          👤
-        </div>
+        <div class="quick-icon blue">👤</div>
 
         <div class="quick-content">
           <strong>Teachers</strong>
@@ -187,26 +177,21 @@
         <span class="arrow">›</span>
       </a>
 
-       <!-- USER MANAGEMENT -->
+      <!-- USER MANAGEMENT -->
+      <a routerLink="/admin/users" class="quick-card">
+        <div class="quick-icon orange">🔐</div>
 
-           <a routerLink="/admin/users" routerLinkActive="active" class="quick-card">
-             <div class="quick-icon orange">
-               🔐
-             </div>
-
-             <div class="quick-content">
-               <strong>User Management</strong>
-               <span>User Management</span>
-             </div>
-
-             <span class="arrow">›</span>
-           </a>
-
-
-      <a routerLink="/subjects" class="quick-card">
-        <div class="quick-icon green">
-          📖
+        <div class="quick-content">
+          <strong>User Management</strong>
+          <span>Manage user accounts</span>
         </div>
+
+        <span class="arrow">›</span>
+      </a>
+
+      <!-- SUBJECTS -->
+      <a routerLink="/subjects" class="quick-card">
+        <div class="quick-icon green">📖</div>
 
         <div class="quick-content">
           <strong>Subjects</strong>
@@ -216,11 +201,9 @@
         <span class="arrow">›</span>
       </a>
 
-
+      <!-- CLASSROOMS -->
       <a routerLink="/classrooms" class="quick-card">
-        <div class="quick-icon orange">
-          🏫
-        </div>
+        <div class="quick-icon orange">🏫</div>
 
         <div class="quick-content">
           <strong>Classrooms</strong>
@@ -230,11 +213,9 @@
         <span class="arrow">›</span>
       </a>
 
-
+      <!-- ACADEMIC YEARS -->
       <a routerLink="/academic-years" class="quick-card">
-        <div class="quick-icon pink">
-          📅
-        </div>
+        <div class="quick-icon pink">📅</div>
 
         <div class="quick-content">
           <strong>Academic Years</strong>
@@ -244,62 +225,45 @@
         <span class="arrow">›</span>
       </a>
 
-
+      <!-- ENROLLMENTS -->
       <a routerLink="/enrollments" class="quick-card">
-        <div class="quick-icon cyan">
-          🗂
-        </div>
+        <div class="quick-icon cyan">🗂</div>
 
         <div class="quick-content">
           <strong>Enrollments</strong>
-          <span>
-            Manage student enrollments
-          </span>
+          <span>Manage student enrollments</span>
         </div>
 
         <span class="arrow">›</span>
       </a>
 
-
+      <!-- TEACHER ASSIGNMENTS -->
       <a routerLink="/teacher-assignments" class="quick-card">
-        <div class="quick-icon violet">
-          🧑‍🏫
-        </div>
+        <div class="quick-icon violet">🧑‍🏫</div>
 
         <div class="quick-content">
-          <strong>
-            Teacher Assignments
-          </strong>
-
-          <span>
-            Assign teachers to subjects
-          </span>
+          <strong>Teacher Assignments</strong>
+          <span>Assign teachers to subjects</span>
         </div>
 
         <span class="arrow">›</span>
       </a>
 
-
+      <!-- SCHEDULES -->
       <a routerLink="/schedules" class="quick-card">
-        <div class="quick-icon blue">
-          🗓
-        </div>
+        <div class="quick-icon blue">🗓</div>
 
         <div class="quick-content">
           <strong>Schedules</strong>
-          <span>
-            Manage class schedules
-          </span>
+          <span>Manage class schedules</span>
         </div>
 
         <span class="arrow">›</span>
       </a>
 
-
+      <!-- ATTENDANCE -->
       <a routerLink="/attendances" class="quick-card">
-        <div class="quick-icon green">
-          ☑
-        </div>
+        <div class="quick-icon green">☑</div>
 
         <div class="quick-content">
           <strong>Attendance</strong>
@@ -309,11 +273,9 @@
         <span class="arrow">›</span>
       </a>
 
-
+      <!-- GRADES -->
       <a routerLink="/grades" class="quick-card">
-        <div class="quick-icon red">
-          📊
-        </div>
+        <div class="quick-icon red">📊</div>
 
         <div class="quick-content">
           <strong>Grades</strong>
@@ -323,17 +285,13 @@
         <span class="arrow">›</span>
       </a>
 
-
+      <!-- REPORT CARDS -->
       <a routerLink="/report-cards" class="quick-card">
-        <div class="quick-icon pink">
-          📈
-        </div>
+        <div class="quick-icon pink">📈</div>
 
         <div class="quick-content">
           <strong>Report Cards</strong>
-          <span>
-            View student report cards
-          </span>
+          <span>View student report cards</span>
         </div>
 
         <span class="arrow">›</span>
@@ -343,286 +301,354 @@
 
   </section>
 
+  <!-- =====================================
+       ANALYTICS SECTION
+  ====================================== -->
 
-  <!-- ANALYTICS -->
   <section class="analytics-grid">
 
-
-    <!-- ENROLLMENTS -->
-    <div class="panel enrollment-panel">
+    <!-- ENROLLMENT OVERVIEW -->
+    <article class="panel enrollment-panel">
 
       <div class="panel-header">
 
-        <h3>
-          Enrollment Overview
-        </h3>
+        <div>
+          <h3>Enrollment Overview</h3>
+          <p>
+            Student distribution ·
+            {{ selectedAcademicYearName }}
+          </p>
+        </div>
 
-        <select>
-          <option>
-            This Year
-          </option>
-        </select>
+        <span class="panel-count">
+          {{ enrolledStudentCount }} students
+        </span>
 
       </div>
 
+      <div class="enrollment-overview">
 
-      <div class="chart-container">
+        <!-- ENROLLMENT SUMMARY -->
+        <div class="overview-summary">
 
-        <div class="chart-y-axis">
-          <span>1500</span>
-          <span>1200</span>
-          <span>900</span>
-          <span>600</span>
-          <span>300</span>
-          <span>0</span>
-        </div>
-
-        <div class="chart">
-
-          <div class="chart-lines">
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
-            <span></span>
+          <div class="overview-stat">
+            <span>Enrollments</span>
+            <strong>{{ enrollmentCount }}</strong>
           </div>
 
-          <svg viewBox="0 0 700 250" preserveAspectRatio="none">
+          <div class="overview-stat">
+            <span>Students</span>
+            <strong>{{ enrolledStudentCount }}</strong>
+          </div>
 
-            <defs>
-
-              <linearGradient id="areaGradient" x1="0" x2="0" y1="0" y2="1">
-
-                <stop offset="0%" stop-color="#5966f7" stop-opacity=".30" />
-
-                <stop offset="100%" stop-color="#5966f7" stop-opacity=".03" />
-
-              </linearGradient>
-
-            </defs>
-
-            <path class="area" d="
-                M0,175
-                L60,150
-                L120,115
-                L180,150
-                L240,130
-                L300,155
-                L360,112
-                L420,150
-                L480,155
-                L540,130
-                L600,112
-                L650,98
-                L700,74
-                L700,250
-                L0,250
-                Z
-              " />
-
-            <polyline class="line" points="
-                0,175
-                60,150
-                120,115
-                180,150
-                240,130
-                300,155
-                360,112
-                420,150
-                480,155
-                540,130
-                600,112
-                650,98
-                700,74
-              " />
-
-          </svg>
-
-          <div class="months">
-            <span>Jan</span>
-            <span>Feb</span>
-            <span>Mar</span>
-            <span>Apr</span>
-            <span>May</span>
-            <span>Jun</span>
-            <span>Jul</span>
-            <span>Aug</span>
-            <span>Sep</span>
-            <span>Oct</span>
-            <span>Nov</span>
-            <span>Dec</span>
+          <div class="overview-stat">
+            <span>Classrooms</span>
+            <strong>{{ classroomCount }}</strong>
           </div>
 
         </div>
 
+        <!-- REAL CLASSROOM CHART -->
+        @if (classroomOverview.length === 0) {
+
+        <div class="analytics-empty">
+          <span class="empty-icon">🏫</span>
+          <p>No classrooms for this academic year.</p>
+        </div>
+
+        } @else {
+
+        <div class="classroom-chart">
+
+          @for (
+          classroom of classroomOverview;
+          track classroom.id
+          ) {
+
+          <div class="classroom-chart-row">
+
+            <div class="chart-classroom-info">
+              <div>
+                <strong>{{ classroom.name }}</strong>
+                <small>{{ classroom.level }}</small>
+              </div>
+
+              <span>
+                {{ classroom.studentCount }}
+                {{ classroom.studentCount === 1
+                      ? 'student'
+                      : 'students' }}
+              </span>
+            </div>
+
+            <div class="chart-track" role="progressbar" [attr.aria-label]="
+                    classroom.name + ' enrollment relative to largest class'
+                  " [attr.aria-valuenow]="classroom.percentage" aria-valuemin="0" aria-valuemax="100">
+
+              <div class="chart-bar" [style.width.%]="classroom.percentage">
+              </div>
+
+            </div>
+
+          </div>
+
+          }
+
+        </div>
+
+        }
+
+        <p class="chart-caption">
+          Distinct enrolled students in each classroom.
+          Bar lengths are relative to the largest class.
+        </p>
+
       </div>
 
-    </div>
+    </article>
 
-
-    <!-- ATTENDANCE -->
-    <div class="panel attendance-panel">
+    <!-- ATTENDANCE OVERVIEW -->
+    <article class="panel attendance-panel">
 
       <div class="panel-header">
-        <h3>
-          Attendance Overview
-        </h3>
+
+        <div>
+          <h3>Attendance Overview</h3>
+          <p>{{ selectedAcademicYearName }}</p>
+        </div>
+
+        <span class="panel-count">
+          {{ totalAttendanceRecords }} records
+        </span>
+
       </div>
+
+      @if (totalAttendanceRecords === 0) {
+
+      <div class="analytics-empty">
+        <span class="empty-icon">📋</span>
+        <p>No attendance records for this year.</p>
+      </div>
+
+      } @else {
 
       <div class="attendance-content">
 
         <div class="donut" [style.background]="getDonutStyle()">
 
           <div class="donut-center">
-
-            <strong>
-              {{ presentPercentage }}%
-            </strong>
-
-            <span>
-              Present
-            </span>
-
+            <strong>{{ presentPercentage }}%</strong>
+            <span>Present</span>
           </div>
 
         </div>
 
-
         <div class="attendance-legend">
 
-          <div>
+          <div class="legend-item">
+            <span class="legend-label">
+              <i class="dot present"></i>
+              Present
+            </span>
 
-            <span class="dot present"></span>
-
-            <span>Present</span>
-
-            <strong>
-              {{ presentPercentage }}%
-            </strong>
-
+            <strong>{{ presentPercentage }}%</strong>
           </div>
 
-          <div>
+          <div class="legend-item">
+            <span class="legend-label">
+              <i class="dot late"></i>
+              Late
+            </span>
 
-            <span class="dot late"></span>
-
-            <span>Late</span>
-
-            <strong>
-              {{ latePercentage }}%
-            </strong>
-
+            <strong>{{ latePercentage }}%</strong>
           </div>
 
-          <div>
+          <div class="legend-item">
+            <span class="legend-label">
+              <i class="dot absent"></i>
+              Absent
+            </span>
 
-            <span class="dot absent"></span>
-
-            <span>Absent</span>
-
-            <strong>
-              {{ absentPercentage }}%
-            </strong>
-
+            <strong>{{ absentPercentage }}%</strong>
           </div>
 
         </div>
 
       </div>
 
-    </div>
+      <div class="attendance-summary">
+        <span>{{ presentCount }} Present</span>
+        <span>{{ lateCount }} Late</span>
+        <span>{{ absentCount }} Absent</span>
+      </div>
 
+      }
 
-    <!-- RECENT ACTIVITIES -->
-    <div class="panel activity-panel">
+      <div class="panel-footer">
+        <a routerLink="/attendances">
+          View Attendance <span>›</span>
+        </a>
+      </div>
+
+    </article>
+
+    <!-- RECENT ATTENDANCE RECORDS -->
+    <article class="panel activity-panel">
 
       <div class="panel-header">
 
-        <h3>
-          Recent Activities
-        </h3>
+        <div>
+          <h3>Recent Attendance Records</h3>
+          <p>Latest recorded attendance dates</p>
+        </div>
 
-        <button type="button">
+        <a routerLink="/attendances" class="view-all-link">
           View All
-        </button>
+        </a>
 
       </div>
 
       <div class="activity-list">
 
+        @for (
+        attendance of recentAttendances;
+        track attendance.id
+        ) {
+
         <div class="activity">
 
-          <div class="activity-icon blue">
-            👥
+          <div class="activity-icon" [class.green]="attendance.status === 'PRESENT'"
+            [class.orange]="attendance.status === 'LATE'" [class.red]="attendance.status === 'ABSENT'">
+
+            @if (attendance.status === 'PRESENT') {
+            ✓
+            } @else if (attendance.status === 'LATE') {
+            ◷
+            } @else {
+            ×
+            }
+
           </div>
 
           <div class="activity-text">
-            <strong>
-              Student management
-            </strong>
+            <strong>{{ attendance.studentFullName }}</strong>
 
             <span>
-              Manage school students
+              {{ attendance.classroomName }}
+              · {{ attendance.subjectName }}
             </span>
+
+            <small>
+              {{ attendance.attendanceDate }}
+              · {{ getStatusLabel(attendance.status) }}
+            </small>
           </div>
 
         </div>
 
+        } @empty {
 
-        <div class="activity">
-
-          <div class="activity-icon green">
-            ☑
-          </div>
-
-          <div class="activity-text">
-            <strong>
-              Attendance
-            </strong>
-
-            <span>
-              Attendance records
-            </span>
-          </div>
-
+        <div class="analytics-empty">
+          <span class="empty-icon">📋</span>
+          <p>No recent attendance records.</p>
         </div>
 
+        }
 
-        <div class="activity">
+      </div>
 
-          <div class="activity-icon orange">
-            📖
-          </div>
+    </article>
 
-          <div class="activity-text">
-            <strong>
-              Subjects
-            </strong>
+  </section>
 
-            <span>
-              Manage school subjects
-            </span>
-          </div>
+  <!-- =====================================
+       ACADEMIC PERFORMANCE
+  ====================================== -->
 
+  <section class="performance-section">
+
+    <div class="performance-heading">
+
+      <div>
+        <h2>Academic Performance</h2>
+        <p>
+          Summary for {{ selectedAcademicYearName }}
+        </p>
+      </div>
+
+      <a routerLink="/grades" class="performance-link">
+        View Grades <span>›</span>
+      </a>
+
+    </div>
+
+    <div class="performance-grid">
+
+      <!-- AVERAGE GRADE -->
+      <div class="performance-card">
+
+        <div class="performance-icon purple">
+          📊
         </div>
 
+        <div class="performance-info">
+          <span>Average Recorded Grade</span>
 
-        <div class="activity">
+          <strong>
+            {{ formatAverage() }}
+            <small>/ 20</small>
+          </strong>
 
-          <div class="activity-icon violet">
-            🗓
-          </div>
+          <p>
+            Simple average of grades for the selected year.
+          </p>
+        </div>
 
-          <div class="activity-text">
-            <strong>
-              Schedules
-            </strong>
+      </div>
 
-            <span>
-              Manage class schedules
-            </span>
-          </div>
+      <!-- ENROLLED STUDENTS -->
+      <div class="performance-card">
 
+        <div class="performance-icon green">
+          👥
+        </div>
+
+        <div class="performance-info">
+          <span>Enrolled Students</span>
+
+          <strong>{{ enrolledStudentCount }}</strong>
+
+          <p>
+            Distinct students enrolled during this year.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- ATTENDANCE RATE -->
+      <div class="performance-card">
+
+        <div class="performance-icon blue">
+          ☑
+        </div>
+
+        <div class="performance-info">
+          <span>Attendance Rate</span>
+
+          <strong>
+            @if (totalAttendanceRecords > 0) {
+            {{
+                ((presentCount + lateCount) * 100 /
+                  totalAttendanceRecords).toFixed(1)
+              }}%
+            } @else {
+            —
+            }
+          </strong>
+
+          <p>
+            Present and late records combined.
+          </p>
         </div>
 
       </div>
@@ -631,8 +657,11 @@
 
   </section>
 
+  <!-- =====================================
+       FOOTER
+  ====================================== -->
 
-  <footer class="footer">
+  <footer class="dashboard-footer">
     © 2026 School Management System.
     All rights reserved.
   </footer>
