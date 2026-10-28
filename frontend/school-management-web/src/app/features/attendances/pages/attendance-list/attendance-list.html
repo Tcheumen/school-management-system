@@ -5,13 +5,77 @@
 
     <div class="page-heading">
       <h1>Attendance</h1>
-      <p>Manage student attendance records.</p>
+      <p>Manage student attendance records by academic year and classroom.</p>
     </div>
 
-    <a routerLink="/attendances/new" class="btn btn-primary">
-      <span>+</span>
-      Add Attendance
-    </a>
+    <div class="header-actions">
+
+      <button type="button" class="btn btn-refresh" (click)="loadAttendances()" [disabled]="loading() || deleting()">
+        ↻ Refresh
+      </button>
+
+      <a routerLink="/attendances/new" class="btn btn-primary">
+        + Add Attendance
+      </a>
+
+    </div>
+
+  </div>
+
+  <!-- ERROR MESSAGE -->
+  @if (errorMessage()) {
+  <div class="error-message" role="alert">
+    {{ errorMessage() }}
+  </div>
+  }
+
+  @if (loading()) {
+
+  <div class="loading">
+    <div class="loader"></div>
+    <span>Loading attendance records...</span>
+  </div>
+
+  } @else {
+
+  <!-- STATISTICS -->
+  <div class="stats-grid">
+
+    <div class="stat-card">
+      <div class="stat-icon records-icon">📋</div>
+      <div class="stat-info">
+        <span>Total Records</span>
+        <strong>{{ totalRecords }}</strong>
+        <small>Matching attendance records</small>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon present-icon">✓</div>
+      <div class="stat-info">
+        <span>Present</span>
+        <strong>{{ presentCount }}</strong>
+        <small>Students marked present</small>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon late-icon">◷</div>
+      <div class="stat-info">
+        <span>Late</span>
+        <strong>{{ lateCount }}</strong>
+        <small>Late arrivals</small>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon absent-icon">×</div>
+      <div class="stat-info">
+        <span>Absent</span>
+        <strong>{{ absentCount }}</strong>
+        <small>Students marked absent</small>
+      </div>
+    </div>
 
   </div>
 
@@ -19,35 +83,198 @@
   <section class="attendance-card">
 
     <div class="card-header">
+
       <div>
         <h2>Attendance Records</h2>
-        <p>Overview of student attendance across classes.</p>
+        <p>Academic Year: {{ selectedYearLabel }}</p>
       </div>
 
       <span class="records-count">
-        {{ attendances().length }} records
+        {{ filteredAttendances.length }} records
       </span>
+
     </div>
 
-    <!-- ERROR -->
-    @if (errorMessage()) {
-    <div class="error-message" role="alert">
-      {{ errorMessage() }}
-    </div>
-    }
+    <!-- FILTERS -->
+    <div class="filters-bar">
 
-    <!-- LOADING -->
-    @if (loading()) {
-    <div class="loading">
-      <div class="loader"></div>
-      <span>Loading attendance records...</span>
+      <!-- ACADEMIC YEAR -->
+      <div class="filter-group">
+        <label for="academicYear">
+          Academic Year
+        </label>
+
+        <select id="academicYear" name="academicYear" [ngModel]="selectedYearId()"
+          (ngModelChange)="onYearChange($event)">
+
+          @for (year of academicYears(); track year.id) {
+          <option [ngValue]="year.id">
+            {{ year.name }}
+            {{ year.active ? '(Active)' : '' }}
+          </option>
+          }
+
+        </select>
+      </div>
+
+      <!-- CLASSROOM -->
+      <div class="filter-group">
+        <label for="classroom">
+          Classroom
+        </label>
+
+        <select id="classroom" name="classroom" [(ngModel)]="selectedClassroomId">
+
+          <option [ngValue]="'ALL'">
+            All Classrooms
+          </option>
+
+          @for (
+          classroom of availableClassrooms();
+          track classroom.id
+          ) {
+          <option [ngValue]="classroom.id">
+            {{ classroom.name }}
+            @if (classroom.level) {
+            - {{ classroom.level }}
+            }
+          </option>
+          }
+
+        </select>
+      </div>
+
+      <!-- SUBJECT -->
+      <div class="filter-group">
+        <label for="subject">
+          Subject
+        </label>
+
+        <select id="subject" name="subject" [(ngModel)]="selectedSubjectId">
+
+          <option [ngValue]="'ALL'">
+            All Subjects
+          </option>
+
+          @for (
+          subject of availableSubjects();
+          track subject.id
+          ) {
+          <option [ngValue]="subject.id">
+            {{ subject.name }}
+          </option>
+          }
+
+        </select>
+      </div>
+
+      <!-- STATUS -->
+      <div class="filter-group">
+        <label for="status">
+          Status
+        </label>
+
+        <select id="status" name="status" [(ngModel)]="selectedStatus">
+
+          <option value="ALL">All Statuses</option>
+          <option value="PRESENT">Present</option>
+          <option value="LATE">Late</option>
+          <option value="ABSENT">Absent</option>
+
+        </select>
+      </div>
+
+      <!-- DATE -->
+      <div class="filter-group">
+        <label for="attendanceDate">
+          Date
+        </label>
+
+        <input id="attendanceDate" type="date" name="attendanceDate" [(ngModel)]="selectedDate" />
+      </div>
+
+      <!-- SEARCH -->
+      <div class="filter-group search-group">
+        <label for="studentSearch">
+          Search Student
+        </label>
+
+        <input id="studentSearch" type="search" name="studentSearch" [(ngModel)]="searchTerm"
+          placeholder="Search student name..." />
+      </div>
+
+      <!-- CLEAR -->
+      <button type="button" class="clear-btn" (click)="clearFilters()">
+        Clear
+      </button>
+
     </div>
-    } @else {
+
+    <!-- ATTENDANCE RATE -->
+    <div class="attendance-rate-section">
+
+      <div class="rate-header">
+        <div>
+          <h3>Attendance Rate</h3>
+          <p>Present and late records in the current selection</p>
+        </div>
+
+        <strong>{{ attendanceRate }}%</strong>
+      </div>
+
+      <div class="rate-track" role="progressbar" [attr.aria-valuenow]="attendanceRate" aria-valuemin="0"
+        aria-valuemax="100" aria-label="Attendance rate">
+
+        <div class="rate-fill" [style.width.%]="attendanceRate">
+        </div>
+
+      </div>
+
+      <div class="rate-legend">
+        <span>
+          <i class="legend-dot legend-present"></i>
+          Present: {{ presentCount }}
+        </span>
+
+        <span>
+          <i class="legend-dot legend-late"></i>
+          Late: {{ lateCount }}
+        </span>
+
+        <span>
+          <i class="legend-dot legend-absent"></i>
+          Absent: {{ absentCount }}
+        </span>
+      </div>
+
+    </div>
 
     <!-- TABLE -->
+    @if (academicYears().length === 0) {
+
+    <div class="empty-state">
+      <div class="empty-icon">📅</div>
+      <h3>No academic years available</h3>
+      <p>Create an academic year before managing attendance.</p>
+    </div>
+
+    } @else if (filteredAttendances.length === 0) {
+
+    <div class="empty-state">
+      <div class="empty-icon">📋</div>
+      <h3>No attendance records found</h3>
+      <p>
+        No records match the selected filters.
+        Try another academic year, classroom, subject or date.
+      </p>
+    </div>
+
+    } @else {
+
     <div class="table-wrapper">
 
       <table>
+
         <thead>
           <tr>
             <th>Date</th>
@@ -63,7 +290,10 @@
 
         <tbody>
 
-          @for (attendance of attendances(); track attendance.id) {
+          @for (
+          attendance of filteredAttendances;
+          track attendance.id
+          ) {
 
           <tr>
 
@@ -80,16 +310,24 @@
                   {{ attendance.studentFullName.charAt(0).toUpperCase() }}
                 </div>
 
-                <strong class="student-name">
-                  {{ attendance.studentFullName }}
-                </strong>
+                <div class="student-info">
+                  <strong>
+                    {{ attendance.studentFullName }}
+                  </strong>
+
+                  <span>
+                    Student #{{ attendance.studentId }}
+                  </span>
+                </div>
 
               </div>
             </td>
 
             <!-- CLASSROOM -->
             <td>
-              {{ attendance.classroomName }}
+              <span class="classroom-badge">
+                {{ attendance.classroomName }}
+              </span>
             </td>
 
             <!-- SUBJECT -->
@@ -102,15 +340,15 @@
             <!-- TIME -->
             <td class="time-cell">
               {{ formatTime(attendance.startTime) }}
-              -
+              –
               {{ formatTime(attendance.endTime) }}
             </td>
 
             <!-- STATUS -->
             <td>
               <span class="status" [class.status-present]="attendance.status === 'PRESENT'"
-                [class.status-absent]="attendance.status === 'ABSENT'"
-                [class.status-late]="attendance.status === 'LATE'">
+                [class.status-late]="attendance.status === 'LATE'"
+                [class.status-absent]="attendance.status === 'ABSENT'">
 
                 <span class="status-dot"></span>
 
@@ -129,12 +367,25 @@
 
               <div class="actions">
 
-                <a [routerLink]="['/attendances', attendance.id, 'edit']" class="btn btn-edit">
+                <button type="button" class="btn btn-view" (click)="viewAttendance(attendance)">
+                  View
+                </button>
+
+                <a [routerLink]="[
+                          '/attendances',
+                          attendance.id,
+                          'edit'
+                        ]" class="btn btn-edit">
                   Edit
                 </a>
 
-                <button type="button" class="btn btn-delete" (click)="deleteAttendance(attendance.id)">
-                  Delete
+                <button type="button" class="btn btn-delete" [disabled]="deleting()"
+                  (click)="deleteAttendance(attendance.id)">
+
+                  {{ deletingId() === attendance.id
+                            ? 'Deleting...'
+                            : 'Delete' }}
+
                 </button>
 
               </div>
@@ -143,17 +394,10 @@
 
           </tr>
 
-          } @empty {
-
-          <tr>
-            <td colspan="8" class="empty-message">
-              No attendance records found.
-            </td>
-          </tr>
-
           }
 
         </tbody>
+
       </table>
 
     </div>
@@ -162,4 +406,164 @@
 
   </section>
 
+  }
+
 </div>
+
+<!-- =====================================
+     ATTENDANCE DETAILS MODAL
+===================================== -->
+
+@if (selectedAttendance(); as attendance) {
+
+<div class="modal-overlay" (click)="closeDetails()">
+
+  <div class="attendance-modal" role="dialog" aria-modal="true" aria-labelledby="attendance-modal-title"
+    (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+
+      <div class="modal-heading">
+        <div class="modal-icon">📋</div>
+
+        <div>
+          <h2 id="attendance-modal-title">
+            Attendance Details
+          </h2>
+
+          <p>
+            Record #{{ attendance.id }}
+          </p>
+        </div>
+      </div>
+
+      <button type="button" class="modal-close" aria-label="Close attendance details" (click)="closeDetails()">
+        ×
+      </button>
+
+    </div>
+
+    <div class="modal-body">
+
+      <!-- STUDENT PROFILE -->
+      <div class="student-profile">
+
+        <div class="profile-avatar">
+          {{ attendance.studentFullName.charAt(0).toUpperCase() }}
+        </div>
+
+        <div>
+          <h3>
+            {{ attendance.studentFullName }}
+          </h3>
+
+          <span>
+            Student #{{ attendance.studentId }}
+          </span>
+        </div>
+
+      </div>
+
+      <!-- STATUS -->
+      <div class="modal-status">
+
+        <span>Attendance Status</span>
+
+        <span class="status" [class.status-present]="attendance.status === 'PRESENT'"
+          [class.status-late]="attendance.status === 'LATE'" [class.status-absent]="attendance.status === 'ABSENT'">
+
+          <span class="status-dot"></span>
+
+          {{ getStatusLabel(attendance.status) }}
+
+        </span>
+
+      </div>
+
+      <!-- DETAILS -->
+      <div class="details-grid">
+
+        <div class="detail-item">
+          <span>Attendance Date</span>
+          <strong>{{ attendance.attendanceDate }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Academic Year</span>
+          <strong>{{ attendance.academicYearName }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Classroom</span>
+          <strong>{{ attendance.classroomName }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Subject</span>
+          <strong>{{ attendance.subjectName }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Teacher</span>
+          <strong>{{ attendance.teacherFullName }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Day</span>
+          <strong>{{ formatDay(attendance.dayOfWeek) }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Start Time</span>
+          <strong>{{ formatTime(attendance.startTime) }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>End Time</span>
+          <strong>{{ formatTime(attendance.endTime) }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Enrollment ID</span>
+          <strong>#{{ attendance.enrollmentId }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Schedule ID</span>
+          <strong>#{{ attendance.classScheduleId }}</strong>
+        </div>
+
+      </div>
+
+      <!-- REMARKS -->
+      <div class="remarks-section">
+        <h4>Remarks</h4>
+
+        <p>
+          {{ attendance.remarks || 'No remarks provided.' }}
+        </p>
+      </div>
+
+    </div>
+
+    <div class="modal-footer">
+
+      <button type="button" class="btn btn-refresh" (click)="closeDetails()">
+        Close
+      </button>
+
+      <a class="btn btn-primary" [routerLink]="[
+            '/attendances',
+            attendance.id,
+            'edit'
+          ]" (click)="closeDetails()">
+        Edit Attendance
+      </a>
+
+    </div>
+
+  </div>
+
+</div>
+
+}

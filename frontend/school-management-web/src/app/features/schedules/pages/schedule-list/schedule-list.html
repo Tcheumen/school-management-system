@@ -2,55 +2,283 @@
 
   <!-- PAGE HEADER -->
   <div class="page-header">
-
     <div class="page-heading">
       <h1>Class Schedules</h1>
-      <p>Manage classroom teaching schedules.</p>
+      <p>Manage classroom teaching schedules by academic year.</p>
     </div>
 
-    <a routerLink="/schedules/new" class="btn btn-primary">
-      <span class="plus-icon">+</span>
-      Add Schedule
-    </a>
+    <div class="header-actions">
+      <button type="button" class="btn btn-refresh" (click)="loadSchedules()" [disabled]="loading() || deleting()">
+        ↻ Refresh
+      </button>
 
+      <a routerLink="/schedules/new" class="btn btn-primary">
+        + Add Schedule
+      </a>
+    </div>
   </div>
+
+  @if (errorMessage()) {
+  <div class="error-message" role="alert">
+    {{ errorMessage() }}
+  </div>
+  }
+
+  @if (loading()) {
+  <div class="loading-state">
+    <div class="loader"></div>
+    <span>Loading class schedules...</span>
+  </div>
+  } @else {
+
+  <!-- STATISTICS -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-icon schedule-icon">📅</div>
+      <div class="stat-info">
+        <span>Scheduled Lessons</span>
+        <strong>{{ totalSchedules }}</strong>
+        <small>{{ selectedYearLabel }}</small>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon teacher-icon">👨‍🏫</div>
+      <div class="stat-info">
+        <span>Teachers</span>
+        <strong>{{ totalTeachers }}</strong>
+        <small>With scheduled lessons</small>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon classroom-icon">🏫</div>
+      <div class="stat-info">
+        <span>Classrooms</span>
+        <strong>{{ totalClassrooms }}</strong>
+        <small>With scheduled lessons</small>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon hours-icon">🕒</div>
+      <div class="stat-info">
+        <span>Weekly Lesson Hours</span>
+        <strong>{{ totalHours | number:'1.0-1' }}</strong>
+        <small>Sum of scheduled durations</small>
+      </div>
+    </div>
+  </div>
+
+  @if (conflictCount > 0) {
+  <div class="conflict-warning" role="alert">
+    ⚠️ {{ conflictCount }} scheduled lesson(s) have a
+    classroom or teacher time conflict.
+    Review the highlighted lessons.
+  </div>
+  }
 
   <!-- SCHEDULES CARD -->
   <section class="schedules-card">
 
     <div class="card-header">
       <div>
-        <h2>All Schedules</h2>
-        <p>Overview of classroom timetables and teaching assignments.</p>
+        <h2>Schedule Management</h2>
+        <p>Academic Year: {{ selectedYearLabel }}</p>
       </div>
 
       <span class="schedules-count">
-        {{ schedules().length }} schedules
+        {{ filteredSchedules.length }} schedules
       </span>
     </div>
 
-    <!-- ERROR -->
-    @if (errorMessage()) {
-    <div class="error-message" role="alert">
-      {{ errorMessage() }}
+    <!-- FILTERS -->
+    <div class="filters-bar">
+
+      <div class="filter-group">
+        <label for="academicYear">Academic Year</label>
+
+        <select id="academicYear" name="academicYear" [ngModel]="selectedYearId()"
+          (ngModelChange)="onYearChange($event)">
+
+          @for (year of academicYears(); track year.id) {
+          <option [ngValue]="year.id">
+            {{ year.name }}
+            {{ year.active ? '(Active)' : '' }}
+          </option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="classroom">Classroom</label>
+
+        <select id="classroom" name="classroom" [(ngModel)]="selectedClassroomId">
+
+          <option [ngValue]="'ALL'">All Classrooms</option>
+
+          @for (
+          classroom of availableClassrooms();
+          track classroom.id
+          ) {
+          <option [ngValue]="classroom.id">
+            {{ classroom.name }} - {{ classroom.level }}
+          </option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="teacher">Teacher</label>
+
+        <select id="teacher" name="teacher" [(ngModel)]="selectedTeacherId">
+
+          <option [ngValue]="'ALL'">All Teachers</option>
+
+          @for (teacher of availableTeachers(); track teacher.id) {
+          <option [ngValue]="teacher.id">
+            {{ teacher.name }}
+          </option>
+          }
+        </select>
+      </div>
+
+      <div class="filter-group search-group">
+        <label for="scheduleSearch">Search</label>
+
+        <input id="scheduleSearch" name="searchTerm" type="search" [(ngModel)]="searchTerm"
+          placeholder="Subject, teacher or class..." />
+      </div>
+
+      <button type="button" class="clear-btn" (click)="clearFilters()">
+        Clear
+      </button>
     </div>
-    }
 
-    <!-- LOADING -->
-    @if (loading()) {
+    <!-- VIEW SWITCHER -->
+    <div class="view-tabs">
+      <button type="button" class="tab-btn" [class.active]="activeView() === 'WEEK'" (click)="changeView('WEEK')">
+        📅 Weekly Timetable
+      </button>
 
-    <div class="loading">
-      <div class="loader"></div>
-      <span>Loading schedules...</span>
+      <button type="button" class="tab-btn" [class.active]="activeView() === 'LIST'" (click)="changeView('LIST')">
+        ☰ Schedule List
+      </button>
+    </div>
+
+    @if (academicYears().length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">📅</div>
+      <h3>No academic years found</h3>
+      <p>Create an academic year before scheduling classes.</p>
+    </div>
+    } @else if (filteredSchedules.length === 0) {
+    <div class="empty-state">
+      <div class="empty-icon">🕒</div>
+      <h3>No schedules found</h3>
+      <p>
+        No lessons match the selected academic year,
+        classroom, teacher or search.
+      </p>
+    </div>
+    } @else if (activeView() === 'WEEK') {
+
+    <!-- WEEKLY TIMETABLE -->
+    <div class="timetable-scroll">
+      <div class="timetable" [style.--day-count]="visibleDays.length">
+
+        <!-- HEADER -->
+        <div class="timetable-header">
+          <div class="time-heading">TIME</div>
+
+          @for (day of visibleDays; track day.value) {
+          <div class="day-heading">
+            {{ day.label }}
+          </div>
+          }
+        </div>
+
+        <!-- GRID BODY -->
+        <div class="timetable-body">
+
+          <!-- TIME AXIS -->
+          <div class="time-axis" [style.height.px]="timetableHeight">
+
+            @for (hour of hourLabels; track hour) {
+            <div class="hour-label" [style.top.px]="
+                      (hour - startHour) * hourHeight
+                    ">
+              {{ formatHour(hour) }}
+            </div>
+            }
+
+          </div>
+
+          <!-- DAY COLUMNS -->
+          @for (day of visibleDays; track day.value) {
+          <div class="day-column" [style.height.px]="timetableHeight">
+
+            @for (hour of hourLabels.slice(0, -1); track hour) {
+            <div class="hour-line" [style.top.px]="
+                        (hour - startHour) * hourHeight
+                      ">
+            </div>
+            }
+
+            @for (
+            block of getTimetableBlocks(day.value);
+            track block.schedule.id
+            ) {
+            <button type="button" class="lesson-block" [class.has-conflict]="block.conflict" [style.top.px]="block.top"
+              [style.height.px]="block.height" [style.left.%]="block.left" [style.width.%]="block.width"
+              (click)="viewSchedule(block.schedule)" [title]="
+                        block.schedule.subjectName + ' - ' +
+                        block.schedule.classroomName
+                      ">
+
+              <span class="lesson-time">
+                {{ formatTime(block.schedule.startTime) }}
+                –
+                {{ formatTime(block.schedule.endTime) }}
+              </span>
+
+              <strong>
+                {{ block.schedule.subjectName }}
+              </strong>
+
+              <span class="lesson-classroom">
+                🏫 {{ block.schedule.classroomName }}
+              </span>
+
+              <span class="lesson-teacher">
+                {{ block.schedule.teacherFullName }}
+              </span>
+
+              @if (block.conflict) {
+              <span class="lesson-warning">
+                ⚠ Conflict
+              </span>
+              }
+
+            </button>
+            }
+          </div>
+          }
+
+        </div>
+      </div>
+    </div>
+
+    <div class="timetable-footer">
+      Click a lesson to view its details. Times are shown
+      on the weekly grid.
     </div>
 
     } @else {
 
-    <!-- TABLE -->
+    <!-- SCHEDULE LIST -->
     <div class="table-wrapper">
-
       <table>
-
         <thead>
           <tr>
             <th>ID</th>
@@ -65,104 +293,159 @@
         </thead>
 
         <tbody>
+          @for (schedule of filteredSchedules; track schedule.id) {
+          <tr [class.conflict-row]="hasConflict(schedule)">
 
-          @for (schedule of schedules(); track schedule.id) {
-
-          <tr>
-
-            <!-- ID -->
             <td class="id-cell">
               #{{ schedule.id }}
             </td>
 
-            <!-- DAY -->
             <td>
               <span class="day-badge">
                 {{ formatDay(schedule.dayOfWeek) }}
               </span>
             </td>
 
-            <!-- TIME -->
             <td>
-              <div class="time-cell">
-                <span class="time-icon">◷</span>
-
-                <span>
-                  {{ formatTime(schedule.startTime) }}
-                  -
-                  {{ formatTime(schedule.endTime) }}
-                </span>
-              </div>
+              <span class="time-cell">
+                {{ formatTime(schedule.startTime) }}
+                –
+                {{ formatTime(schedule.endTime) }}
+              </span>
             </td>
 
-            <!-- CLASSROOM -->
             <td>
-              <div class="classroom-cell">
-                <span class="classroom-icon">🏫</span>
-                <span>{{ schedule.classroomName }}</span>
-              </div>
+              <span class="classroom-badge">
+                {{ schedule.classroomName }}
+              </span>
             </td>
 
-            <!-- SUBJECT -->
             <td>
               <span class="subject-badge">
                 {{ schedule.subjectName }}
               </span>
             </td>
 
-            <!-- TEACHER -->
             <td>
               <div class="teacher-cell">
                 <div class="teacher-avatar">
                   {{ schedule.teacherFullName.charAt(0).toUpperCase() }}
                 </div>
-
                 <span>{{ schedule.teacherFullName }}</span>
               </div>
             </td>
 
-            <!-- ACADEMIC YEAR -->
-            <td class="year-cell">
-              {{ schedule.academicYearName }}
-            </td>
+            <td>{{ schedule.academicYearName }}</td>
 
-            <!-- ACTIONS -->
             <td>
               <div class="actions">
-
-                <button type="button" class="btn btn-delete" (click)="deleteSchedule(schedule.id)">
-                  Delete
+                <button type="button" class="btn btn-view" (click)="viewSchedule(schedule)">
+                  View
                 </button>
 
-              </div>
-            </td>
-
-          </tr>
-
-          } @empty {
-
-          <tr>
-            <td colspan="8" class="empty-message">
-              <div class="empty-content">
-                <span class="empty-icon">📅</span>
-                <strong>No schedules found</strong>
-                <p>
-                  Create a schedule to organize classroom teaching.
-                </p>
+                <button type="button" class="btn btn-delete" [disabled]="deleting()"
+                  (click)="deleteSchedule(schedule.id)">
+                  {{ deletingId() === schedule.id
+                          ? 'Deleting...'
+                          : 'Delete' }}
+                </button>
               </div>
             </td>
           </tr>
-
           }
-
         </tbody>
-
       </table>
-
     </div>
 
     }
 
   </section>
 
+  }
+
 </div>
+
+<!-- DETAILS MODAL -->
+@if (selectedSchedule(); as schedule) {
+
+<div class="modal-overlay" (click)="closeDetails()">
+
+  <div class="schedule-modal" role="dialog" aria-modal="true" aria-labelledby="schedule-modal-title"
+    (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <div>
+        <h2 id="schedule-modal-title">Schedule Details</h2>
+        <p>Lesson #{{ schedule.id }}</p>
+      </div>
+
+      <button type="button" class="modal-close" aria-label="Close schedule details" (click)="closeDetails()">
+        ×
+      </button>
+    </div>
+
+    <div class="modal-body">
+
+      <div class="lesson-summary">
+        <div class="lesson-icon">📚</div>
+        <div>
+          <h3>{{ schedule.subjectName }}</h3>
+          <span>
+            {{ formatDay(schedule.dayOfWeek) }}
+            · {{ formatTime(schedule.startTime) }}
+            – {{ formatTime(schedule.endTime) }}
+          </span>
+        </div>
+      </div>
+
+      @if (hasConflict(schedule)) {
+      <div class="conflict-warning">
+        ⚠ This lesson has a scheduling conflict.
+      </div>
+      }
+
+      <div class="details-grid">
+        <div class="detail-item">
+          <span>Teacher</span>
+          <strong>{{ schedule.teacherFullName }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Classroom</span>
+          <strong>{{ schedule.classroomName }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Subject</span>
+          <strong>{{ schedule.subjectName }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Academic Year</span>
+          <strong>{{ schedule.academicYearName }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Day</span>
+          <strong>{{ formatDay(schedule.dayOfWeek) }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Time</span>
+          <strong>
+            {{ formatTime(schedule.startTime) }}
+            – {{ formatTime(schedule.endTime) }}
+          </strong>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal-footer">
+      <button type="button" class="btn btn-refresh" (click)="closeDetails()">
+        Close
+      </button>
+    </div>
+
+  </div>
+</div>
+}

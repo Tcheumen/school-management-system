@@ -8,10 +8,83 @@
       <p>Manage student grades and academic performance.</p>
     </div>
 
-    <a routerLink="/grades/new" class="btn btn-primary">
-      <span>+</span>
-      Add Grade
-    </a>
+    <div class="header-actions">
+
+      <button type="button" class="btn btn-refresh" (click)="loadGrades()" [disabled]="loading() || deleting()">
+        ↻ Refresh
+      </button>
+
+      @if (canManageGrades) {
+      <a routerLink="/grades/new" class="btn btn-primary">
+        + Add Grade
+      </a>
+      }
+
+    </div>
+
+  </div>
+
+  <!-- ERROR -->
+  @if (errorMessage()) {
+  <div class="error-message" role="alert">
+    {{ errorMessage() }}
+  </div>
+  }
+
+  @if (loading()) {
+
+  <div class="loading-state">
+    <div class="loader"></div>
+    <span>Loading grades...</span>
+  </div>
+
+  } @else {
+
+  <!-- STATISTICS -->
+  <div class="stats-grid">
+
+    <div class="stat-card">
+      <div class="stat-icon total-icon">📋</div>
+      <div class="stat-info">
+        <span>Total Grades</span>
+        <strong>{{ totalGrades() }}</strong>
+        <small>Matching grade records</small>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon average-icon">📊</div>
+      <div class="stat-info">
+        <span>Average Grade</span>
+        <strong>
+          @if (averageGrade() !== null) {
+          {{ averageGrade()!.toFixed(2) }}
+          <span class="stat-suffix">/ 20</span>
+          } @else {
+          —
+          }
+        </strong>
+        <small>Simple average of selected grades</small>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon students-icon">👥</div>
+      <div class="stat-info">
+        <span>Evaluated Students</span>
+        <strong>{{ totalStudents() }}</strong>
+        <small>Distinct students</small>
+      </div>
+    </div>
+
+    <div class="stat-card">
+      <div class="stat-icon low-icon">📉</div>
+      <div class="stat-info">
+        <span>Grades Below 10</span>
+        <strong>{{ belowAverageCount() }}</strong>
+        <small>Grades requiring attention</small>
+      </div>
+    </div>
 
   </div>
 
@@ -19,37 +92,150 @@
   <section class="grades-card">
 
     <div class="card-header">
-
       <div>
-        <h2>All Grades</h2>
-        <p>Overview of student academic results.</p>
+        <h2>Grade Directory</h2>
+        <p>
+          Academic Year: {{ selectedYearLabel }}
+        </p>
       </div>
 
       <span class="grades-count">
-        {{ grades().length }} grades
+        {{ filteredGrades().length }} grades
       </span>
+    </div>
+
+    <!-- FILTERS -->
+    <div class="filters-bar">
+
+      <!-- YEAR -->
+      <div class="filter-group">
+        <label for="academicYear">
+          Academic Year
+        </label>
+
+        <select id="academicYear" name="academicYear" [ngModel]="selectedYearId()"
+          (ngModelChange)="onYearChange($event)">
+
+          @for (year of availableYears(); track year.id) {
+          <option [ngValue]="year.id">
+            {{ year.name }}
+            {{ year.active ? '(Active)' : '' }}
+          </option>
+          }
+
+        </select>
+      </div>
+
+      <!-- CLASSROOM -->
+      <div class="filter-group">
+        <label for="classroom">
+          Classroom
+        </label>
+
+        <select id="classroom" name="classroom" [ngModel]="selectedClassroomId()"
+          (ngModelChange)="onClassroomChange($event)">
+
+          <option [ngValue]="'ALL'">
+            All Classrooms
+          </option>
+
+          @for (
+          classroom of availableClassrooms();
+          track classroom.id
+          ) {
+          <option [ngValue]="classroom.id">
+            {{ classroom.name }}
+          </option>
+          }
+
+        </select>
+      </div>
+
+      <!-- SUBJECT -->
+      <div class="filter-group">
+        <label for="subject">
+          Subject
+        </label>
+
+        <select id="subject" name="subject" [ngModel]="selectedSubjectId()"
+          (ngModelChange)="selectedSubjectId.set($event)">
+
+          <option [ngValue]="'ALL'">
+            All Subjects
+          </option>
+
+          @for (
+          subject of availableSubjects();
+          track subject.id
+          ) {
+          <option [ngValue]="subject.id">
+            {{ subject.name }}
+          </option>
+          }
+
+        </select>
+      </div>
+
+      <!-- TERM -->
+      <div class="filter-group">
+        <label for="term">
+          Term
+        </label>
+
+        <select id="term" name="term" [ngModel]="selectedTerm()" (ngModelChange)="selectedTerm.set($event)">
+
+          <option [ngValue]="'ALL'">
+            All Terms
+          </option>
+
+          @for (term of terms; track term.value) {
+          <option [ngValue]="term.value">
+            {{ term.label }}
+          </option>
+          }
+
+        </select>
+      </div>
+
+      <!-- SEARCH -->
+      <div class="filter-group search-group">
+        <label for="gradeSearch">
+          Search
+        </label>
+
+        <input id="gradeSearch" type="search" name="searchTerm" [ngModel]="searchTerm()"
+          (ngModelChange)="searchTerm.set($event)" placeholder="Student, teacher or subject..." />
+      </div>
+
+      <button type="button" class="clear-btn" (click)="clearFilters()">
+        Clear
+      </button>
 
     </div>
 
-    <!-- ERROR -->
-    @if (errorMessage()) {
-    <div class="error-message" role="alert">
-      {{ errorMessage() }}
+    <!-- TABLE -->
+    @if (availableYears().length === 0) {
+
+    <div class="empty-state">
+      <div class="empty-icon">📅</div>
+      <h3>No academic years found</h3>
+      <p>No academic years are available to display.</p>
     </div>
-    }
 
-    <!-- LOADING -->
-    @if (loading()) {
+    } @else if (filteredGrades().length === 0) {
 
-    <div class="loading">
-      <div class="loader"></div>
-      <span>Loading grades...</span>
+    <div class="empty-state">
+      <div class="empty-icon">📚</div>
+      <h3>No grades found</h3>
+      <p>
+        No grades match the selected academic year,
+        classroom, subject, term or search.
+      </p>
     </div>
 
     } @else {
 
     <div class="table-wrapper">
-
       <table>
 
         <thead>
@@ -67,7 +253,7 @@
 
         <tbody>
 
-          @for (grade of grades(); track grade.id) {
+          @for (grade of filteredGrades(); track grade.id) {
 
           <tr>
 
@@ -80,8 +266,13 @@
                 </div>
 
                 <div class="student-info">
-                  <strong>{{ grade.studentFullName }}</strong>
-                  <span>Student</span>
+                  <strong>
+                    {{ grade.studentFullName }}
+                  </strong>
+
+                  <span>
+                    Student #{{ grade.studentId }}
+                  </span>
                 </div>
 
               </div>
@@ -89,18 +280,20 @@
 
             <!-- SUBJECT -->
             <td>
-              <span class="subject-name">
+              <span class="subject-badge">
                 {{ grade.subjectName }}
               </span>
             </td>
 
             <!-- CLASSROOM -->
             <td>
-              {{ grade.classroomName }}
+              <span class="classroom-badge">
+                {{ grade.classroomName }}
+              </span>
             </td>
 
             <!-- TEACHER -->
-            <td>
+            <td class="teacher-cell">
               {{ grade.teacherFullName }}
             </td>
 
@@ -113,8 +306,10 @@
 
             <!-- GRADE -->
             <td>
-              <span class="grade-value" [class.grade-good]="grade.value >= 14"
-                [class.grade-average]="grade.value >= 10 && grade.value < 14" [class.grade-low]="grade.value < 10">
+              <span class="grade-value" [class.grade-good]="grade.value >= 14" [class.grade-average]="
+                        grade.value >= 10 &&
+                        grade.value < 14
+                      " [class.grade-low]="grade.value < 10">
 
                 {{ grade.value }} / 20
 
@@ -130,25 +325,33 @@
             <td>
               <div class="actions">
 
-                <a [routerLink]="['/grades', grade.id, 'edit']" class="btn btn-edit">
+                <button type="button" class="btn btn-view" (click)="viewGrade(grade)">
+                  View
+                </button>
+
+                @if (canManageGrades) {
+
+                <a [routerLink]="[
+                            '/grades',
+                            grade.id,
+                            'edit'
+                          ]" class="btn btn-edit">
                   Edit
                 </a>
 
-                <button type="button" class="btn btn-delete" (click)="deleteGrade(grade.id)">
-                  Delete
+                <button type="button" class="btn btn-delete" [disabled]="deleting()" (click)="deleteGrade(grade.id)">
+
+                  {{ deletingId() === grade.id
+                            ? 'Deleting...'
+                            : 'Delete' }}
+
                 </button>
+
+                }
 
               </div>
             </td>
 
-          </tr>
-
-          } @empty {
-
-          <tr>
-            <td colspan="8" class="empty-message">
-              No grades found.
-            </td>
           </tr>
 
           }
@@ -156,11 +359,167 @@
         </tbody>
 
       </table>
-
     </div>
 
     }
 
   </section>
 
+  }
+
 </div>
+
+<!-- =====================================
+     GRADE DETAILS MODAL
+===================================== -->
+
+@if (selectedGrade(); as grade) {
+
+<div class="modal-overlay" (click)="closeDetails()">
+
+  <div class="grade-modal" role="dialog" aria-modal="true" aria-labelledby="grade-modal-title"
+    (click)="$event.stopPropagation()">
+
+    <!-- MODAL HEADER -->
+    <div class="modal-header">
+
+      <div class="modal-heading">
+        <div class="modal-icon">📊</div>
+
+        <div>
+          <h2 id="grade-modal-title">
+            Grade Details
+          </h2>
+
+          <p>
+            Grade Record #{{ grade.id }}
+          </p>
+        </div>
+      </div>
+
+      <button type="button" class="modal-close" aria-label="Close grade details" (click)="closeDetails()">
+        ×
+      </button>
+
+    </div>
+
+    <!-- MODAL BODY -->
+    <div class="modal-body">
+
+      <!-- STUDENT PROFILE -->
+      <div class="student-profile">
+        <div class="profile-avatar">
+          {{ grade.studentFullName.charAt(0).toUpperCase() }}
+        </div>
+
+        <div class="profile-info">
+          <h3>{{ grade.studentFullName }}</h3>
+
+          <span>
+            Student #{{ grade.studentId }}
+          </span>
+        </div>
+      </div>
+
+      <!-- GRADE SUMMARY -->
+      <div class="grade-summary">
+
+        <div>
+          <span>Grade</span>
+
+          <strong>
+            {{ grade.value }} / 20
+          </strong>
+        </div>
+
+        <span class="grade-level" [class.grade-good]="grade.value >= 14" [class.grade-average]="
+              grade.value >= 10 && grade.value < 14
+            " [class.grade-low]="grade.value < 10">
+
+          {{ getGradeLevel(grade.value) }}
+
+        </span>
+
+      </div>
+
+      <!-- DETAILS -->
+      <div class="details-grid">
+
+        <div class="detail-item">
+          <span>Academic Year</span>
+          <strong>{{ grade.academicYearName }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Classroom</span>
+          <strong>{{ grade.classroomName }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Subject</span>
+          <strong>{{ grade.subjectName }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Term</span>
+          <strong>{{ formatTerm(grade.term) }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Teacher</span>
+          <strong>{{ grade.teacherFullName }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Grade ID</span>
+          <strong>#{{ grade.id }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Enrollment ID</span>
+          <strong>#{{ grade.enrollmentId }}</strong>
+        </div>
+
+        <div class="detail-item">
+          <span>Teacher Assignment ID</span>
+          <strong>#{{ grade.teacherAssignmentId }}</strong>
+        </div>
+
+      </div>
+
+      <!-- REMARKS -->
+      <div class="remarks-section">
+
+        <h4>Teacher Remarks</h4>
+
+        <p>
+          {{ grade.remarks || 'No remarks provided.' }}
+        </p>
+
+      </div>
+
+    </div>
+
+    <!-- MODAL FOOTER -->
+    <div class="modal-footer">
+
+      <button type="button" class="btn btn-refresh" (click)="closeDetails()">
+        Close
+      </button>
+
+      @if (canManageGrades) {
+      <a class="btn btn-primary" [routerLink]="[
+              '/grades',
+              grade.id,
+              'edit'
+            ]" (click)="closeDetails()">
+        Edit Grade
+      </a>
+      }
+
+    </div>
+
+  </div>
+</div>
+
+}
